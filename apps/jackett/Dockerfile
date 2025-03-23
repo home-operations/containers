@@ -30,11 +30,8 @@ RUN \
     && mkdir -p /app/bin \
     && curl -fsSL "https://github.com/Jackett/Jackett/releases/download/${VERSION}/Jackett.Binaries.LinuxMusl${ARCH}.tar.gz" \
         | tar xzf - -C /app/bin --strip-components 1 \
-    && \
-    rm -rf \
-        /app/bin/JackettUpdater* \
     && chown -R root:root /app && chmod -R 755 /app \
-    && rm -rf /tmp/*
+    && rm -rf /tmp/* /app/bin/JackettUpdater*
 
 COPY ./entrypoint.sh /entrypoint.sh
 
