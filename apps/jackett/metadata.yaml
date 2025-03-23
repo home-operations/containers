@@ -1,0 +1,4 @@
+---
+# renovate: datasource=github-releases depName=Jackett/Jackett
+version: v0.22.1680
+name: jackett
