@@ -202,12 +202,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
-
-      - name: Sign Digest
-        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
-
       - name: Generate and Upload SBOM
         uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
