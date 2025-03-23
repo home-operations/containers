@@ -30,22 +30,18 @@ jobs:
     name: Pre-Job
     runs-on: ubuntu-latest
     outputs:
-      any_changed: ${{ steps.changed-dirs.outputs.any_changed }}
-      all_changed_and_modified_files: ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }}
+      changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Get Changed Files
-        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
-        id: changed-dirs
+      - name: Get changed files
+        id: changed-files
+        uses: bjw-s-labs/action-changed-files@2cc35474e9d534ed0d743aa122fd142afbdaa0ad # v0.3.1
         with:
-          dir_names: true
-          dir_names_max_depth: "1"
           path: apps
+          include_only_directories: true
+          max_depth: 1
 
   changed:
-    if: ${{ needs.pre-job.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ needs.pre-job.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
     needs: pre-job
     name: Get Changed Apps
     runs-on: ubuntu-latest
@@ -64,18 +60,15 @@ jobs:
       - name: Extract Metadata
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: apps
+        env:
+          APPS_TO_BUILD: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.pre-job.outputs.changed-files), ' ') }}
         with:
           script: |
             const fs = require('fs');
             const yaml = require('yaml');
             const cwd = process.cwd();
-
-            const input =
-              context.eventName === 'workflow_dispatch'
-                ? '${{ inputs.app }}'
-                : '${{ needs.pre-job.outputs.all_changed_and_modified_files }}';
-
-            const appsToBuild = input.split(' ').filter(Boolean);
+            const { APPS_TO_BUILD } = process.env;
+            const appsToBuild = APPS_TO_BUILD.split(' ').filter(Boolean);
             const output = [];
 
             appsToBuild.forEach((app) => {
