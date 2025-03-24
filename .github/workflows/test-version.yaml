@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Test Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: Version
+        required: true
+
+jobs:
+  test-version:
+    name: Test Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine Definitive Versions
+        uses: ./.github/actions/definitive-versions
+        id: version
+        with:
+          version: ${{ inputs.version }}
+
+      - name: Check Version Results
+        run: |
+          echo "Input Version: ${{ inputs.version }}"
+          echo "Is Valid Semver: ${{ steps.version.outputs.is-valid-semver }}"
+          echo "Output Version: ${{ steps.version.outputs.output-version }}"
+          echo "Sanitized Version: ${{ steps.version.outputs.sanitized-version }}"

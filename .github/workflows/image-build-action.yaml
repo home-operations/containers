@@ -73,33 +73,11 @@ jobs:
           provenance: false
 
       - if: ${{ inputs.test }}
-        name: Setup Testing Tools
-        id: test
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=container-structure-test" >> $GITHUB_OUTPUT
-              gh release download --repo GoogleContainerTools/container-structure-test --pattern '*-linux-${{ matrix.platform }}' --output container-structure-test
-              mv container-structure-test /usr/local/bin/container-structure-test && chmod +rx /usr/local/bin/container-structure-test
-          else
-              echo "tool=goss" >> $GITHUB_OUTPUT
-              gh release download --repo goss-org/goss --pattern '*-linux-${{ matrix.platform }}' --output goss
-              mv goss /usr/local/bin/goss && chmod +rx /usr/local/bin/goss
-              gh release download --repo goss-org/goss --pattern 'dgoss' --output dgoss
-              mv dgoss /usr/local/bin/dgoss && chmod +rx /usr/local/bin/dgoss
-          fi
-
-      - if: ${{ inputs.test && steps.test.outputs.tool == 'container-structure-test' }}
-        name: Run Tests (container-structure-test)
-        run: container-structure-test test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
-
-      - if: ${{ inputs.test && steps.test.outputs.tool == 'goss' }}
-        name: Run Tests (Goss)
-        env:
-          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
-          GOSS_OPTS: --retry-timeout 60s --sleep 1s
-        run: dgoss run ${{ steps.build.outputs.imageid }}
+        name: Run Tests
+        uses: ./.github/actions/test-container
+        with:
+          app: ${{ inputs.app }}
+          image: ${{ steps.build.outputs.imageid }}
 
       - if: ${{ inputs.release }}
         name: Export Digest
@@ -122,41 +100,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Setup Node
-        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
-        with:
-          node-version: 22.x
-
-      - name: Install Semver
-        run: npm install semver
-
-      - name: Determine Definitive Version
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      - name: Determine Definitive Versions
+        uses: ./.github/actions/definitive-versions
         id: version
         with:
-          script: |
-            const semver = require('semver');
-
-            function sanitizeInputVersion(version) {
-                return version.split('-')[0]; // Remove any pre-release suffixes
-            }
-
-            const version = '${{ inputs.version }}';
-            const validSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
-            const date = new Date();
-            const parsedVersion = validSemverRegex.exec(version);
-            const validSemver = parsedVersion !== null;
-
-            const parsedSemver = validSemver ? semver.coerce(parsedVersion[0]) : null;
-            const outputVersion = validSemver
-                ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
-                : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
-
-            const sanitizedInputVersion = validSemver ? sanitizeInputVersion(version) : version;
-
-            core.setOutput('version', outputVersion);
-            core.setOutput('validSemver', validSemver);
-            core.setOutput('sanitizedInputVersion', sanitizedInputVersion);
+          version: ${{ inputs.version }}
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -167,10 +115,10 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
-            type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
-            type=raw,value=${{ steps.version.outputs.sanitizedInputVersion }},enable=${{ steps.version.outputs.validSemver }}
+            type=semver,pattern={{version}},value=${{ steps.version.outputs.output-version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.output-version }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=semver,pattern={{major}},value=${{ steps.version.outputs.output-version }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=raw,value=${{ steps.version.outputs.sanitized-version }},enable=${{ steps.version.outputs.is-valid-semver }}
             type=raw,value=rolling
 
       - name: Push Images
