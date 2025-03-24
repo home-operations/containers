@@ -101,14 +101,12 @@ jobs:
           GOSS_OPTS: --retry-timeout 60s --sleep 1s
         run: dgoss run ${{ steps.build.outputs.imageid }}
 
-      - if: ${{ inputs.release }}
-        name: Export Digest
+      - name: Export Digest
         id: digest
         run: |
           echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
   release:
-    if: ${{ inputs.release }}
     needs: build
     name: Release ${{ inputs.app }}
     runs-on: ubuntu-latest
@@ -181,7 +179,7 @@ jobs:
           images: >-
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
-          push: true
+          push: ${{ inputs.release }}
 
       - name: Export Digest
         id: digest
@@ -219,6 +217,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+
+  pull-request-comments:
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: release
+    name: Pull Request Comments
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@af35edadc00be37caa72ed9f3e6d5f7801bfdf09 # v1.11.7
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - name: Get Container Size Diff
+        uses: ./.github/actions/container-size-diff
+        id: container-size-diff
+        with:
+          from-container: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
+          to-container: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+
+      - name: Comment Container Size Diff
+        uses: marocchino/sticky-pull-request-comment@52423e01640425a022ef5fd42c6fb5f633a02728 # v2.9.1
+        with:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          header: container-size-diff-${{ inputs.app }}
+          message: |
+            ${{ steps.container-size-diff.outputs.size-diff-markdown }}
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
