@@ -4,4 +4,5 @@
 exec \
     /app/bin/jackett \
         --NoUpdates \
+        --ListenPublic \
         "$@"
