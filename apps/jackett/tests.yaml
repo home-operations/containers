@@ -7,5 +7,5 @@ port:
   tcp6:9117:
     listening: true
 http:
-  http://localhost:9117/UI/Dashboard:
+  http://localhost:9117:
     status: 200
