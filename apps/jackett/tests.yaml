@@ -8,4 +8,6 @@ port:
     listening: true
 http:
   http://localhost:9117:
-    status: 200
+    status: 400
+  body:
+    - Cookies required
