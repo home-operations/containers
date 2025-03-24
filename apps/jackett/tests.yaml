@@ -9,5 +9,5 @@ port:
 http:
   http://localhost:9117:
     status: 400
-  body:
-    - Cookies required
+    body:
+      - Cookies required
