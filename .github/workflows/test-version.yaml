@@ -25,5 +25,5 @@ jobs:
         run: |
           echo "Input Version: ${{ inputs.version }}"
           echo "Is Valid Semver: ${{ steps.version.outputs.is-valid-semver }}"
-          echo "Output Version: ${{ steps.version.outputs.output-version }}"
-          echo "Sanitized Version: ${{ steps.version.outputs.sanitized-version }}"
+          echo "Output Version: ${{ steps.version.outputs.semantic }}"
+          echo "Sanitized Version: ${{ steps.version.outputs.raw }}"
