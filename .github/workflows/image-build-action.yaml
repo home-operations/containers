@@ -115,10 +115,10 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.version.outputs.output-version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.output-version }},enable=${{ steps.version.outputs.is-valid-semver }}
-            type=semver,pattern={{major}},value=${{ steps.version.outputs.output-version }},enable=${{ steps.version.outputs.is-valid-semver }}
-            type=raw,value=${{ steps.version.outputs.sanitized-version }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=semver,pattern={{version}},value=${{ steps.version.outputs.semver }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.semver }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=semver,pattern={{major}},value=${{ steps.version.outputs.semver }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=raw,value=${{ steps.version.outputs.raw }},enable=${{ steps.version.outputs.is-valid-semver }}
             type=raw,value=rolling
 
       - name: Push Images
