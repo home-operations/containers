@@ -5,6 +5,7 @@ FROM docker.io/library/ubuntu:24.04
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
+ARG POWERSHELL_VERSION=7.5.0
 
 # Set environment variables
 ENV UMASK="0002" \
@@ -73,18 +74,43 @@ RUN set -e && \
     cd /tmp && \
     rm -rf /tmp/imagemagick
 
-# Install PowerShell using Microsoft repository for Ubuntu 24.04
-RUN apt-get update && apt-get install -y \
+# Install PowerShell - using repository for amd64 and binary archives for arm64
+RUN set -e && \
+    # Install common dependencies
+    apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
-    curl \
-    gnupg \
-    && mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg \
-    && echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" > /etc/apt/sources.list.d/microsoft.list \
-    && apt-get update \
-    && apt-get install -y powershell \
-    && rm -rf /var/lib/apt/lists/*
+    curl && \
+    # Architecture-specific installation
+    case "${TARGETARCH}" in \
+        "amd64") \
+            echo "Installing PowerShell for AMD64 using repository..." && \
+            apt-get install -y gnupg && \
+            mkdir -p /etc/apt/keyrings && \
+            curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/keyrings/microsoft.gpg && \
+            echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/24.04/prod noble main" > /etc/apt/sources.list.d/microsoft.list && \
+            apt-get update && \
+            apt-get install -y powershell \
+            ;; \
+        "arm64") \
+            echo "Installing PowerShell for ARM64 using binary archives..." && \
+            POWERSHELL_PACKAGE="powershell-${POWERSHELL_VERSION}-linux-arm64.tar.gz" && \
+            POWERSHELL_DOWNLOAD_URL="https://github.com/PowerShell/PowerShell/releases/download/v${POWERSHELL_VERSION}/${POWERSHELL_PACKAGE}" && \
+            curl -L -o "/tmp/${POWERSHELL_PACKAGE}" "${POWERSHELL_DOWNLOAD_URL}" && \
+            mkdir -p /opt/microsoft/powershell/7 && \
+            tar zxf "/tmp/${POWERSHELL_PACKAGE}" -C /opt/microsoft/powershell/7 && \
+            chmod +x /opt/microsoft/powershell/7/pwsh && \
+            ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh && \
+            rm -f "/tmp/${POWERSHELL_PACKAGE}" \
+            ;; \
+        *) \
+            echo "Unsupported architecture: ${TARGETARCH}" && exit 1 \
+            ;; \
+    esac && \
+    # Verify installation
+    pwsh --version && \
+    # Clean up
+    rm -rf /var/lib/apt/lists/*
 
 # Set up PowerShell modules with error handling
 RUN set -e && \
