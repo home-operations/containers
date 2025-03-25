@@ -14,7 +14,8 @@ ENV UMASK="0002" \
     DEBIAN_FRONTEND="noninteractive" \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
+    POWERSHELL_DISTRIBUTION_CHANNEL="PSDocker"
 
 # Install all dependencies
 RUN apt-get update && apt-get install -y \
