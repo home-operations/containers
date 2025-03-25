@@ -6,74 +6,116 @@ fileExistenceTests:
     path: "/usr/local/bin/magick"
     shouldExist: true
     permissions: "-rwxr-xr-x"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "ImageMagick - convert"
     path: "/usr/local/bin/convert"
     shouldExist: true
     permissions: "Lrwxrwxrwx"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "ImageMagick - identify"
     path: "/usr/local/bin/identify"
     shouldExist: true
     permissions: "Lrwxrwxrwx"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "PowerShell"
     path: "/usr/bin/pwsh"
     shouldExist: true
     permissions: "Lrwxrwxrwx"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "Entrypoint script"
     path: "/entrypoint.sh"
     shouldExist: true
     permissions: "-rwxr-xr-x"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "Config directory"
     path: "/config"
     shouldExist: true
     permissions: "drwxr-xr-x"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "PowerShell modules directory - usr"
     path: "/usr/local/share/powershell"
     shouldExist: true
     permissions: "drwxr-xr-x"
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "PowerShell modules directory - opt"
     path: "/opt/microsoft/powershell"
     shouldExist: true
     permissions: "drwxr-xr-x"
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
 
 commandTests:
   - name: "ImageMagick version"
     command: "magick"
     args: ["-version"]
     expectedOutput: ["Version: ImageMagick"]
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "PowerShell version"
     command: "pwsh"
     args: ["--version"]
     expectedOutput: ["PowerShell"]
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "PowerShell FanartTvAPI module"
     command: "pwsh"
     args: ["-Command", "Get-Module -ListAvailable FanartTvAPI"]
     expectedOutput: ["FanartTvAPI"]
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "FanartTvAPI module import"
     command: "pwsh"
     args: ["-Command", "Import-Module FanartTvAPI -Force; Write-Host 'Module imported successfully'"]
     expectedOutput: ["Module imported successfully"]
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   - name: "Add-FanartTvAPIKey function availability"
     command: "pwsh"
     args: ["-Command", "Import-Module FanartTvAPI -Force; if (Get-Command -Name Add-FanartTvAPIKey -ErrorAction SilentlyContinue) { Write-Host 'Function exists' } else { Write-Error 'Function not found'; exit 1 }"]
     expectedOutput: ["Function exists"]
-    
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
+
   # Skipping the nobody user test as it requires password authentication
   # Instead, we'll check if the module directories have the right permissions
   - name: "FanartTvAPI module directory permissions"
     command: "ls"
     args: ["-la", "/usr/local/share/powershell/Modules/FanartTvAPI"]
     expectedOutput: ["drwxr-xr-x"]
+    envVars:
+      - key: "POSTERIZARR_TEST_MODE"
+        value: "true"
 
 metadataTest:
   labels:
