@@ -23,6 +23,7 @@ RUN \
         catatonit \
         coreutils \
         curl \
+        icu-libs \
         jo \
         jq \
         nano \
