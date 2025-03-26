@@ -76,9 +76,7 @@ RUN \
     && rm -rf /tmp/*
 
 COPY --from=betanin-client /src/betanin_client/dist/ /usr/local/lib/python3.12/site-packages/betanin_client/dist/
-COPY ./entrypoint.sh /entrypoint.sh
-COPY ./config-beets.yaml /config-beets.yaml
-COPY ./config-betanin.toml /config-betanin.toml
+COPY . /
 
 USER nobody:nogroup
 WORKDIR /config
