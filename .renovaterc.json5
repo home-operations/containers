@@ -32,11 +32,6 @@
         '{"releases":[{"version": computer.Linux.version}]}',
       ],
     },
-    qbittorrent: {
-      defaultRegistryUrlTemplate: "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json",
-      format: "json",
-      transformTemplates: ['{"releases":[{"version": qbittorrent}]}'],
-    },
   },
   packageRules: [
     {
