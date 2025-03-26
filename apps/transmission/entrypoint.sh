@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-minijinja-cli --env /settings.json.j2 > /config/settings.json
+minijinja-cli --env /defaults/settings.json.j2 > /config/settings.json
 
 if [[ "${TRANSMISSION__DEBUG}" == "true" ]]; then
     echo "Transmission starting with the following configuration..."
