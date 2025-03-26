@@ -21,13 +21,14 @@ RUN \
         tzdata \
     && \
     pwsh -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
-                   Install-Module -Name FanartTvAPI -Scope AllUsers -Force" && \
-    chmod -R 755 /usr/local/share/powershell && \
-    pip install apprise && \
-    mkdir -p /app && \
-    chmod 755 /app && \
+        Install-Module -Name FanartTvAPI -Scope AllUsers -Force" \
+    && chmod -R 755 /usr/local/share/powershell \
+    && pip install apprise \
+    && mkdir -p /app && chmod 755 /app \
+    && \
     curl -fsSL https://github.com/fscorrupt/Posterizarr/archive/refs/tags/${VERSION}.tar.gz \
-        | tar xzf - -C /app --strip-components=1 && \
+        | tar xzf - -C /app --strip-components=1 \
+    && \
     rm -rf /app/images && \
     find /app -type f \( -name "*.md" -o -name "*.zip" -o -name "*.yml" -o -name ".*" \) -delete
 
