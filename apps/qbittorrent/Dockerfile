@@ -27,6 +27,7 @@ RUN \
         jq \
         nano \
         p7zip \
+        qt6-qtbase-sqlite \
         trurl \
         tzdata \
     && \
