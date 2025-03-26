@@ -4,7 +4,7 @@
 if [[ ! -f "/config/sabnzbd.ini" ]]; then
     printf "Copying over default configuration ...\n"
     mkdir -p /config/sabnzbd
-    cp /app/sabnzbd.ini /config/sabnzbd.ini
+    cp /defaults/sabnzbd.ini /config/sabnzbd.ini
 
     printf "Creating api keys ...\n"
     api_key=$(tr -dc 'a-z0-9' < /dev/urandom | fold -w 32 | head -n 1)
