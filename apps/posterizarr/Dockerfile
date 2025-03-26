@@ -28,9 +28,8 @@ RUN \
     && \
     curl -fsSL https://github.com/fscorrupt/Posterizarr/archive/refs/tags/${VERSION}.tar.gz \
         | tar xzf - -C /app --strip-components=1 \
-    && \
-    rm -rf /app/images && \
-    find /app -type f \( -name "*.md" -o -name "*.zip" -o -name "*.yml" -o -name ".*" \) -delete
+    && rm -rf /app/images \
+    && find /app -type f \( -name "*.md" -o -name "*.zip" -o -name "*.yml" -o -name ".*" \) -delete
 
 
 COPY entrypoint.sh /entrypoint.sh
