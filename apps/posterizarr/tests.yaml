@@ -13,8 +13,8 @@ fileExistenceTests:
     shouldExist: true
     permissions: "-rwxr-xr-x"
 
-  - name: "Config directory"
-    path: "/config"
+  - name: "App directory"
+    path: "/app"
     shouldExist: true
     permissions: "drwxr-xr-x"
 

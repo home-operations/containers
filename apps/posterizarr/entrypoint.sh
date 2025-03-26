@@ -1,12 +1,9 @@
 #!/bin/sh
-set -e
 
-## Check if config.json exists
-if [ -f "/config/config.json" ]; then
-    chmod 644 /config/config.json
-fi
+# Needed as the default config expects these
+# files to be in the "config directory"
+cp /app/*.png /app/config
+cp /app/*.ttf /app/config
 
-# Remove running file if it exists
-rm /config/temp/Posterizarr.Running || true
-
-exec pwsh -File /config/Posterizarr.ps1 "$@"
+# Execute the main application
+exec pwsh -File /app/Posterizarr.ps1 "$@"
