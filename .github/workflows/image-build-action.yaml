@@ -39,7 +39,7 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: vars
         with:
-          script: core.setOutput('repository_owner', '${{ github.repository_owner }}'.toLowerCase()
+          script: core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase()
 
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -59,22 +59,22 @@ jobs:
         id: build
         with:
           build-args: |
-            VENDOR=${{ steps.vars.outputs.repository_owner }}
+            VENDOR=${{ steps.vars.outputs.repository-owner }}
             VERSION=${{ inputs.version }}
             REVISION=${{ github.sha }}
           cache-from: |
-            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository_owner, inputs.app, matrix.platform) }}
+            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, matrix.platform) }}
           cache-to: |
-            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository_owner, inputs.app, matrix.platform) || '' }}
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, matrix.platform) || '' }}
           labels: |
             org.opencontainers.image.title=${{ inputs.app }}
-            org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}
+            org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
             org.opencontainers.image.version=${{ inputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.vendor=${{ steps.vars.outputs.repository_owner }}
+            org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
           outputs: |
             type=docker
-            ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository_owner, inputs.app) || '' }}
+            ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
           context: ./apps/${{ inputs.app }}
           platforms: linux/${{ matrix.platform }}
           provenance: false
@@ -106,7 +106,7 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: vars
         with:
-          script: core.setOutput('repository_owner', '${{ github.repository_owner }}'.toLowerCase()
+          script: core.setOutput('repository-owner', '${{ github.repository-owner }}'.toLowerCase()
 
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -131,7 +131,7 @@ jobs:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           flavor: latest=false
-          images: ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}
+          images: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           tags: |
             type=semver,pattern={{version}},value=${{ steps.version.outputs.semantic }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.semantic }},enable=${{ steps.version.outputs.is-valid-semver }}
@@ -145,8 +145,8 @@ jobs:
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
           images: >-
-            ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
-            ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
+            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
+            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true
 
       - name: Export Digest
@@ -166,7 +166,7 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: vars
         with:
-          script: core.setOutput('repository_owner', '${{ github.repository_owner }}'.toLowerCase()
+          script: core.setOutput('repository-owner', '${{ github.repository-owner }}'.toLowerCase()
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -179,19 +179,19 @@ jobs:
         uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
           dependency-snapshot: true
-          image: ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
 
       - name: Attestation
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         with:
           push-to-registry: true
-          subject-name: ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}
+          subject-name: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           subject-digest: ${{ needs.release.outputs.digest }}
 
       - name: Verify Attestation
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+        run: gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
