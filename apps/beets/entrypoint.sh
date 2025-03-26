@@ -5,12 +5,12 @@ export BETANINDIR="/config/.config/betanin"
 
 if [[ ! -f "${BEETSDIR}/config.yaml" ]]; then
     mkdir -p "${BEETSDIR}"
-    cp /config-beets.yaml "${BEETSDIR}/config.yaml"
+    cp /defaults/config-beets.yaml "${BEETSDIR}/config.yaml"
 fi
 
 if [[ ! -f "${BETANINDIR}/config.toml" ]]; then
     mkdir -p "${BETANINDIR}"
-    cp /config-betanin.toml "${BETANINDIR}/config.toml"
+    cp /defaults/config-betanin.toml "${BETANINDIR}/config.toml"
 
     password=$(tr -dc 'a-z0-9' < /dev/urandom | fold -w 32 | head -n 1)
     api_key=$(tr -dc 'a-z0-9' < /dev/urandom | fold -w 32 | head -n 1)
