@@ -24,6 +24,8 @@ RUN \
     pwsh -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; \
                    Install-Module -Name FanartTvAPI -Scope AllUsers -Force" && \
     chmod -R 755 /usr/local/share/powershell && \
+    mkdir -p /config && \
+    chmod 755 /config && \
     curl -L https://github.com/fscorrupt/Posterizarr/archive/refs/tags/${VERSION}.tar.gz | tar -xz -C /config --strip-components=1 && \
     chown -R nobody:nogroup /config
 
