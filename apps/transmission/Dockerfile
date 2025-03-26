@@ -41,8 +41,7 @@ RUN \
     && \
     rm -rf /tmp/*
 
-COPY ./settings.json.j2 /settings.json.j2
-COPY ./entrypoint.sh /entrypoint.sh
+COPY . /
 
 COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
 
