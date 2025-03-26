@@ -9,6 +9,7 @@ ENV UMASK="0002" \
     DEBCONF_NONINTERACTIVE_SEEN="true" \
     DEBIAN_FRONTEND="noninteractive" \
     POWERSHELL_DISTRIBUTION_CHANNEL="PSDocker"
+
 RUN \
     apk add --no-cache \
         catatonit \
