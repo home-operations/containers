@@ -1,55 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 set -e
-
-echo "Setting up ImageMagick for Posterizarr"
-
-# Check for ImageMagick in /usr/local/bin (installed from source in Dockerfile)
-if [ -f "/usr/local/bin/magick" ]; then
-    echo "Found ImageMagick in /usr/local/bin:"
-    /usr/local/bin/magick -version
-
-    # Create a fallback script in /config for the PowerShell script to find
-    echo '#!/bin/bash' > /config/magick
-    echo '/usr/local/bin/magick "$@"' >> /config/magick
-    chmod +x /config/magick
-    echo "Created fallback magick script at /config/magick"
-
-    # Also ensure convert command is available for backward compatibility
-    if [ ! -f "/usr/local/bin/convert" ]; then
-        echo "Creating convert compatibility link"
-        ln -sf /usr/local/bin/magick /usr/local/bin/convert
-    fi
-
-    # Ensure identify command is available
-    if [ ! -f "/usr/local/bin/identify" ]; then
-        echo "Creating identify compatibility link"
-        ln -sf /usr/local/bin/magick /usr/local/bin/identify
-    fi
-
-    # Create identify fallback script in /config
-    echo '#!/bin/bash' > /config/identify
-    echo '/usr/local/bin/magick identify "$@"' >> /config/identify
-    chmod +x /config/identify
-    echo "Created fallback identify script at /config/identify"
-else
-    echo "ERROR: ImageMagick not found in /usr/local/bin!"
-    echo "Checking PATH for any ImageMagick binaries:"
-    which magick || echo "magick command not found in PATH"
-    which convert || echo "convert command not found in PATH"
-    which identify || echo "identify command not found in PATH"
-
-    echo "Creating empty magick script in /config as fallback"
-    echo '#!/bin/bash' > /config/magick
-    echo 'echo "ERROR: ImageMagick not properly installed"' >> /config/magick
-    echo 'exit 1' >> /config/magick
-    chmod +x /config/magick
-
-    echo "Creating empty identify script in /config as fallback"
-    echo '#!/bin/bash' > /config/identify
-    echo 'echo "ERROR: ImageMagick not properly installed"' >> /config/identify
-    echo 'exit 1' >> /config/identify
-    chmod +x /config/identify
-fi
 
 # Check for test mode
 if [ "$1" = "--test" ] || [ "$POSTERIZARR_TEST_MODE" = "true" ]; then
@@ -73,11 +23,42 @@ else
     exit 1
 fi
 
-# Remove weird is running check
+## Check if config.json exists
+if [ -f "/config/config.json" ]; then
+    echo "Found config.json"
+    # Ensure proper permissions for config files
+    echo "Setting proper permissions for config files"
+    chmod 644 /config/config.json
+else
+    echo "WARNING: config.json not found in /config!"
+    # Check if it exists in a nested location
+    if [ -f "/config/config/config.json" ]; then
+        echo "Found config.json in nested directory, moving to correct location"
+        cp /config/config/config.json /config/
+        chmod 644 /config/config.json
+    fi
+fi
+
+# Remove running file if it exists
 if [ -f "/config/temp/Posterizarr.Running" ]; then
-    echo "Found Posterizarr.Running"
+    echo "Found Posterizarr.Running, removing it"
     rm /config/temp/Posterizarr.Running
 fi
+
+
+# Print debugging information
+echo "Current user: $(whoami)"
+echo "VIRTUAL_ENV: $VIRTUAL_ENV"
+echo "POWERSHELL_DISTRIBUTION_CHANNEL: $POWERSHELL_DISTRIBUTION_CHANNEL"
+echo "Working directory: $(pwd)"
+echo "Contents of /config:"
+ls -la /config
+
+# Verify ImageMagick delegates
+echo "Checking ImageMagick delegates:"
+magick -list format | grep JPEG
+echo "ImageMagick version:"
+magick -version
 
 # Execute the PowerShell script with any parameters passed to this script
 echo "Starting Posterizarr with parameters: $@"
