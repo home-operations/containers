@@ -26,12 +26,14 @@ RUN \
     chmod -R 755 /usr/local/share/powershell && \
     mkdir -p /config && \
     chmod 755 /config && \
-    curl -L https://github.com/fscorrupt/Posterizarr/archive/refs/tags/${VERSION}.tar.gz | tar -xz -C /config --strip-components=1 && \
+    curl -fsSL https://github.com/fscorrupt/Posterizarr/archive/refs/tags/${VERSION}.tar.gz \
+        | tar xzf - -C /config --strip-components=1 && \
+    rm -rf /config/images && \
+    find /config -type f \( -name "*.md" -o -name "*.zip" -o -name "*.yml" -o -name ".*" \) -delete && \
     chown -R nobody:nogroup /config
 
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chown -R nobody:nogroup /config /entrypoint.sh
 
 USER nobody:nogroup
 
