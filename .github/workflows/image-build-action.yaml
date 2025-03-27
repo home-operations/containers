@@ -44,7 +44,7 @@ jobs:
         with:
           script: |
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
-            core.setOutput('platform', '${{ matrix.platform }}'.split('/').pop());
+            core.setOutput('platform-arch', '${{ matrix.platform }}'.split('/').pop());
 
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -68,9 +68,9 @@ jobs:
             VERSION=${{ inputs.version }}
             REVISION=${{ github.sha }}
           cache-from: |
-            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform) }}
+            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) }}
           cache-to: |
-            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform) || '' }}
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) || '' }}
           labels: |
             org.opencontainers.image.title=${{ inputs.app }}
             org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
@@ -96,7 +96,7 @@ jobs:
         name: Export Digest
         id: digest
         run: |
-          echo "${{ steps.vars.outputs.platform }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+          echo "${{ steps.vars.outputs.platform-arch }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
   release:
     if: ${{ inputs.release }}
