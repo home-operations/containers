@@ -32,12 +32,12 @@ jobs:
       max-parallel: 4
       fail-fast: false
     steps:
-      - # Ref: https://github.com/orgs/community/discussions/25768
-        name: Lowercase Vars Hack
+      - name: Setup Vars
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: vars
         with:
-          script: core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase())
+          script: |
+            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
       - name: Generate Token
         uses: actions/create-github-app-token@af35edadc00be37caa72ed9f3e6d5f7801bfdf09 # v1.11.7
