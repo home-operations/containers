@@ -25,15 +25,15 @@ on:
 jobs:
   build:
     name: Build ${{ inputs.app }} (${{ matrix.platform }})
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: amd64
-            os: ubuntu-latest
+            runner: ubuntu-latest
           - platform: arm64
-            os: ubuntu-24.04-arm
+            runner: ubuntu-24.04-arm
     outputs:
       amd64: ${{ steps.digest.outputs.amd64 }}
       arm64: ${{ steps.digest.outputs.arm64 }}
