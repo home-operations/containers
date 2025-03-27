@@ -81,7 +81,7 @@ jobs:
             type=docker
             ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
           context: ./apps/${{ inputs.app }}
-          platforms: linux/${{ steps.vars.outputs.platform }}
+          platforms: ${{ matrix.platform }}
           provenance: false
 
       - if: ${{ inputs.test }}
