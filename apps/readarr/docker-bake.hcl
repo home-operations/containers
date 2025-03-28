@@ -1,8 +1,8 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=Jackett/Jackett
-  default = "v0.22.1699"
+  // renovate: datasource=custom.servarr depName=readarr versioning=loose
+  default = "0.4.12.2753"
 }
 
 group "default" {
@@ -15,7 +15,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Jackett/Jackett"
+    "org.opencontainers.image.source" = "https://github.com/Readarr/Readarr"
   }
 }
 
