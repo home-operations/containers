@@ -83,8 +83,7 @@ jobs:
           gh workflow run release.yaml \
               --repo ${{ github.repository }} \
               -f app=${{ matrix.app }} \
-              -f release=true \
-              -f test=true
+              -f release=true
 
           {
               echo '## Retrying Release'
