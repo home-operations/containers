@@ -12,12 +12,11 @@ tasks:
     silent: true
 
   build-*:
-    desc: Build an app [RELEASE=true] [TEST=true]
-    cmd: gh workflow run release.yaml -f app={{.APP}} -f release={{.RELEASE}} test={{.TEST}}
+    desc: Build an app [RELEASE=true]
+    cmd: gh workflow run release.yaml -f app={{.APP}} -f release={{.RELEASE}}
     vars:
       APP: '{{index .MATCH 0}}'
       RELEASE: '{{.RELEASE | default "true"}}'
-      TEST: '{{.TEST | default "true"}}'
     preconditions:
       - gh auth status
       - test -f {{.ROOT_DIR}}/.github/workflows/release.yaml
