@@ -41,5 +41,3 @@ WORKDIR /config
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 CMD ["dashboard", "/config"]
-
-LABEL org.opencontainers.image.source="https://github.com/esphome/esphome"

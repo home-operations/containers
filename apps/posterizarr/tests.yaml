@@ -55,10 +55,3 @@ commandTests:
     command: "ls"
     args: ["-la", "/usr/local/share/powershell/Modules/FanartTvAPI"]
     expectedOutput: ["drwxr-xr-x"]
-
-metadataTest:
-  labels:
-    - key: "org.opencontainers.image.source"
-      value: "https://github.com/fscorrupt/Posterizarr"
-    - key: "org.opencontainers.image.licenses"
-      value: "GPL-3.0"

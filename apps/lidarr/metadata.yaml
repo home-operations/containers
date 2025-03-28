@@ -1,4 +1,0 @@
----
-# renovate: datasource=custom.servarr depName=lidarr versioning=loose
-version: 2.10.3.4602
-name: lidarr

@@ -12,5 +12,3 @@ RUN \
         irqbalance="${VERSION}"
 
 ENTRYPOINT ["/usr/sbin/irqbalance", "--foreground"]
-
-LABEL org.opencontainers.image.source="https://github.com/irqbalance/irqbalance"

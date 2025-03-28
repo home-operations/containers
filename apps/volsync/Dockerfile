@@ -40,5 +40,3 @@ COPY --from=docker.io/restic/restic:0.18.0 /usr/bin/restic /usr/local/bin/restic
 COPY --from=volsync /go/bin/volsync /manager
 
 ENTRYPOINT ["/bin/bash"]
-
-LABEL org.opencontainers.image.source="https://github.com/backube/volsync"

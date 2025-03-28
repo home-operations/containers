@@ -1,4 +1,0 @@
----
-# renovate: datasource=github-releases depName=fscorrupt/Posterizarr
-version: 1.9.36
-name: posterizarr

@@ -53,5 +53,3 @@ COPY ./entrypoint.sh /entrypoint.sh
 USER nobody:nogroup
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/blacktwin/JBOPS"

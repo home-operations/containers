@@ -20,4 +20,3 @@ COPY --from=builder --chown=nginx:nginx /tmp/css /usr/share/nginx/html/css/
 COPY --from=builder --chown=nginx:nginx /tmp/resources /usr/share/nginx/html/resources/
 USER nginx
 WORKDIR /usr/share/nginx/html
-LABEL org.opencontainers.image.source="https://github.com/themepark-dev/theme.park"

@@ -22,5 +22,3 @@ RUN \
     && rm -rf  /tmp/*
 
 CMD rsync -av /plugins/* $CNI_BIN_DIR
-
-LABEL org.opencontainers.image.source="https://github.com/containernetworking/plugins"

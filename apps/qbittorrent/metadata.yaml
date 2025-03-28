@@ -1,4 +1,0 @@
----
-# renovate: datasource=repology depName=alpine_edge/qbittorrent-nox
-version: 5.0.4-r0
-name: qbittorrent

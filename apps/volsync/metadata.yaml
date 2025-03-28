@@ -1,4 +1,0 @@
----
-# renovate: datasource=github-releases depName=backube/volsync
-version: v0.12.1
-name: volsync

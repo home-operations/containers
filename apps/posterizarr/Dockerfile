@@ -42,7 +42,3 @@ WORKDIR /app
 VOLUME ["/app"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/fscorrupt/Posterizarr"
-LABEL org.opencontainers.image.description="Posterizarr - Automated poster generation for Plex/Jellyfin/Emby media libraries"
-LABEL org.opencontainers.image.licenses="GPL-3.0"
