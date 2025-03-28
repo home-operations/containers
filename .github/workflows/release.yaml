@@ -43,7 +43,7 @@ jobs:
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
     needs: prepare
-    name: Build ${{ matrix.app }}
+    name: Build ${{ matrix.app || inputs.app }}
     uses: ./.github/workflows/image-build-action.yaml
     permissions:
       attestations: write
@@ -58,7 +58,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
     with:
-      app: ${{ matrix.app }}
+      app: ${{ matrix.app || inputs.app }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
       test: ${{ github.event_name == 'pull_request' || inputs.test == 'true' }}
 
