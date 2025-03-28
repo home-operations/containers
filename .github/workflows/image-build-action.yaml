@@ -137,7 +137,7 @@ jobs:
             *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
             ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
             *.platform=${{ matrix.platform }}
-            *.tags=${{ inputs.app }}:local
+            *.tags=
           source: .
           targets: image
           workdir: ./apps/${{ inputs.app }}
@@ -147,7 +147,7 @@ jobs:
         uses: ./.github/actions/container-tests
         with:
           app: ${{ inputs.app }}
-          image: ${{ inputs.app }}:local
+          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
           token: ${{ github.token }}
 
       - if: ${{ inputs.release }}
