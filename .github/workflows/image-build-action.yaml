@@ -121,7 +121,6 @@ jobs:
           files: |
             ./docker-bake.hcl
             cwd://${{ runner.temp }}/bake-meta.json
-          no-cache: true
           set: |
             *.args.VENDOR=${{ steps.vars.outputs.repository-owner }}
             *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) }}
@@ -150,7 +149,7 @@ jobs:
         name: Export digest
         run: |
           mkdir -p ${{ runner.temp }}/digests
-          DIGEST="${{ fromJSON(steps.release-bake.outputs.metadata).image['containerimage.digest'] }}"
+          DIGEST="${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}"
           touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
 
       - if: ${{ inputs.release }}
