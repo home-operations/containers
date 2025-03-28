@@ -58,5 +58,6 @@ runs:
           const rawVersion = isValidSemver ? sanitize(upstreamVersion) : upstreamVersion;
 
           core.setOutput('is-valid-semver', isValidSemver);
+          core.setOutput('upstream', upstreamVersion);
           core.setOutput('semantic', semanticVersion);
           core.setOutput('raw', rawVersion);

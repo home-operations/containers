@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.platforms.outputs.matrix }}
+      bake-version: ${{ steps.bake-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -101,13 +102,6 @@ jobs:
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
             core.setOutput('platform-arch', '${{ matrix.platform }}'.split('/').pop());
 
-      - name: Get Bake Version
-        id: bake-version
-        working-directory: ./apps/${{ inputs.app }}
-        run: |
-          VERSION=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".args.VERSION')
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -140,7 +134,7 @@ jobs:
             *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) || '' }}
             *.labels.org.opencontainers.image.title=${{ inputs.app }}
             *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
-            *.labels.org.opencontainers.image.version=${{ steps.bake-version.outputs.version }}
+            *.labels.org.opencontainers.image.version=${{ needs.prepare.outputs.bake-version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
             *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
             ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
@@ -276,7 +270,7 @@ jobs:
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["build", "release", "attest"]
+    needs: ["prepare", "build", "release", "attest"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
@@ -287,7 +281,7 @@ jobs:
           color: "0xFF0000"
           description: |
             Application: `${{ inputs.app }}`
-            Version: `${{ inputs.version }}`
+            Version: `${{ needs.prepare.outputs.bake-version }}`
             [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
           title: Container build failed
