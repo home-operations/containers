@@ -13,10 +13,6 @@ on:
         type: boolean
         description: Release
         required: true
-      test:
-        type: boolean
-        description: Test
-        required: true
 
 jobs:
   prepare:
@@ -115,72 +111,40 @@ jobs:
           name: ${{ inputs.app }}-bake-meta
           path: ${{ runner.temp }}
 
-      - if: ${{ inputs.test }}
-        name: Setup Docker Buildx (Test)
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-        id: test-builder
 
-      - if: ${{ inputs.test }}
-        name: Build (Test)
+      - name: Build
         uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747 # v6.5.0
-        id: test-bake
+        id: bake
         with:
-          builder: ${{ steps.test-builder.outputs.name }}
           files: |
             ./docker-bake.hcl
             cwd://${{ runner.temp }}/bake-meta.json
-          load: true
+          no-cache: true
           set: |
             *.args.VENDOR=${{ steps.vars.outputs.repository-owner }}
-            *.cache-from=type=registry,ref=ghcr.io/${{ steps.vars.outputs.repository-owner }}/build_cache:${{ inputs.app }}-${{ steps.vars.outputs.platform-arch }}
+            *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) }}
+            *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) || '' }}
             *.labels.org.opencontainers.image.title=${{ inputs.app }}
             *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
             *.labels.org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
             *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
-            *.platform=${{ matrix.platform }}
-            *.tags=${{ inputs.app }}:local
-          source: .
-          targets: image
-          workdir: ./apps/${{ inputs.app }}
-
-      - if: ${{ inputs.test }}
-        name: Run Container Tests
-        uses: ./.github/actions/container-tests
-        with:
-          app: ${{ inputs.app }}
-          image: ${{ inputs.app }}:local
-          token: ${{ github.token }}
-
-      - if: ${{ inputs.release }}
-        name: Setup Docker Buildx (Release)
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-        id: release-builder
-
-      - if: ${{ inputs.release }}
-        name: Build (Release)
-        uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747 # v6.5.0
-        id: release-bake
-        with:
-          builder: ${{ steps.release-builder.outputs.name }}
-          files: |
-            ./docker-bake.hcl
-            cwd://${{ runner.temp }}/bake-meta.json
-          set: |
-            *.args.VENDOR=${{ steps.vars.outputs.repository-owner }}
-            *.cache-from=type=registry,ref=ghcr.io/${{ steps.vars.outputs.repository-owner }}/build_cache:${{ inputs.app }}-${{ steps.vars.outputs.platform-arch }}
-            *.cache-to=type=registry,ref=ghcr.io/${{ steps.vars.outputs.repository-owner }}/build_cache:${{ inputs.app }}-${{ steps.vars.outputs.platform-arch }}
-            *.labels.org.opencontainers.image.title=${{ inputs.app }}
-            *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
-            *.labels.org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
-            *.labels.org.opencontainers.image.revision=${{ github.sha }}
-            *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
-            *.output=type=image,name=ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }},push-by-digest=true,name-canonical=true,push=true
+            ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '*.output=type=docker' }}
             *.platform=${{ matrix.platform }}
             *.tags=
           source: .
           targets: image
           workdir: ./apps/${{ inputs.app }}
+
+      - if: ${{ ! inputs.release }}
+        name: Run Container Tests
+        uses: ./.github/actions/container-tests
+        with:
+          app: ${{ inputs.app }}
+          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
+          token: ${{ github.token }}
 
       - if: ${{ inputs.release }}
         name: Export digest
