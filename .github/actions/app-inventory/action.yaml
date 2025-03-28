@@ -1,0 +1,36 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: App Inventory
+description: Return items from the apps directory in a JSON array
+
+outputs:
+  apps:
+    description: App Inventory
+    value: ${{ steps.inventory.outputs.apps }}
+
+runs:
+  using: composite
+  steps:
+    - name: App Inventory
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      id: inventory
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+
+          function scanDirectory(dirPath) {
+              try {
+                  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+                  const folderNames = entries
+                      .filter((entry) => entry.isDirectory())
+                      .map((entry) => entry.name);
+                  return folderNames;
+              } catch (error) {
+                  console.error(`Error reading directory ${dirPath}:`, error.message);
+                  return [];
+              }
+          }
+
+          const apps = scanDirectory(path.resolve(__dirname, 'apps')).sort();
+          core.setOutput('apps', JSON.stringify(apps));

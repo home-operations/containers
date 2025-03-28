@@ -17,9 +17,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Output
+      - name: Get Apps
+        uses: ./.github/actions/app-inventory
         id: repository
-        run: echo "apps=$(yq eval-all --indent 0 --output-format json '[.]' apps/*/metadata.yaml)" >> $GITHUB_OUTPUT
 
   retry:
     if: ${{ needs.repository.outputs.apps != '[]' }}
@@ -28,10 +28,13 @@ jobs:
     needs: repository
     strategy:
       matrix:
-        apps: ${{ fromJSON(needs.repository.outputs.apps) }}
+        app: ${{ fromJSON(needs.repository.outputs.apps) }}
       max-parallel: 4
       fail-fast: false
     steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Setup Vars
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: vars
@@ -52,27 +55,34 @@ jobs:
       - name: Install regctl
         uses: regclient/actions/regctl-installer@main
 
-      - name: Actual Version
-        id: actual
+      - name: Get Bake Version
+        id: bake
+        working-directory: ./apps/${{ matrix.app }}
+        run: |
+          VERSION=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".args.VERSION')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Get Container Registry Version
+        id: registry
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          if ! version=$(regctl image inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ matrix.apps.name }}:rolling \
+          if ! version=$(regctl image inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ matrix.app }}:rolling \
               | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
           then
-              echo "Failed to get actual version for ${{ matrix.apps.name }}"
+              echo "Failed to get registry version for ${{ matrix.app }}"
               exit 1
           fi
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - if: ${{ matrix.apps.version != steps.actual.outputs.version }}
+      - if: ${{ steps.bake.outputs.version != steps.registry.outputs.version }}
         name: Retry Release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run release.yaml \
               --repo ${{ github.repository }} \
-              -f app=${{ matrix.apps.name }} \
+              -f app=${{ matrix.app }} \
               -f release=true \
               -f test=true
 
@@ -81,5 +91,5 @@ jobs:
               echo
               echo '| Container Name | Actual Version | Expected Version |'
               echo '|----------------|------------------|----------------|'
-              echo '| `${{ matrix.apps.name }}` | `${{ steps.actual.outputs.version }}` | `${{ matrix.apps.version }}` |'
+              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.bake.outputs.version }}` |'
           } >> $GITHUB_STEP_SUMMARY

@@ -9,10 +9,6 @@ on:
         type: string
         description: Application Name
         required: true
-      version:
-        type: string
-        description: Version
-        required: true
       release:
         type: boolean
         description: Release
@@ -23,89 +19,15 @@ on:
         required: true
 
 jobs:
-  build:
-    name: Build ${{ inputs.app }} (${{ matrix.platform }})
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: linux/amd64
-            runner: ubuntu-latest
-          - platform: linux/arm64
-            runner: ubuntu-24.04-arm
-    outputs:
-      amd64: ${{ steps.digest.outputs.amd64 }}
-      arm64: ${{ steps.digest.outputs.arm64 }}
-    steps:
-      - name: Setup Vars
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        id: vars
-        with:
-          script: |
-            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
-            core.setOutput('platform-arch', '${{ matrix.platform }}'.split('/').pop());
-
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-
-      - name: Build Image
-        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
-        id: build
-        with:
-          build-args: |
-            VENDOR=${{ steps.vars.outputs.repository-owner }}
-            VERSION=${{ inputs.version }}
-            REVISION=${{ github.sha }}
-          cache-from: |
-            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) }}
-          cache-to: |
-            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) || '' }}
-          labels: |
-            org.opencontainers.image.title=${{ inputs.app }}
-            org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
-            org.opencontainers.image.version=${{ inputs.version }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
-          outputs: |
-            type=docker
-            ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
-          context: ./apps/${{ inputs.app }}
-          platforms: ${{ matrix.platform }}
-          provenance: false
-
-      - if: ${{ inputs.test }}
-        name: Run Tests
-        uses: ./.github/actions/test-container
-        with:
-          app: ${{ inputs.app }}
-          image: ${{ steps.build.outputs.imageid }}
-          token: ${{ github.token }}
-
-      - if: ${{ inputs.release }}
-        name: Export Digest
-        id: digest
-        run: |
-          echo "${{ steps.vars.outputs.platform-arch }}=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
-
-  release:
-    if: ${{ inputs.release }}
-    needs: build
-    name: Release ${{ inputs.app }}
+  prepare:
+    name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      digest: ${{ steps.digest.outputs.digest }}
+      matrix: ${{ steps.platforms.outputs.matrix }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Setup Vars
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: vars
@@ -113,21 +35,18 @@ jobs:
           script: |
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Get Bake Version
+        id: bake-version
+        working-directory: ./apps/${{ inputs.app }}
+        run: |
+          VERSION=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".args.VERSION')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+      - name: Get App Versions
+        uses: ./.github/actions/app-versions
+        id: app-versions
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Determine Definitive Versions
-        uses: ./.github/actions/definitive-versions
-        id: version
-        with:
-          version: ${{ inputs.version }}
+          upstream-version: ${{ steps.bake-version.outputs.version }}
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -138,32 +57,183 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.version.outputs.semantic }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.semantic }},enable=${{ steps.version.outputs.is-valid-semver }}
-            type=semver,pattern={{major}},value=${{ steps.version.outputs.semantic }},enable=${{ steps.version.outputs.is-valid-semver }}
-            type=raw,value=${{ steps.version.outputs.raw }},enable=${{ steps.version.outputs.is-valid-semver }}
+            type=semver,pattern={{version}},value=${{ steps.app-versions.outputs.semantic }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
+            type=semver,pattern={{major}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
+            type=raw,value=${{ steps.app-versions.outputs.raw }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
             type=raw,value=rolling
 
-      - name: Push Images
-        uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
-        id: push
+      - name: Rename meta bake definition file
+        run: mv ${{ steps.meta.outputs.bake-file }} ${{ runner.temp }}/bake-meta.json
+
+      - name: Upload meta bake definition
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
-          images: >-
-            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
-            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
-          push: true
+          name: ${{ inputs.app }}-bake-meta
+          path: ${{ runner.temp }}/bake-meta.json
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Create matrix
+        id: platforms
+        working-directory: ./apps/${{ inputs.app }}
+        run: |
+          PLATFORMS=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".platforms')
+          echo "matrix=${PLATFORMS}" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build (${{ matrix.platform }})
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Vars
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: vars
+        with:
+          script: |
+            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
+            core.setOutput('platform-arch', '${{ matrix.platform }}'.split('/').pop());
+
+      - name: Get Bake Version
+        id: bake-version
+        working-directory: ./apps/${{ inputs.app }}
+        run: |
+          VERSION=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".args.VERSION')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Download Bake Metadata
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: ${{ inputs.app }}-bake-meta
+          path: ${{ runner.temp }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+        id: buildx
+
+      - name: Build
+        uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747 # v6.5.0
+        id: bake
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          files: |
+            ./docker-bake.hcl
+            cwd://${{ runner.temp }}/bake-meta.json
+          load: true
+          set: |
+            *.args.VENDOR=${{ steps.vars.outputs.repository-owner }}
+            *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) }}
+            *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.platform-arch) || '' }}
+            *.labels.org.opencontainers.image.title=${{ inputs.app }}
+            *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
+            *.labels.org.opencontainers.image.version=${{ steps.bake-version.outputs.version }}
+            *.labels.org.opencontainers.image.revision=${{ github.sha }}
+            *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
+            ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '' }}
+            *.platform=${{ matrix.platform }}
+            *.tags=
+          source: .
+          targets: image
+          workdir: ./apps/${{ inputs.app }}
+
+      - if: ${{ inputs.test }}
+        name: Run Container Tests
+        uses: ./.github/actions/container-tests
+        with:
+          app: ${{ inputs.app }}
+          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
+          token: ${{ github.token }}
+
+      - if: ${{ inputs.release }}
+        name: Export digest
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          DIGEST="${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}"
+          touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
+
+      - if: ${{ inputs.release }}
+        name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.app }}-digests-${{ steps.vars.outputs.platform-arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    if: ${{ inputs.release }}
+    name: Release
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Vars
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: vars
+        with:
+          script: |
+            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
+
+      - name: Download Bake Metadata
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: ${{ inputs.app }}-bake-meta
+          path: ${{ runner.temp }}
+
+      - name: Download digests
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: ${{ inputs.app }}-digests-*
+          merge-multiple: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Create Manifest List and Push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create \
+              $(jq --raw-output --compact-output '.target."docker-metadata-action".tags | map(select(startswith("${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}")) | "-t ghcr.io/" + .) | join(" ")' ${{ runner.temp }}/bake-meta.json) \
+              $(printf 'ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/bake-meta.json)
 
       - name: Export Digest
         id: digest
         run: |
-          digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
-          echo "digest=${digest}" >> $GITHUB_OUTPUT
+          TAG=$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/bake-meta.json)
+          DIGEST=$(docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${TAG} --format '{{ json . }}' | jq --raw-output '.manifest.digest')
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
   attest:
     if: ${{ inputs.release }}
+    name: Attest
     needs: release
-    name: Attest ${{ inputs.app }}
     runs-on: ubuntu-latest
     steps:
       - name: Setup Vars

@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Definitive Versions
-description: Takes a version string and returns the definitive versions
+name: App Versions
+description: Takes an upstream version string and returns the sanitized versions
 
 inputs:
-  version:
-    description: Version
+  upstream-version:
+    description: Upstream Version
     required: true
 
 outputs:
@@ -31,7 +31,7 @@ runs:
       shell: bash
       run: npm install semver
 
-    - name: Determine Definitive Version
+    - name: Determine App Versions
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       id: version
       with:
@@ -48,14 +48,14 @@ runs:
               return `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
           }
 
-          const version = '${{ inputs.version }}';
+          const upstreamVersion = '${{ inputs.upstream-version }}';
           const strictSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
 
-          const parsedVersion = strictSemverRegex.exec(version);
+          const parsedVersion = strictSemverRegex.exec(upstreamVersion);
           const isValidSemver = parsedVersion !== null;
           const parsedSemver = isValidSemver ? semver.coerce(parsedVersion[0]) : null;
           const semanticVersion = isValidSemver ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}` : calver();
-          const rawVersion = isValidSemver ? sanitize(version) : version;
+          const rawVersion = isValidSemver ? sanitize(upstreamVersion) : upstreamVersion;
 
           core.setOutput('is-valid-semver', isValidSemver);
           core.setOutput('semantic', semanticVersion);
