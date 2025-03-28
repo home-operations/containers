@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.platforms.outputs.matrix }}
-      upstream-version: ${{ steps.app-versions.outputs.upstream-version }}
+      upstream-version: ${{ steps.image-versions.outputs.upstream-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -36,18 +36,18 @@ jobs:
           script: |
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
-      - name: Get Bake Version
-        id: bake-version
+      - name: Get App Version
+        id: app-version
         working-directory: ./apps/${{ inputs.app }}
         run: |
           VERSION=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".args.VERSION')
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Get App Versions
-        uses: ./.github/actions/app-versions
-        id: app-versions
+      - name: Get Image Versions
+        uses: ./.github/actions/image-versions
+        id: image-versions
         with:
-          upstream-version: ${{ steps.bake-version.outputs.version }}
+          upstream-version: ${{ steps.app-version.outputs.version }}
 
       - name: Build Meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -58,10 +58,10 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.app-versions.outputs.semantic }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
-            type=semver,pattern={{major}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
-            type=raw,value=${{ steps.app-versions.outputs.raw }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
+            type=semver,pattern={{version}},value=${{ steps.image-versions.outputs.semantic }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
+            type=semver,pattern={{major}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
+            type=raw,value=${{ steps.image-versions.outputs.raw }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
             type=raw,value=rolling
 
       - name: Rename meta bake definition file

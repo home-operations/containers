@@ -55,8 +55,8 @@ jobs:
       - name: Install regctl
         uses: regclient/actions/regctl-installer@main
 
-      - name: Get Bake Version
-        id: bake
+      - name: Get App Version
+        id: app-version
         working-directory: ./apps/${{ matrix.app }}
         run: |
           VERSION=$(docker buildx bake image-all --print | jq --raw-output --compact-output '.target."image-all".args.VERSION')
@@ -75,7 +75,7 @@ jobs:
           fi
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - if: ${{ steps.bake.outputs.version != steps.registry.outputs.version }}
+      - if: ${{ steps.app-version.outputs.version != steps.registry.outputs.version }}
         name: Retry Release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
@@ -91,5 +91,5 @@ jobs:
               echo
               echo '| Container Name | Actual Version | Expected Version |'
               echo '|----------------|------------------|----------------|'
-              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.bake.outputs.version }}` |'
+              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.app-version.outputs.version }}` |'
           } >> $GITHUB_STEP_SUMMARY
