@@ -61,7 +61,7 @@ jobs:
             const { APPS } = process.env;
             const appsToBuild = APPS.split(' ').filter(Boolean);
             core.setOutput('apps', JSON.stringify(appsToBuild));
-            console.log('apps:', JSON.stringify(output, null, 2));
+            console.log('apps:', JSON.stringify(appsToBuild, null, 2));
             core.summary.addHeading('Apps to build:').addList(appsToBuild).write();
 
   build:
