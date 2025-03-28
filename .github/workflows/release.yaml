@@ -56,6 +56,7 @@ jobs:
       matrix:
         app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
       fail-fast: false
+      max-parallel: 4
     with:
       app: ${{ matrix.app }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
