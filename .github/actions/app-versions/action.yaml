@@ -18,6 +18,9 @@ outputs:
   raw:
     description: Raw Version
     value: ${{ steps.version.outputs.raw }}
+  upstream:
+    description: Upstream Version
+    value: ${{ steps.version.outputs.upstream }}
 
 runs:
   using: composite
@@ -58,6 +61,6 @@ runs:
           const rawVersion = isValidSemver ? sanitize(upstreamVersion) : upstreamVersion;
 
           core.setOutput('is-valid-semver', isValidSemver);
-          core.setOutput('upstream', upstreamVersion);
           core.setOutput('semantic', semanticVersion);
           core.setOutput('raw', rawVersion);
+          core.setOutput('upstream', upstreamVersion);
