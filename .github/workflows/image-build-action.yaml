@@ -117,13 +117,11 @@ jobs:
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-        id: buildx
 
       - name: Build
         uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747 # v6.5.0
         id: bake
         with:
-          builder: ${{ steps.buildx.outputs.name }}
           files: |
             ./docker-bake.hcl
             cwd://${{ runner.temp }}/bake-meta.json
@@ -143,12 +141,6 @@ jobs:
           source: .
           targets: image
           workdir: ./apps/${{ inputs.app }}
-
-      - name: Check image
-        run: |
-          set -ex
-          docker image ls -a
-          docker image inspect ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
 
       - if: ${{ inputs.test }}
         name: Run Container Tests
