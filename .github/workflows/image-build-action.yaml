@@ -150,6 +150,12 @@ jobs:
           targets: image
           workdir: ./apps/${{ inputs.app }}
 
+      - name: Check image
+        run: |
+          set -ex
+          docker image ls -a
+          docker image inspect ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
+
       - if: ${{ inputs.test }}
         name: Run Container Tests
         uses: ./.github/actions/container-tests
