@@ -19,11 +19,6 @@ on:
         description: Release
         required: false
         default: false
-      test:
-        type: boolean
-        description: Test
-        required: false
-        default: true
 
 jobs:
   prepare:
@@ -84,7 +79,6 @@ jobs:
     with:
       app: ${{ matrix.app }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
-      test: ${{ github.event_name == 'pull_request' || inputs.test == true }}
 
   status:
     if: ${{ !cancelled() }}
