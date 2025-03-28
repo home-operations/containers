@@ -148,14 +148,14 @@ jobs:
         run: |
           set -ex
           docker image ls -a
-          docker image inspect ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
+          docker image inspect ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
 
       - if: ${{ inputs.test }}
         name: Run Container Tests
         uses: ./.github/actions/container-tests
         with:
           app: ${{ inputs.app }}
-          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
+          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
           token: ${{ github.token }}
 
       - if: ${{ inputs.release }}
