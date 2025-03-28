@@ -40,10 +40,34 @@ jobs:
           include_only_directories: true
           max_depth: 1
 
-  build:
+  changed:
     if: ${{ needs.prepare.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
     needs: prepare
-    name: Build ${{ matrix.app || inputs.app }}
+    name: Get Changed Apps
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.apps.outputs.apps }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Get Apps to Build
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: apps
+        env:
+          APPS: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.prepare.outputs.changed-files), ' ') }}
+        with:
+          script: |
+            const { APPS } = process.env;
+            const appsToBuild = APPS.split(' ').filter(Boolean);
+            core.setOutput('apps', JSON.stringify(appsToBuild));
+            console.log('apps:', JSON.stringify(output, null, 2));
+            core.summary.addHeading('Apps to build:').addList(appsToBuild).write();
+
+  build:
+    if: ${{ needs.changed.outputs.apps != '[]' }}
+    needs: changed
+    name: Build ${{ matrix.app }}
     uses: ./.github/workflows/image-build-action.yaml
     permissions:
       attestations: write
@@ -54,11 +78,11 @@ jobs:
     secrets: inherit
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
+        app: ${{ fromJSON(needs.changed.outputs.apps) }}
       fail-fast: false
       max-parallel: 4
     with:
-      app: ${{ matrix.app || inputs.app }}
+      app: ${{ matrix.app }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
       test: ${{ github.event_name == 'pull_request' || inputs.test == 'true' }}
 
