@@ -50,11 +50,10 @@ jobs:
           app: ${{ matrix.app }}
 
   build:
-    name: Build (${{ needs.prepare.outputs.app }})
+    name: Build (${{ matrix.platform }})
     needs: ["prepare"]
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         platform: ${{ fromJson(needs.prepare.outputs.platforms) }}
     steps:
