@@ -78,7 +78,7 @@ jobs:
         uses: ./.github/actions/container-tests
         with:
           app: ${{ matrix.app }}
-          image: ${{ steps.build.outputs.local-digest }}
+          image: ${{ fromJSON(steps.build.outputs.metadata).image['containerimage.config.digest'] }}
           token: ${{ github.token }}
 
   status:
