@@ -55,10 +55,9 @@ jobs:
     needs: ["prepare"]
     strategy:
       matrix:
-        include:
-          - app: ${{ needs.prepare.outputs.app }}
-            version: ${{ needs.prepare.outputs.version }}
-            platform: ${{ fromJson(needs.prepare.outputs.platforms) }}
+        app: ${{ needs.prepare.outputs.app }}
+        version: ${{ needs.prepare.outputs.version }}
+        platform: ${{ fromJson(needs.prepare.outputs.platforms) }}
     runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
