@@ -19,15 +19,12 @@ inputs:
     required: true
 
 outputs:
-  metadata:
-    description: Metadata
-    value: ${{ steps.bake.outputs.metadata }}
-  # registry-digest:
-  #   description: Registry Digest
-  #   value: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
-  # local-digest:
-  #   description: Local Digest
-  #   value: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
+  registry-digest:
+    description: Registry Digest
+    value: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
+  local-digest:
+    description: Local Digest
+    value: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
 
 runs:
   using: composite
