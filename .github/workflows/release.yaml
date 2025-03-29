@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   filter:
-    name: filter
+    name: Filter
     runs-on: ubuntu-latest
     outputs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
