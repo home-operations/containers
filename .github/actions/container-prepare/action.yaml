@@ -1,0 +1,74 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Container Prepare
+description: Prepares a container for a given app
+
+inputs:
+  app:
+    description: App
+    required: true
+
+outputs:
+  app:
+    description: App
+    value: ${{ inputs.app }}
+  platforms:
+    description: Platforms
+    value: ${{ steps.bake-options.outputs.platforms }}
+  version:
+    description: Version
+    value: ${{ steps.bake-options.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Setup Vars
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      id: vars
+      with:
+        script: |
+          core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
+
+    - name: Get Bake Options
+      id: bake-options
+      uses: ./.github/actions/bake-options
+      with:
+        app: ${{ inputs.app }}
+
+    - name: Get Image Versions
+      uses: ./.github/actions/image-versions
+      id: image-versions
+      with:
+        upstream-version: ${{ steps.bake-options.outputs.version }}
+
+    - name: Build Meta
+      uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+      id: meta
+      env:
+        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+      with:
+        flavor: latest=false
+        images: |
+          ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
+        tags: |
+          type=semver,pattern={{version}},value=${{ steps.image-versions.outputs.semantic }}
+          type=semver,pattern={{major}}.{{minor}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
+          type=semver,pattern={{major}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
+          type=raw,value=${{ steps.image-versions.outputs.raw }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
+          type=raw,value=rolling
+
+    - name: Rename meta bake definition file
+      shell: bash
+      run: |
+        mv ${{ steps.meta.outputs.bake-file }} ${{ runner.temp }}/bake-meta.json
+
+    - name: Upload meta bake definition
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: ${{ inputs.app }}-bake-meta
+        path: ${{ runner.temp }}/bake-meta.json
+        if-no-files-found: error
+        retention-days: 1

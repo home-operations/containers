@@ -1,0 +1,86 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Release
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths: ["apps/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  filter:
+    name: filter
+    runs-on: ubuntu-latest
+    outputs:
+      changed-files: ${{ steps.changed-files.outputs.changed_files }}
+    steps:
+      - name: Get changed files
+        id: changed-files
+        uses: bjw-s-labs/action-changed-files@2cc35474e9d534ed0d743aa122fd142afbdaa0ad # v0.3.1
+        with:
+          path: apps
+          include_only_directories: true
+          max_depth: 1
+
+  prepare:
+    if: ${{ needs.filter.outputs.changed-files != '[]' }}
+    name: Prepare (${{ matrix.app }})
+    needs: filter
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.prepare.outputs.app }}
+      platforms: ${{ steps.prepare.outputs.platforms }}
+      version: ${{ steps.prepare.outputs.version }}
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.filter.outputs.changed-files) }}
+      fail-fast: false
+      max-parallel: 4
+    steps:
+      - name: Prepare Container
+        id: prepare
+        uses: ./.github/actions/container-prepare
+        with:
+          app: ${{ matrix.app }}
+
+  build:
+    name: Build (${{ needs.prepare.outputs.app }})
+    needs: ["prepare"]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJson(needs.prepare.outputs.platforms) }}
+    steps:
+      - name: Build Container
+        id: build
+        uses: ./.github/actions/container-build
+        with:
+          app: ${{ needs.prepare.outputs.app }}
+          platform: ${{ matrix.platform }}
+          release: false
+          version: ${{ needs.prepare.outputs.version }}
+
+      - name: Test Container
+        uses: ./.github/actions/container-tests
+        with:
+          app: ${{ needs.prepare.outputs.app }}
+          image: ${{ steps.build.outputs.test-digest }}
+          token: ${{ github.token }}
+
+  status:
+    if: ${{ !cancelled() }}
+    needs: ["filter", "prepare", "build"]
+    name: Build Success
+    runs-on: ubuntu-latest
+    steps:
+      - name: Any jobs failed?
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
+      - name: All jobs passed or skipped?
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"
