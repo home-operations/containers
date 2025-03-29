@@ -63,20 +63,20 @@ runs:
         set: |
           *.args.VENDOR=${{ steps.vars.outputs.repository-owner }}
           *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) }}
-          *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max,compression=zstd,force-compression=true', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) || '' }}
+          *.cache-to=${{ inputs.release == 'true' && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max,compression=zstd,force-compression=true', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) || '' }}
           *.labels.org.opencontainers.image.title=${{ inputs.app }}
           *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           *.labels.org.opencontainers.image.version=${{ inputs.version }}
           *.labels.org.opencontainers.image.revision=${{ github.sha }}
           *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
-          ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '*.output=type=docker' }}
+          ${{ inputs.release == 'true' && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '*.output=type=docker' }}
           *.platform=${{ inputs.platform }}
           *.tags=
         source: .
         targets: image
         workdir: ./apps/${{ inputs.app }}
 
-    - if: ${{ inputs.release }}
+    - if: ${{ inputs.release == 'true' }}
       name: Export digest
       shell: bash
       run: |
@@ -84,7 +84,7 @@ runs:
         DIGEST="${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}"
         touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
 
-    - if: ${{ inputs.release }}
+    - if: ${{ inputs.release == 'true' }}
       name: Upload digest
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
