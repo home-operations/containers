@@ -29,7 +29,7 @@ jobs:
   prepare:
     if: ${{ needs.filter.outputs.changed-files != '[]' }}
     name: Prepare (${{ matrix.app }})
-    needs: filter
+    needs: ["filter"]
     runs-on: ubuntu-latest
     outputs:
       app: ${{ steps.prepare.outputs.app }}
@@ -55,7 +55,9 @@ jobs:
     needs: ["prepare"]
     strategy:
       matrix:
+        app: ${{ needs.prepare.outputs.app }}
         platform: ${{ fromJSON(needs.prepare.outputs.platforms) }}
+        version: ${{ needs.prepare.outputs.version }}
     runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
@@ -65,9 +67,9 @@ jobs:
         id: build
         uses: ./.github/actions/container-build
         with:
-          app: ${{ needs.prepare.outputs.app }}
+          app: ${{ matrix.app }}
           platform: ${{ matrix.platform }}
-          version: ${{ needs.prepare.outputs.version }}
+          version: ${{ matrix.version }}
 
       - name: Test Container
         uses: ./.github/actions/container-tests
