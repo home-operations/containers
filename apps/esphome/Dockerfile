@@ -36,7 +36,6 @@ COPY ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 
-WORKDIR /cache
 WORKDIR /config
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
