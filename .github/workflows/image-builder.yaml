@@ -22,7 +22,7 @@ jobs:
       build-tags: ${{ steps.meta.outputs.tags }}
       build-version: ${{ steps.meta.outputs.version }}
       platforms: ${{ steps.bake-options.outputs.platforms }}
-      version: ${{ steps.bake-options.outputs.version }}
+      upstream-version: ${{ steps.bake-options.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -120,7 +120,7 @@ jobs:
             *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max,compression=zstd,force-compression=true', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) || '' }}
             *.labels.org.opencontainers.image.title=${{ inputs.app }}
             *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
-            *.labels.org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
+            *.labels.org.opencontainers.image.version=${{ needs.prepare.outputs.upstream-version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
             *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
             ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '*.output=type=docker' }}
@@ -257,7 +257,7 @@ jobs:
           color: "0xFF0000"
           description: |
             Application: `${{ inputs.app }}`
-            Version: `${{ needs.prepare.outputs.version }}`
+            Version: `${{ needs.prepare.outputs.upstream-version }}`
             [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
           title: Container build failed
