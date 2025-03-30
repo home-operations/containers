@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=custom.servarr depName=prowlarr versioning=loose
-  default = "1.33.0.4994"
+  default = "1.33.1.4997"
 }
 
 group "default" {
