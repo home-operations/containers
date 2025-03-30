@@ -19,9 +19,9 @@ jobs:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      build-tags: ${{ steps.meta.outputs.tags }}
-      build-version: ${{ steps.meta.outputs.version }}
       platforms: ${{ steps.bake-options.outputs.platforms }}
+      release-tags: ${{ steps.meta.outputs.tags }}
+      release-version: ${{ steps.meta.outputs.version }}
       upstream-version: ${{ steps.bake-options.outputs.version }}
     steps:
       - name: Checkout
@@ -189,18 +189,18 @@ jobs:
       - name: Create Manifest List and Push
         working-directory: ${{ runner.temp }}/digests
         run: |
-          docker buildx imagetools create --tag ${{ needs.prepare.outputs.build-tags }} \
+          docker buildx imagetools create --tag ${{ needs.prepare.outputs.release-tags }} \
               $(printf 'ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@sha256:%s ' *)
 
       - name: Inspect Image
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${{ needs.prepare.outputs.build-version }}
+          docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${{ needs.prepare.outputs.release-version }}
 
       - name: Export Digest
         id: digest
         run: |
           DIGEST=$(\
-              docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${{ needs.prepare.outputs.build-version }} \
+              docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${{ needs.prepare.outputs.release-version }} \
                   --format '{{ json . }}' | jq --raw-output '.manifest.digest' \
           )
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
