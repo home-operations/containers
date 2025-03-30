@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       platforms: ${{ steps.bake-options.outputs.platforms }}
-      release-tags: ${{ steps.meta.outputs.tags }}
+      release-tag-args: "--tag ${{ steps.meta.outputs.tags }}"
       release-version: ${{ steps.meta.outputs.version }}
       upstream-version: ${{ steps.bake-options.outputs.version }}
     steps:
@@ -189,7 +189,7 @@ jobs:
       - name: Create Manifest List and Push
         working-directory: ${{ runner.temp }}/digests
         run: |
-          docker buildx imagetools create --tag ${{ needs.prepare.outputs.release-tags }} \
+          docker buildx imagetools create ${{ needs.prepare.outputs.release-tag-args }} \
               $(printf 'ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@sha256:%s ' *)
 
       - name: Inspect Image
