@@ -44,7 +44,7 @@ jobs:
         with:
           upstream-version: ${{ steps.bake-options.outputs.version }}
 
-      - name: Build Meta
+      - name: Build Container Metadata
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
         id: meta
         env:
