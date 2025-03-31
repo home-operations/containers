@@ -32,7 +32,7 @@ RUN \
     && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "setuptools" "esphome[displays]==${VERSION}" \
     && rm -rf /wheels /tmp/*
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY . /
 
 USER nobody:nogroup
 

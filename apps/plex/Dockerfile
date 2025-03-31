@@ -48,7 +48,7 @@ RUN \
     && apt-get clean \
     && rm -rf /etc/default/plexmediaserver /tmp/* /var/lib/apt/lists/* /var/tmp/
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY . /
 
 USER nobody:nogroup
 WORKDIR /config

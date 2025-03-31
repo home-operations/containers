@@ -14,7 +14,7 @@ RUN \
         catatonit \
         postgresql17-client="${VERSION}"
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY . /
 
 USER nobody:nogroup
 

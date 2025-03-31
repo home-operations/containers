@@ -41,7 +41,7 @@ RUN \
     && chown -R root:root /app && chmod -R 755 /app \
     && rm -rf /tmp/*  /app/bin/Prowlarr.Update
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY . /
 
 USER nobody:nogroup
 WORKDIR /config

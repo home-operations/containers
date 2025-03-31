@@ -63,7 +63,7 @@ RUN \
     && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY . /
 COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
 
 USER nobody:nogroup
