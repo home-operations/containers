@@ -30,7 +30,7 @@ RUN \
         nano \
         tzdata \
     && \
-    curl -fsSL -o /tmp/emby-server.deb \
+    curl -fsSL -o /tmp/emby.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
     && \
     dpkg-deb -xv /tmp/emby.deb /tmp/emby/ \
