@@ -1,7 +1,7 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=MediaBrowser/Emby.Releases
+  // renovate: datasource=github-releases depName=MediaBrowser/Emby.Releases versioning=loose
   default = "4.8.11.0"
 }
 
