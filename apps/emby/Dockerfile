@@ -14,7 +14,6 @@ ENV DEBCONF_NONINTERACTIVE_SEEN="true" \
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 USER root
-WORKDIR /app
 
 #hadolint ignore=DL3018,DL3013
 RUN \
@@ -30,15 +29,13 @@ RUN \
         nano \
         tzdata \
     && \
-    mkdir -p /app/emby /tmp/emby \
-    && \
     curl -fsSL -o /tmp/emby.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
     && \
-    dpkg-deb -xv /tmp/emby.deb /tmp/emby/ \
-    && mv -t /app/emby/ /tmp/emby/opt/emby-server/* \
-    && chown -R root:root /app \
-    && chmod -R 755 /app \
+    mkdir -p /app/bin /tmp/emby \
+    && dpkg-deb -xv /tmp/emby.deb /tmp/emby/ \
+    && mv -t /app/bin/ /tmp/emby/opt/emby-server/* \
+    && chown -R root:root /app && chmod -R 755 /app \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
     && apt-get clean \
