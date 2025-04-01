@@ -25,28 +25,22 @@ RUN \
         ca-certificates \
         catatonit \
         curl \
-        ffmpeg \
-        fontconfig \
         jo \
         jq \
-        libicu72 \
-        libfreetype6 \
-        libsqlite3-0 \
-        libssl3 \
-        libass9 \
         nano \
         tzdata \
     && \
     curl -fsSL -o /tmp/emby-server.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
     && \
-    dpkg -i /tmp/emby-server.deb \
-    && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
-    && echo "EMBY_DATA=/config" > /etc/emby-server.conf \
+    dpkg-deb -xv /tmp/emby.deb /tmp/emby/ \
+    && mv -t /app/emby/ /tmp/emby/opt/emby-server/* \
+    && chown -R root:root /app \
+    && chmod -R 755 /app \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /usr/lib/systemd /var/lib/dpkg/info/emby-server.postinst /var/lib/apt/lists/* /tmp/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY . /
 
