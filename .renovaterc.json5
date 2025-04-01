@@ -47,12 +47,11 @@
       allowedVersions: "/24\\.04/",
     },
     {
-      description: ["Allowed Python versions for Bazarr, Beets, ESPHome and JBOPS"],
+      description: ["Allowed Python versions for Bazarr, Beets and JBOPS"],
       matchDatasources: ["docker"],
       matchFileNames: [
         "apps/bazarr/Dockerfile",
         "apps/beets/Dockerfile",
-        "apps/esphome/Dockerfile",
         "apps/jbops/Dockerfile",
       ],
       matchPackageNames: ["/python/"],
