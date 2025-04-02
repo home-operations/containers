@@ -10,5 +10,6 @@ exec \
     -port "${WEBHOOK__PORT}" \
     -urlprefix "${WEBHOOK__URLPREFIX}" \
     -hooks "${HOOKS_FILE}" \
+    -template \
     -verbose \
     "$@"
