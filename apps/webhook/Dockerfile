@@ -44,7 +44,7 @@ RUN \
         | tar xzf - -C /app/bin --strip-components=1 \
     && \
     curl -fsSL -o /usr/local/bin/jsonpath \
-        "https://raw.githubusercontent.com/bashtools/JSONPath.sh/refs/tags/v0.0.21/JSONPath.sh" \
+        "https://raw.githubusercontent.com/bashtools/JSONPath.sh/2e049cb3da5b7ea4a54e153f4f5246e40682f297/JSONPath.sh" \
     && chmod +x /usr/local/bin/jsonpath \
     && \
     pip install uv \
