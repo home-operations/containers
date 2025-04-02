@@ -16,8 +16,8 @@ fi
 exec \
     /app/bin/system/EmbyServer \
         -programdata /config \
-        -ffdetect /app/emby/bin/ffdetect \
-        -ffmpeg /app/emby/bin/ffmpeg \
-        -ffprobe /app/emby/bin/ffprobe \
+        -ffdetect /app/bin/bin/ffdetect \
+        -ffmpeg /app/bin/bin/ffmpeg \
+        -ffprobe /app/bin/bin/ffprobe \
         -restartexitcode 3 \
         "$@"
