@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+schemaVersion: "2.0.0"
 fileExistenceTests:
   - name: terraform
     path: /usr/local/bin/terraform
