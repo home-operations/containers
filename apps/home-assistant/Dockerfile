@@ -19,6 +19,7 @@ ENV \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
     HOMEASSISTANT_WHEELS="https://wheels.home-assistant.io/musllinux/" \
     HOME="/config" \
+    PYTHONUSERBASE="/usr/local" \
     VENV_FOLDER="/config/.venv"
 
 USER root
