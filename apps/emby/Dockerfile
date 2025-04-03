@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND="noninteractive" \
     UMASK="0002" \
     TZ="Etc/UTC"
 
+ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
+
 USER root
 
 #hadolint ignore=DL3018,DL3013
