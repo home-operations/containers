@@ -4,12 +4,9 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 
-ENV UMASK="0002" \
+ENV DEBIAN_FRONTEND="noninteractive" \
+    UMASK="0002" \
     TZ="Etc/UTC"
-
-ENV DEBCONF_NONINTERACTIVE_SEEN="true" \
-    DEBIAN_FRONTEND="noninteractive" \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE="DontWarn"
 
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR="/config/Library/Application Support" \
@@ -31,7 +28,6 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        jo \
         jq \
         nano \
         tzdata \

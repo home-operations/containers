@@ -16,11 +16,9 @@ RUN \
         curl \
         icu-data-full \
         icu-libs \
-        jo \
         jq \
         libintl \
         nano \
-        trurl \
         tzdata \
     && \
     case "${TARGETPLATFORM}" in \

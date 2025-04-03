@@ -22,12 +22,10 @@ RUN \
         coreutils \
         curl \
         icu-libs \
-        jo \
         jq \
         libintl \
         nano \
         sqlite-libs \
-        trurl \
         tzdata \
     && \
     case "${TARGETPLATFORM}" in \

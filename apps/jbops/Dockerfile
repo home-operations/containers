@@ -28,10 +28,8 @@ RUN apk add --no-cache \
         catatonit \
         coreutils \
         curl \
-        jo \
         jq \
         nano \
-        trurl \
         tzdata \
     && \
     apk add --no-cache --virtual=.build-deps \

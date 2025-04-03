@@ -49,6 +49,7 @@ RUN \
         gstreamer \
         imagemagick \
         jpeg \
+        jq \
         keyfinder-cli \
         lame \
         libev \

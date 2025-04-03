@@ -42,7 +42,6 @@ RUN \
         ffmpeg \
         git \
         iputils \
-        jo \
         jq \
         libcap \
         libjpeg-turbo-dev \
@@ -57,7 +56,6 @@ RUN \
         postgresql-libs \
         socat \
         tiff \
-        trurl \
         tzdata \
         unzip \
     && \

@@ -34,6 +34,7 @@ RUN \
         curl \
         jo \
         jq \
+        trurl \
         tzdata \
     && mkdir -p /app/bin \
     && \
