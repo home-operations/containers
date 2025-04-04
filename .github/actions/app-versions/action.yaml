@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Image Versions
+name: Application Versions
 description: Takes an upstream version string and returns various version types
 
 inputs:

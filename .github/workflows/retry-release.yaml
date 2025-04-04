@@ -28,7 +28,7 @@ jobs:
     needs: ["apps"]
     strategy:
       matrix:
-        name: ${{ fromJSON(needs.apps.outputs.apps) }}
+        app: ${{ fromJSON(needs.apps.outputs.apps) }}
       max-parallel: 4
       fail-fast: false
     steps:
@@ -56,32 +56,32 @@ jobs:
         uses: regclient/actions/regctl-installer@ce5fd131e371ffcdd7508b478cb223b3511a9183 # main
 
       - name: Get Bake Options
-        id: bake-options
-        uses: ./.github/actions/bake-options
+        id: app-options
+        uses: ./.github/actions/app-options
         with:
-          app: ${{ matrix.name }}
+          app: ${{ matrix.app }}
 
       - name: Get Container Registry Version
         id: registry
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          if ! version=$(regctl image inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ matrix.name }}:rolling \
+          if ! version=$(regctl image inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ matrix.app }}:rolling \
               | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
           then
-              echo "Failed to get registry version for ${{ matrix.name }}"
+              echo "Failed to get registry version for ${{ matrix.app }}"
               exit 1
           fi
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - if: ${{ steps.bake-options.outputs.version != steps.registry.outputs.version }}
+      - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
         name: Retry Release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run release.yaml \
               --repo ${{ github.repository }} \
-              -f app=${{ matrix.name }} \
+              -f app=${{ matrix.app }} \
               -f release=true
 
           {
@@ -89,5 +89,5 @@ jobs:
               echo
               echo '| Container Name | Actual Version | Expected Version |'
               echo '|----------------|------------------|----------------|'
-              echo '| `${{ matrix.name }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.bake-options.outputs.version }}` |'
+              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.app-options.outputs.version }}` |'
           } >> $GITHUB_STEP_SUMMARY

@@ -24,19 +24,19 @@ jobs:
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
     needs: ["prepare"]
-    name: Build ${{ matrix.name }}
-    uses: ./.github/workflows/image-builder.yaml
+    name: Build ${{ matrix.app }}
+    uses: ./.github/workflows/app-builder.yaml
     permissions:
       contents: read
       packages: read
     secrets: inherit
     strategy:
       matrix:
-        name: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
+        app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
       fail-fast: false
       max-parallel: 4
     with:
-      name: ${{ matrix.name }}
+      app: ${{ matrix.app }}
       release: false
 
   status:

@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Deprecate App
+name: Deprecate Application
 
 on:
   workflow_dispatch:
     inputs:
-      name:
+      app:
         type: string
         description: Application Name
         required: true
@@ -20,7 +20,7 @@ on:
 
 jobs:
   deprecate:
-    name: Deprecate (${{ inputs.name }})
+    name: Deprecate (${{ inputs.app }})
     runs-on: ubuntu-latest
     outputs:
       pull-number: ${{ steps.pr.outputs.pull-request-number }}
@@ -37,7 +37,7 @@ jobs:
 
       - name: Delete App Directory
         run: |
-          rm -rf ./apps/${{ inputs.name }}
+          rm -rf ./apps/${{ inputs.app }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
@@ -45,16 +45,16 @@ jobs:
         with:
           body: |
             **Reason**: ${{ inputs.reason }}
-          branch: deprecate/${{ inputs.name }}
-          commit-message: "feat: deprecate ${{ inputs.name }}"
+          branch: deprecate/${{ inputs.app }}
+          commit-message: "feat: deprecate ${{ inputs.app }}"
           sign-commits: true
           signoff: true
-          title: "feat: deprecate ${{ inputs.name }}"
+          title: "feat: deprecate ${{ inputs.app }}"
           token: ${{ steps.app-token.outputs.token }}
 
   release:
     if: ${{ inputs.release }}
-    name: Release (${{ inputs.name }})
+    name: Release (${{ inputs.app }})
     needs: ["deprecate"]
     runs-on: ubuntu-latest
     steps:
@@ -96,7 +96,7 @@ jobs:
 
             ## 📦 Application
 
-            **Name**: ${{ inputs.name }}
+            **Name**: ${{ inputs.app }}
             **Reason**: ${{ inputs.reason }}
           tag: ${{ steps.release.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}

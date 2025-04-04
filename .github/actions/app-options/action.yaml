@@ -1,29 +1,29 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Bake Options
+name: Application Options
 description: Takes an app and returns various fields from its docker-bake.hcl file
 
 inputs:
   app:
-    description: Application name
+    description: Application Name
     required: true
 
 outputs:
   platforms:
     description: Platforms
-    value: ${{ steps.bake.outputs.platforms }}
+    value: ${{ steps.app.outputs.platforms }}
   source:
     description: Source
-    value: ${{ steps.bake.outputs.source }}
+    value: ${{ steps.app.outputs.source }}
   version:
     description: Version
-    value: ${{ steps.bake.outputs.version }}
+    value: ${{ steps.app.outputs.version }}
 
 runs:
   using: composite
   steps:
-    - name: Bake Options
-      id: bake
+    - name:  Application Options
+      id: app
       shell: bash
       run: |
         BAKE_OPTS=$(docker buildx bake --file ./apps/${{ inputs.app }}/docker-bake.hcl image-all --print 2>/dev/null)

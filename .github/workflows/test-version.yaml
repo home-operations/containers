@@ -18,15 +18,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Get Image Versions
-        uses: ./.github/actions/image-versions
-        id: image-versions
+      - name: Get Application Versions
+        uses: ./.github/actions/app-versions
+        id: app-versions
         with:
           upstream-version: ${{ inputs.version }}
 
       - name: Check Version Results
         run: |
           echo "Input Version: ${{ inputs.version }}"
-          echo "Is Valid Semver: ${{ steps.image-versions.outputs.is-valid-semver }}"
-          echo "Semantic Version: ${{ steps.image-versions.outputs.semantic }}"
-          echo "Raw Version: ${{ steps.image-versions.outputs.raw }}"
+          echo "Is Valid Semver: ${{ steps.app-versions.outputs.is-valid-semver }}"
+          echo "Semantic Version: ${{ steps.app-versions.outputs.semantic }}"
+          echo "Raw Version: ${{ steps.app-versions.outputs.raw }}"
