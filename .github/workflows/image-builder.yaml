@@ -81,7 +81,7 @@ jobs:
             if (user.type === 'User') {
               let { data: container } = await github.rest.packages.getPackageForUser({
                 package_type: 'container',
-                package_name: '${{ inputs.app }}'
+                package_name: '${{ inputs.app }}',
                 username: '${{ github.repository_owner }}',
               });
             }
