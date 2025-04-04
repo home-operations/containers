@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Image Versions
+name: Application Versions
 description: Takes an upstream version string and returns various version types
 
 inputs:
@@ -11,16 +11,16 @@ inputs:
 outputs:
   is-valid-semver:
     description: If version is valid semantic versioning
-    value: ${{ steps.version.outputs.is-valid-semver }}
+    value: ${{ steps.versions.outputs.is-valid-semver }}
   semantic:
     description: Semantic Version
-    value: ${{ steps.version.outputs.semantic }}
+    value: ${{ steps.versions.outputs.semantic }}
   raw:
     description: Raw Version
-    value: ${{ steps.version.outputs.raw }}
+    value: ${{ steps.versions.outputs.raw }}
   upstream:
     description: Upstream Version
-    value: ${{ steps.version.outputs.upstream }}
+    value: ${{ steps.versions.outputs.upstream }}
 
 runs:
   using: composite
@@ -34,9 +34,9 @@ runs:
       shell: bash
       run: npm install semver
 
-    - name: Determine Image Versions
+    - name: Application Versions
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-      id: version
+      id: versions
       with:
         script: |
           const semver = require('semver');

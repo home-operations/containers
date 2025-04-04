@@ -29,7 +29,6 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        jo \
         jq \
         nano \
         tzdata \

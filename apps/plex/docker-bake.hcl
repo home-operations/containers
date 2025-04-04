@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "1.41.5.9522-a96edc606"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/plexinc/pms-docker"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -13,6 +17,9 @@ target "image" {
   inherits = ["docker-metadata-action"]
   args = {
     VERSION = "${VERSION}"
+  }
+  labels = {
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

@@ -25,7 +25,7 @@ jobs:
     if: ${{ needs.apps.outputs.apps != '[]' }}
     name: Retry Release
     runs-on: ubuntu-latest
-    needs: apps
+    needs: ["apps"]
     strategy:
       matrix:
         app: ${{ fromJSON(needs.apps.outputs.apps) }}
@@ -43,7 +43,7 @@ jobs:
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
       - name: Generate Token
-        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        uses: actions/create-github-app-token@3ff1caaa28b64c9cc276ce0a02e2ff584f3900c5 # v2.0.2
         id: app-token
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
@@ -56,8 +56,8 @@ jobs:
         uses: regclient/actions/regctl-installer@ce5fd131e371ffcdd7508b478cb223b3511a9183 # main
 
       - name: Get Bake Options
-        id: bake-options
-        uses: ./.github/actions/bake-options
+        id: app-options
+        uses: ./.github/actions/app-options
         with:
           app: ${{ matrix.app }}
 
@@ -74,7 +74,7 @@ jobs:
           fi
           echo "version=${version}" >> $GITHUB_OUTPUT
 
-      - if: ${{ steps.bake-options.outputs.version != steps.registry.outputs.version }}
+      - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
         name: Retry Release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
@@ -89,5 +89,5 @@ jobs:
               echo
               echo '| Container Name | Actual Version | Expected Version |'
               echo '|----------------|------------------|----------------|'
-              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.bake-options.outputs.version }}` |'
+              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.app-options.outputs.version }}` |'
           } >> $GITHUB_STEP_SUMMARY

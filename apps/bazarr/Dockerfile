@@ -34,16 +34,15 @@ RUN \
         coreutils \
         curl \
         ffmpeg \
-        jo \
         jq \
         libxml2 \
+        libpq \
         libxslt \
         mediainfo \
         nano \
         trurl \
         tzdata \
         unzip \
-        libpq \
     && \
     apk add --no-cache --virtual .build-deps \
         build-base \

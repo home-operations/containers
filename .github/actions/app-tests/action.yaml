@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Container Tests
+name: Application Tests
 description: Takes an app, container image and token then runs container tests
 
 inputs:
   app:
-    description: Application name
+    description: Application Name
     required: true
   image:
     description: Image

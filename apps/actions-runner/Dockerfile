@@ -4,10 +4,7 @@ ARG TARGETARCH
 
 ENV HOMEBREW_NO_ANALYTICS=1 \
     HOMEBREW_NO_ENV_HINTS=1 \
-    HOMEBREW_NO_INSTALL_CLEANUP=1 \
-    DEBCONF_NONINTERACTIVE_SEEN=true \
-    DEBIAN_FRONTEND="noninteractive" \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
+    HOMEBREW_NO_INSTALL_CLEANUP=1
 
 USER root
 
@@ -16,7 +13,6 @@ RUN \
     && \
     apt-get -qq install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
-        curl \
         jo \
         moreutils \
         wget \

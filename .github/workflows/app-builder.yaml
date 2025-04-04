@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Image Builder
+name: Application Builder
 
 on:
   workflow_call:
@@ -19,8 +19,8 @@ jobs:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      platforms: ${{ steps.bake-options.outputs.platforms }}
-      version: ${{ steps.bake-options.outputs.version }}
+      app-exists: ${{ steps.app-exists.outputs.exists }}
+      platforms: ${{ steps.app-options.outputs.platforms }}
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -32,19 +32,25 @@ jobs:
           script: |
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
-      - name: Get Bake Options
-        id: bake-options
-        uses: ./.github/actions/bake-options
+      - name: Check For Exising Application
+        uses: ./.github/actions/app-exists
+        id: app-exists
         with:
           app: ${{ inputs.app }}
 
-      - name: Get Image Versions
-        uses: ./.github/actions/image-versions
-        id: image-versions
+      - name: Get Application Options
+        id: app-options
+        uses: ./.github/actions/app-options
         with:
-          upstream-version: ${{ steps.bake-options.outputs.version }}
+          app: ${{ inputs.app }}
 
-      - name: Build Container Metadata
+      - name: Get Application Versions
+        uses: ./.github/actions/app-versions
+        id: app-versions
+        with:
+          upstream-version: ${{ steps.app-options.outputs.version }}
+
+      - name: Build Application Metadata
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
         id: meta
         env:
@@ -54,10 +60,10 @@ jobs:
           images: |
             ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.image-versions.outputs.semantic }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
-            type=semver,pattern={{major}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
-            type=raw,value=${{ steps.image-versions.outputs.raw }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
+            type=semver,pattern={{version}},value=${{ steps.app-versions.outputs.semantic }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
+            type=semver,pattern={{major}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
+            type=raw,value=${{ steps.app-versions.outputs.raw }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
             type=raw,value=rolling
 
       - name: Upload Bake Metadata
@@ -70,7 +76,7 @@ jobs:
 
   build:
     name: Build (${{ matrix.platform }})
-    needs: prepare
+    needs: ["prepare"]
     strategy:
       fail-fast: false
       matrix:
@@ -88,6 +94,12 @@ jobs:
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
             core.setOutput('target-arch', '${{ matrix.platform }}'.split('/').pop());
 
+      - name: Get Application Options
+        id: app-options
+        uses: ./.github/actions/app-options
+        with:
+          app: ${{ inputs.app }}
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -104,7 +116,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
 
-      - name: Build
+      - name: Build Application
         uses: docker/bake-action@4ba453fbc2db7735392b93edf935aaf9b1e8f747 # v6.5.0
         id: bake
         with:
@@ -117,9 +129,9 @@ jobs:
             *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max,compression=zstd,force-compression=true', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) || '' }}
             *.labels.org.opencontainers.image.title=${{ inputs.app }}
             *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
-            *.labels.org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
+            *.labels.org.opencontainers.image.version=${{ steps.app-options.outputs.version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
-            *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
+            *.labels.org.opencontainers.image.vendor=${{ github.repository_owner }}
             ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '*.output=type=docker' }}
             *.platform=${{ matrix.platform }}
             *.tags=
@@ -128,8 +140,8 @@ jobs:
           workdir: ./apps/${{ inputs.app }}
 
       - if: ${{ ! inputs.release }}
-        name: Run Container Tests
-        uses: ./.github/actions/container-tests
+        name: Run Application Tests
+        uses: ./.github/actions/app-tests
         with:
           app: ${{ inputs.app }}
           image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
@@ -151,11 +163,11 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  release:
+  merge:
     if: ${{ inputs.release }}
-    name: Release
+    name: Merge
     runs-on: ubuntu-latest
-    needs: build
+    needs: ["build"]
     outputs:
       digest: ${{ steps.digest.outputs.digest }}
     steps:
@@ -210,7 +222,7 @@ jobs:
   attest:
     if: ${{ inputs.release }}
     name: Attest
-    needs: release
+    needs: ["merge"]
     runs-on: ubuntu-latest
     steps:
       - name: Setup Vars
@@ -231,27 +243,76 @@ jobs:
         uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
           dependency-snapshot: true
-          image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
 
       - name: Attestation
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         with:
           push-to-registry: true
           subject-name: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
-          subject-digest: ${{ needs.release.outputs.digest }}
+          subject-digest: ${{ needs.merge.outputs.digest }}
 
       - name: Verify Attestation
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+
+  release:
+    if: ${{ inputs.release && ! needs.prepare.outputs.app-exists }}
+    name: Release
+    needs: ["prepare", "attest"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Generate Token
+        uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      - name: Get Application Options
+        id: app-options
+        uses: ./.github/actions/app-options
+        with:
+          app: ${{ inputs.app }}
+
+      - name: Get Release Tag
+        uses: ./.github/actions/release-tag
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Create Release
+        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
+        with:
+          body: |
+            > [!NOTE]
+            > A new application has been added.
+
+            ## 📦 Application
+
+            **Name**: [${{ inputs.app }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.app }})
+            **Source**: <${{ steps.app-options.outputs.source }}>
+          tag: ${{ steps.release.outputs.tag }}
+          token: ${{ steps.app-token.outputs.token }}
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["prepare", "build", "release", "attest"]
+    needs: ["prepare", "build", "merge", "attest", "release"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
+      - if: ${{ contains(needs.*.result, 'failure') }}
+        name: Get Application Options
+        id: app-options
+        uses: ./.github/actions/app-options
+        with:
+          app: ${{ inputs.app }}
+
       - if: ${{ contains(needs.*.result, 'failure') }}
         name: Send Discord Webhook
         uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
@@ -259,7 +320,7 @@ jobs:
           color: "0xFF0000"
           description: |
             Application: `${{ inputs.app }}`
-            Version: `${{ needs.prepare.outputs.version }}`
+            Version: `${{ steps.app-options.outputs.version }}`
             [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
           title: Container build failed

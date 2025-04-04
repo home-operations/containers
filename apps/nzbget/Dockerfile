@@ -19,11 +19,9 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        jo \
         jq \
         nano \
         p7zip \
-        trurl \
         tzdata \
     && \
     curl -fsSL -o /tmp/nzbget.run \

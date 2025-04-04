@@ -1,8 +1,8 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=Jackett/Jackett
-  default = "v0.22.1726"
+  // renovate: datasource=docker depName=ghcr.io/kiwigrid/k8s-sidecar
+  default = "1.30.3"
 }
 
 group "default" {
@@ -15,7 +15,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Jackett/Jackett"
+    "org.opencontainers.image.source" = "https://github.com/kiwigrid/k8s-sidecar"
   }
 }
 

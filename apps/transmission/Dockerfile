@@ -20,7 +20,6 @@ RUN \
         catatonit \
         coreutils \
         curl \
-        jo \
         jq \
         nano \
         p7zip \
@@ -28,7 +27,6 @@ RUN \
         transmission-cli \
         transmission-extra \
         transmission-remote \
-        trurl \
         tzdata \
     && \
     case "${TARGETPLATFORM}" in \
