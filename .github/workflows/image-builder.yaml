@@ -271,13 +271,6 @@ jobs:
     needs: ["prepare", "build", "merge", "attest"]
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Vars
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        id: vars
-        with:
-          script: |
-            core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
-
       - name: Generate Token
         uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
         id: app-token
@@ -290,12 +283,6 @@ jobs:
         uses: ./.github/actions/bake-options
         with:
           app: ${{ inputs.app }}
-
-      - name: Get Image Versions
-        uses: ./.github/actions/image-versions
-        id: image-versions
-        with:
-          upstream-version: ${{ steps.bake-options.outputs.version }}
 
       - name: Get Release Tag
         uses: ./.github/actions/release-tag
@@ -312,23 +299,8 @@ jobs:
 
             ## 📦 Application
 
-            [${{ inputs.app }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.app }}) ([_Source_](${{ steps.bake-options.outputs.source }}))
-
-            ## 🏷️ Tag
-
-            ```text
-            docker pull ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${{ steps.image-versions.outputs.semantic }}@${{ needs.merge.outputs.digest }}
-            ```
-
-            ```text
-            podman pull ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${{ steps.image-versions.outputs.semantic }}@${{ needs.merge.outputs.digest }}
-            ```
-
-            ## ✅ Attestation
-
-            ```bash
-            gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
-            ```
+            **Name**: [${{ inputs.app }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.app }})
+            **Source**: <${{ steps.bake-options.outputs.source }}>
           tag: ${{ steps.release.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
 

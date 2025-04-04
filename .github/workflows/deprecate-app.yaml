@@ -91,7 +91,9 @@ jobs:
             > An application has been deprecated and will no longer receive updates.
             > After **6 months** from now, its image will be **removed** from our container registry.
 
-            **Application**: ${{ inputs.app }}
+            ## 📦 Application
+
+            **Name**: ${{ inputs.app }}
             **Reason**: ${{ inputs.reason }}
           tag: ${{ steps.release.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
