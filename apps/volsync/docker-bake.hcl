@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "v0.12.1"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/backube/volsync"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/backube/volsync"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

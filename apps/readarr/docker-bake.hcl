@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "0.4.13.2760"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/Readarr/Readarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Readarr/Readarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

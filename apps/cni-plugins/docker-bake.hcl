@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "v1.6.2"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/containernetworking/plugins"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/containernetworking/plugins"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

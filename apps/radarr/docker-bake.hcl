@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "5.22.0.9808"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/Radarr/Radarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Radarr/Radarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

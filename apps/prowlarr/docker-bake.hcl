@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "1.33.1.4997"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/Prowlarr/Prowlarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Prowlarr/Prowlarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

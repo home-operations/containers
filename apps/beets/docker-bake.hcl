@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "v2.2.0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/beetbox/beets"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/beetbox/beets"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "2025.3.3"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/esphome/esphome"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/esphome/esphome"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

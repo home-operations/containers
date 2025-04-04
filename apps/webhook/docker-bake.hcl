@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "2.8.2"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/adnanh/webhook"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/adnanh/webhook"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

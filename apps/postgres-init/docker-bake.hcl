@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "17.4-r0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/postgres/postgres"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/postgres/postgres"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

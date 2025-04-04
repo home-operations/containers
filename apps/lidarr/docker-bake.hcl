@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "2.11.0.4610"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/Lidarr/Lidarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Lidarr/Lidarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

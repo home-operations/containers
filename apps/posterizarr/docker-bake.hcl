@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "1.9.36"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/fscorrupt/Posterizarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/fscorrupt/Posterizarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

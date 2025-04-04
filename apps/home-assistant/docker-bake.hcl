@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "2025.4.1"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/home-assistant/core"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/home-assistant/core"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 
