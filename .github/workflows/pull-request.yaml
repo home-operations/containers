@@ -23,7 +23,7 @@ jobs:
 
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
-    needs: prepare
+    needs: ["prepare"]
     name: Build ${{ matrix.app }}
     uses: ./.github/workflows/image-builder.yaml
     permissions:
@@ -41,7 +41,7 @@ jobs:
 
   status:
     if: ${{ !cancelled() }}
-    needs: build
+    needs: ["build"]
     name: Build Success
     runs-on: ubuntu-latest
     steps:
