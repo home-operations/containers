@@ -261,7 +261,7 @@ jobs:
   release:
     if: ${{ inputs.release && ! needs.prepare.outputs.package-exists }}
     name: Release
-    needs: ["attest"]
+    needs: ["prepare", "attest"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
