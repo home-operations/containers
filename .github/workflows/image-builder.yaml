@@ -73,11 +73,26 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
-            const { data: container } = await github.rest.packages.getPackageForOrganization({
-              package_type: 'container',
-              package_name: '${{ inputs.app }}',
-              org: '${{ github.repository_owner }}',
+            const { data: user } = await github.rest.users.getByUsername({
+              username: '${{ github.repository_owner }}',
             });
+
+            let container;
+            if (user.type === 'User') {
+              let { data: container } = await github.rest.packages.getPackageForUser({
+                package_type: 'container',
+                package_name: '${{ inputs.app }}'
+                username: '${{ github.repository_owner }}',
+              });
+            }
+
+            if (user.type === 'Organization') {
+              let { data: container } = await github.rest.packages.getPackageForOrganization({
+                package_type: 'container',
+                package_name: '${{ inputs.app }}',
+                org: '${{ github.repository_owner }}',
+              });
+            }
 
             core.setOutput('new-app', `${container?.title ? true : false}`);
 
