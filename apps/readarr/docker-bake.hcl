@@ -19,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = ${SOURCE}"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 
