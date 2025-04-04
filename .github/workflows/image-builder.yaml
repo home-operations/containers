@@ -74,12 +74,12 @@ jobs:
         with:
           script: |
             const { data: container } = await github.rest.packages.getPackageForOrganization({
-              'container',
-              '${{ inputs.app }}',
-              '${{ github.repository_owner }}',
+              package_type: 'container',
+              package_name: '${{ inputs.app }}',
+              org: '${{ github.repository_owner }}',
             });
 
-            core.setOutput('new-app', `${container?.title && true || false}`);
+            core.setOutput('new-app', `${container?.title ? true : false}`);
 
   build:
     name: Build (${{ matrix.platform }})
