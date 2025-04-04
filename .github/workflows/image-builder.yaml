@@ -5,7 +5,7 @@ name: Image Builder
 on:
   workflow_call:
     inputs:
-      app:
+      name:
         type: string
         description: Application Name
         required: true
@@ -19,7 +19,7 @@ jobs:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      new-app: ${{ steps.new-app.outputs.new-app }}
+      package-exists: ${{ steps.package.outputs.exists }}
       platforms: ${{ steps.bake-options.outputs.platforms }}
     steps:
       - name: Checkout
@@ -32,11 +32,17 @@ jobs:
           script: |
             core.setOutput('repository-owner', '${{ github.repository_owner }}'.toLowerCase());
 
+      - name: Check For Exising Package
+        uses: ./.github/actions/package-exists
+        id: package
+        with:
+          package-name: ${{ inputs.name }}
+
       - name: Get Bake Options
         id: bake-options
         uses: ./.github/actions/bake-options
         with:
-          app: ${{ inputs.app }}
+          app: ${{ inputs.name }}
 
       - name: Get Image Versions
         uses: ./.github/actions/image-versions
@@ -52,7 +58,7 @@ jobs:
         with:
           flavor: latest=false
           images: |
-            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
+            ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}
           tags: |
             type=semver,pattern={{version}},value=${{ steps.image-versions.outputs.semantic }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.image-versions.outputs.semantic }},enable=${{ steps.image-versions.outputs.is-valid-semver }}
@@ -63,38 +69,10 @@ jobs:
       - name: Upload Bake Metadata
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: ${{ inputs.app }}-bake-metadata
+          name: ${{ inputs.name }}-bake-metadata
           path: ${{ steps.meta.outputs.bake-file }}
           if-no-files-found: error
           retention-days: 1
-
-      - name: Determine New Application
-        id: new-app
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          script: |
-            const { data: user } = await github.rest.users.getByUsername({
-              username: '${{ github.repository_owner }}',
-            });
-
-            let container;
-            if (user.type === 'User') {
-              let { data: container } = await github.rest.packages.getPackageForUser({
-                package_type: 'container',
-                package_name: '${{ inputs.app }}',
-                username: '${{ github.repository_owner }}',
-              });
-            }
-
-            if (user.type === 'Organization') {
-              let { data: container } = await github.rest.packages.getPackageForOrganization({
-                package_type: 'container',
-                package_name: '${{ inputs.app }}',
-                org: '${{ github.repository_owner }}',
-              });
-            }
-
-            core.setOutput('new-app', `${container?.title ? true : false}`);
 
   build:
     name: Build (${{ matrix.platform }})
@@ -120,7 +98,7 @@ jobs:
         id: bake-options
         uses: ./.github/actions/bake-options
         with:
-          app: ${{ inputs.app }}
+          app: ${{ inputs.name }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -132,7 +110,7 @@ jobs:
       - name: Download Bake Metadata
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          name: ${{ inputs.app }}-bake-metadata
+          name: ${{ inputs.name }}-bake-metadata
           path: ${{ runner.temp }}
 
       - name: Setup Docker Buildx
@@ -147,25 +125,25 @@ jobs:
             cwd://${{ runner.temp }}/docker-metadata-action-bake.json
           set: |
             *.args.VENDOR=${{ steps.vars.outputs.repository-owner }}
-            *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) }}
-            *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max,compression=zstd,force-compression=true', steps.vars.outputs.repository-owner, inputs.app, steps.vars.outputs.target-arch) || '' }}
-            *.labels.org.opencontainers.image.title=${{ inputs.app }}
-            *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
+            *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', steps.vars.outputs.repository-owner, inputs.name, steps.vars.outputs.target-arch) }}
+            *.cache-to=${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max,compression=zstd,force-compression=true', steps.vars.outputs.repository-owner, inputs.name, steps.vars.outputs.target-arch) || '' }}
+            *.labels.org.opencontainers.image.title=${{ inputs.name }}
+            *.labels.org.opencontainers.image.url=https://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}
             *.labels.org.opencontainers.image.version=${{ steps.bake-options.outputs.version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
-            *.labels.org.opencontainers.image.vendor=${{ steps.vars.outputs.repository-owner }}
-            ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.app) || '*.output=type=docker' }}
+            *.labels.org.opencontainers.image.vendor=${{ github.repository_owner }}
+            ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', steps.vars.outputs.repository-owner, inputs.name) || '*.output=type=docker' }}
             *.platform=${{ matrix.platform }}
             *.tags=
           source: .
           targets: image
-          workdir: ./apps/${{ inputs.app }}
+          workdir: ./apps/${{ inputs.name }}
 
       - if: ${{ ! inputs.release }}
         name: Run Container Tests
         uses: ./.github/actions/container-tests
         with:
-          app: ${{ inputs.app }}
+          app: ${{ inputs.name }}
           image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
           token: ${{ github.token }}
 
@@ -180,7 +158,7 @@ jobs:
         name: Upload Digest
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: ${{ inputs.app }}-digests-${{ steps.vars.outputs.target-arch }}
+          name: ${{ inputs.name }}-digests-${{ steps.vars.outputs.target-arch }}
           path: ${{ runner.temp }}/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -206,14 +184,14 @@ jobs:
       - name: Download Bake Metadata
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          name: ${{ inputs.app }}-bake-metadata
+          name: ${{ inputs.name }}-bake-metadata
           path: ${{ runner.temp }}
 
       - name: Download Digests
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
           path: ${{ runner.temp }}/digests
-          pattern: ${{ inputs.app }}-digests-*
+          pattern: ${{ inputs.name }}-digests-*
           merge-multiple: true
 
       - name: Login to GitHub Container Registry
@@ -227,18 +205,18 @@ jobs:
         working-directory: ${{ runner.temp }}/digests
         run: |
           docker buildx imagetools create \
-              $(jq --raw-output --compact-output '.target."docker-metadata-action".tags | map(select(startswith("ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}")) | "-t " + .) | join(" ")' ${{ runner.temp }}/docker-metadata-action-bake.json) \
-              $(printf 'ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@sha256:%s ' *)
+              $(jq --raw-output --compact-output '.target."docker-metadata-action".tags | map(select(startswith("ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}")) | "-t " + .) | join(" ")' ${{ runner.temp }}/docker-metadata-action-bake.json) \
+              $(printf 'ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}@sha256:%s ' *)
 
       - name: Inspect Image
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/docker-metadata-action-bake.json)
+          docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}:$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/docker-metadata-action-bake.json)
 
       - name: Export Digest
         id: digest
         run: |
           TAG=$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/docker-metadata-action-bake.json)
-          DIGEST=$(docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}:${TAG} --format '{{ json . }}' | jq --raw-output '.manifest.digest')
+          DIGEST=$(docker buildx imagetools inspect ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}:${TAG} --format '{{ json . }}' | jq --raw-output '.manifest.digest')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
   attest:
@@ -265,27 +243,30 @@ jobs:
         uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
           dependency-snapshot: true
-          image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+          image: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}@${{ needs.merge.outputs.digest }}
 
       - name: Attestation
         uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
         with:
           push-to-registry: true
-          subject-name: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}
+          subject-name: ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}
           subject-digest: ${{ needs.merge.outputs.digest }}
 
       - name: Verify Attestation
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ steps.vars.outputs.repository-owner }}/${{ inputs.name }}@${{ needs.merge.outputs.digest }}
 
   release:
-    if: ${{ inputs.release && needs.prepare.outputs.new-app }}
+    if: ${{ inputs.release && ! needs.prepare.outputs.package-exists }}
     name: Release
-    needs: ["prepare", "build", "merge", "attest"]
+    needs: ["attest"]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Generate Token
         uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
         id: app-token
@@ -297,7 +278,7 @@ jobs:
         id: bake-options
         uses: ./.github/actions/bake-options
         with:
-          app: ${{ inputs.app }}
+          app: ${{ inputs.name }}
 
       - name: Get Release Tag
         uses: ./.github/actions/release-tag
@@ -310,11 +291,11 @@ jobs:
         with:
           body: |
             > [!NOTE]
-            > An new application has added.
+            > A new application has been added.
 
             ## 📦 Application
 
-            **Name**: [${{ inputs.app }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.app }})
+            **Name**: [${{ inputs.name }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.name }})
             **Source**: <${{ steps.bake-options.outputs.source }}>
           tag: ${{ steps.release.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
@@ -330,7 +311,7 @@ jobs:
         id: bake-options
         uses: ./.github/actions/bake-options
         with:
-          app: ${{ inputs.app }}
+          app: ${{ inputs.name }}
 
       - if: ${{ contains(needs.*.result, 'failure') }}
         name: Send Discord Webhook
@@ -338,7 +319,7 @@ jobs:
         with:
           color: "0xFF0000"
           description: |
-            Application: `${{ inputs.app }}`
+            Application: `${{ inputs.name }}`
             Version: `${{ steps.bake-options.outputs.version }}`
             [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true

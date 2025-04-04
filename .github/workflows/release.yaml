@@ -8,7 +8,7 @@ on:
     paths: ["apps/**"]
   workflow_dispatch:
     inputs:
-      app:
+      name:
         type: string
         description: Application Name
         required: true
@@ -45,7 +45,7 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: apps
         env:
-          APPS: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.prepare.outputs.changed-files), ' ') }}
+          APPS: ${{ github.event_name == 'workflow_dispatch' && inputs.name || join(fromJSON(needs.prepare.outputs.changed-files), ' ') }}
         with:
           script: |
             const { APPS } = process.env;
@@ -57,7 +57,7 @@ jobs:
   build:
     if: ${{ needs.changed.outputs.apps != '[]' }}
     needs: ["changed"]
-    name: Build ${{ matrix.app }}
+    name: Build ${{ matrix.name }}
     uses: ./.github/workflows/image-builder.yaml
     permissions:
       attestations: write
@@ -68,11 +68,11 @@ jobs:
     secrets: inherit
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.changed.outputs.apps) }}
+        name: ${{ fromJSON(needs.changed.outputs.apps) }}
       fail-fast: false
       max-parallel: 4
     with:
-      app: ${{ matrix.app }}
+      name: ${{ matrix.name }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
 
   status:

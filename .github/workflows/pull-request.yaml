@@ -24,7 +24,7 @@ jobs:
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
     needs: ["prepare"]
-    name: Build ${{ matrix.app }}
+    name: Build ${{ matrix.name }}
     uses: ./.github/workflows/image-builder.yaml
     permissions:
       contents: read
@@ -32,11 +32,11 @@ jobs:
     secrets: inherit
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
+        name: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
       fail-fast: false
       max-parallel: 4
     with:
-      app: ${{ matrix.app }}
+      name: ${{ matrix.name }}
       release: false
 
   status:

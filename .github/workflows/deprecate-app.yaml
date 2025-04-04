@@ -5,7 +5,7 @@ name: Deprecate App
 on:
   workflow_dispatch:
     inputs:
-      app:
+      name:
         type: string
         description: Application Name
         required: true
@@ -20,7 +20,7 @@ on:
 
 jobs:
   deprecate:
-    name: Deprecate (${{ inputs.app }})
+    name: Deprecate (${{ inputs.name }})
     runs-on: ubuntu-latest
     outputs:
       pull-number: ${{ steps.pr.outputs.pull-request-number }}
@@ -37,7 +37,7 @@ jobs:
 
       - name: Delete App Directory
         run: |
-          rm -rf ./apps/${{ inputs.app }}
+          rm -rf ./apps/${{ inputs.name }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
@@ -45,19 +45,22 @@ jobs:
         with:
           body: |
             **Reason**: ${{ inputs.reason }}
-          branch: deprecate/${{ inputs.app }}
-          commit-message: "feat: deprecate ${{ inputs.app }}"
+          branch: deprecate/${{ inputs.name }}
+          commit-message: "feat: deprecate ${{ inputs.name }}"
           sign-commits: true
           signoff: true
-          title: "feat: deprecate ${{ inputs.app }}"
+          title: "feat: deprecate ${{ inputs.name }}"
           token: ${{ steps.app-token.outputs.token }}
 
   release:
     if: ${{ inputs.release }}
-    name: Release (${{ inputs.app }})
+    name: Release (${{ inputs.name }})
     needs: ["deprecate"]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Generate Token
         uses: actions/create-github-app-token@064492a9a1762067169d50c792a7dc02bc3d1254 # v2.0.0
         id: app-token
@@ -93,7 +96,7 @@ jobs:
 
             ## 📦 Application
 
-            **Name**: ${{ inputs.app }}
+            **Name**: ${{ inputs.name }}
             **Reason**: ${{ inputs.reason }}
           tag: ${{ steps.release.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
