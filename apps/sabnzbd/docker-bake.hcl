@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "4.5.0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/sabnzbd/sabnzbd"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/sabnzbd/sabnzbd"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

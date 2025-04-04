@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "1.9.0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/opentofu/opentofu"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/opentofu/opentofu"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

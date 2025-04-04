@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "2.323.0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/actions/runner"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/actions/runner"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

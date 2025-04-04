@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "5.0.4-r0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/qbittorrent/qBittorrent"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/qbittorrent/qBittorrent"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

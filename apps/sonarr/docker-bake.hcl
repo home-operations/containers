@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "4.0.14.2938"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/Sonarr/Sonarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Sonarr/Sonarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

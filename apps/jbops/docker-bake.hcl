@@ -4,6 +4,10 @@ variable "VERSION" {
   default = "master"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/blacktwin/JBOPS"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -14,7 +18,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/blacktwin/JBOPS"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

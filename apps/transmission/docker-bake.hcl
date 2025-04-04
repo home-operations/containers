@@ -7,6 +7,10 @@ variable "VERSION" {
   default = "4.0.6-r0"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/transmission/transmission"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -17,7 +21,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/transmission/transmission"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

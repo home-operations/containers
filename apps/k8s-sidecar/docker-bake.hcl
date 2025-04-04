@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "1.30.3"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/kiwigrid/k8s-sidecar"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/kiwigrid/k8s-sidecar"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

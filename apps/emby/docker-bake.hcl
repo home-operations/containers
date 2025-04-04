@@ -9,13 +9,17 @@ group "default" {
   targets = ["image-local"]
 }
 
+variable "SOURCE" {
+  default = "https://github.com/MediaBrowser/Emby.Releases"
+}
+
 target "image" {
   inherits = ["docker-metadata-action"]
   args = {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/MediaBrowser/Emby.Releases"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

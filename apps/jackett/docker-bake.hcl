@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "v0.22.1726"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/Jackett/Jackett"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/Jackett/Jackett"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

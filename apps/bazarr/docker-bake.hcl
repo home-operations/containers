@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "v1.5.1"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/morpheus65535/bazarr"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/morpheus65535/bazarr"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 

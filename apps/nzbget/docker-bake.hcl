@@ -5,6 +5,10 @@ variable "VERSION" {
   default = "24.8"
 }
 
+variable "SOURCE" {
+  default = "https://github.com/nzbgetcom/nzbget"
+}
+
 group "default" {
   targets = ["image-local"]
 }
@@ -15,7 +19,7 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "https://github.com/nzbgetcom/nzbget"
+    "org.opencontainers.image.source" = "${SOURCE}"
   }
 }
 
