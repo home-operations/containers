@@ -11,10 +11,10 @@ inputs:
 outputs:
   platforms:
     description: Platforms
-    value: ${{ steps.app.outputs.platforms }}
+    value: ${{ steps.options.outputs.platforms }}
   source:
     description: Source
-    value: ${{ steps.app.outputs.source }}
+    value: ${{ steps.options.outputs.source }}
   version:
     description: Version
     value: ${{ steps.options.outputs.version }}
