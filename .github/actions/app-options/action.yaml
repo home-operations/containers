@@ -17,13 +17,13 @@ outputs:
     value: ${{ steps.app.outputs.source }}
   version:
     description: Version
-    value: ${{ steps.app.outputs.version }}
+    value: ${{ steps.options.outputs.version }}
 
 runs:
   using: composite
   steps:
     - name:  Application Options
-      id: app
+      id: options
       shell: bash
       run: |
         BAKE_OPTS=$(docker buildx bake --file ./apps/${{ inputs.app }}/docker-bake.hcl image-all --print 2>/dev/null)
