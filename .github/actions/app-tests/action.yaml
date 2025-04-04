@@ -29,9 +29,9 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
       run: |
-        setup.sh "${{ inputs.name }}"
+        setup.sh "${{ inputs.app }}"
 
     - name: Run Tests
       shell: bash
       run: |
-        run.sh "${{ inputs.name }}" "${{ inputs.image }}"
+        run.sh "${{ inputs.app }}" "${{ inputs.image }}"
