@@ -24,16 +24,14 @@ RUN \
         coreutils \
         curl \
         icu-libs \
-        jo \
         jq \
         nano \
         p7zip \
         qt6-qtbase-sqlite \
-        trurl \
         tzdata \
     && \
     apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
-        qbittorrent-nox="${VERSION}" \
+        qbittorrent-nox=="${VERSION}" \
     && rm -rf /tmp/*
 
 COPY . /

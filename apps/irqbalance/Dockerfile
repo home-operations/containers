@@ -9,6 +9,6 @@ USER root
 RUN \
     apk add --no-cache \
         bash \
-        irqbalance="${VERSION}"
+        irqbalance=="${VERSION}"
 
 ENTRYPOINT ["/usr/sbin/irqbalance", "--foreground"]
