@@ -56,7 +56,4 @@ runs:
               }
           }
 
-          core.setOutput('exists', `${container !== null}`);
-
-          console.log(`User: ${user}`);
-          console.log(`Container: ${container}`);
+          core.setOutput('exists', typeof container !== "undefined");
