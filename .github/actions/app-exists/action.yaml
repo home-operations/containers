@@ -32,7 +32,7 @@ runs:
               try {
                   const { data } = await github.rest.packages.getPackageForOrganization({
                       package_type: 'container',
-                      package_name: applicationName,
+                      package_name: `${applicationName}a`,
                       org: context.repo.owner,
                   });
                   container = data;
@@ -45,7 +45,7 @@ runs:
               try {
                   const { data } = await github.rest.packages.getPackageForUser({
                       package_type: 'container',
-                      package_name: applicationName,
+                      package_name: `${applicationName}a`,
                       username: context.repo.owner,
                   });
                   container = data;
