@@ -38,10 +38,6 @@ jobs:
         with:
           app: ${{ inputs.app }}
 
-      - name: Debug
-        run: |
-          echo "${{ steps.app-exists.outputs.exists }}"
-
       - name: Get Application Options
         id: app-options
         uses: ./.github/actions/app-options
