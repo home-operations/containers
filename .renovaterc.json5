@@ -34,32 +34,42 @@
   },
   packageRules: [
     {
-      description: ["Auto-merge container app updates"],
+      description: ["Auto-merge Application Updates"],
       matchFileNames: ["**/docker-bake.hcl"],
       automerge: true,
       automergeType: "pr",
       ignoreTests: false,
     },
     {
-      description: ["Allowed Ubuntu versions for all container images"],
+      description: ["Allowed Ubuntu Version"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
       allowedVersions: "/24\\.04/",
     },
     {
-      description: ["Allowed Python versions for Bazarr, Beets, ESPHome and JBOPS"],
+      description: ["Allowed Python Version for Bazarr"],
       matchDatasources: ["docker"],
-      matchFileNames: [
-        "apps/bazarr/Dockerfile",
-        "apps/beets/Dockerfile",
-        "apps/esphome/Dockerfile",
-        "apps/jbops/Dockerfile",
-      ],
+      matchFileNames: ["apps/bazarr/Dockerfile"],
       matchPackageNames: ["/python/"],
       allowedVersions: "/3\\.12/",
     },
     {
-      description: ["Allowed Node versions for Beets"],
+      description: ["Allowed Python Version for Beets"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/beets/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.12/",
+    },
+    {
+      description: ["Allowed Python Version for ESPHome"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/esphome/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.12/",
+    },
+
+    {
+      description: ["Allowed Node Version for Beets"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/beets/Dockerfile"],
       matchPackageNames: ["/node/"],
