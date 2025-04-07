@@ -1,12 +1,12 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=custom.servarr depName=radarr versioning=loose
-  default = "5.22.1.9832"
+  // renovate: datasource=github-releases depName=CorentinTh/it-tools
+  default = "v2024.10.22-7ca5933"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/Radarr/Radarr"
+  default = "https://github.com/CorentinTh/it-tools"
 }
 
 group "default" {

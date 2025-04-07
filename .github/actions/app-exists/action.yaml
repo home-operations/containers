@@ -56,4 +56,4 @@ runs:
               }
           }
 
-          core.setOutput('exists', `${container !== null}`);
+          core.setOutput('exists', typeof container !== "undefined");

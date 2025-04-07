@@ -32,7 +32,7 @@ runs:
         echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
 
         SOURCE=$(jq --raw-output --compact-output '.target."image-all".labels."org.opencontainers.image.source"' <<< "$BAKE_OPTS")
-        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "source=${SOURCE}" >> $GITHUB_OUTPUT
 
         VERSION=$(jq --raw-output --compact-output '.target."image-all".args.VERSION' <<< "$BAKE_OPTS")
         echo "version=${VERSION}" >> $GITHUB_OUTPUT

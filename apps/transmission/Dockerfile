@@ -23,10 +23,10 @@ RUN \
         jq \
         nano \
         p7zip \
-        transmission-daemon="${VERSION}" \
-        transmission-cli \
-        transmission-extra \
-        transmission-remote \
+        transmission-daemon=="${VERSION}" \
+        transmission-cli=="${VERSION}" \
+        transmission-extra=="${VERSION}" \
+        transmission-remote=="${VERSION}" \
         tzdata \
     && \
     case "${TARGETPLATFORM}" in \
