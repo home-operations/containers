@@ -61,13 +61,6 @@
       allowedVersions: "/3\\.12/",
     },
     {
-      description: ["Allowed Python Version for ESPHome"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/esphome/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
-    },
-    {
       description: ["Allowed Node Version for Beets"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/beets/Dockerfile"],
