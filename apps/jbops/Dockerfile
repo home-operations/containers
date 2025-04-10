@@ -21,8 +21,6 @@ ENV PLEXAPI_CONFIG_PATH="/config/config.ini" \
 USER root
 WORKDIR /app
 
-ADD https://github.com/blacktwin/JBOPS.git#${VERSION} .
-
 RUN apk add --no-cache \
         bash \
         ca-certificates \
@@ -38,6 +36,9 @@ RUN apk add --no-cache \
         libffi-dev \
         openssl-dev \
         musl-dev \
+        git \
+    && \
+    git clone --single-branch --branch "${VERSION}" https://github.com/blacktwin/JBOPS.git . \
     && \
     pip install --upgrade --requirement requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \
