@@ -43,7 +43,7 @@ RUN apk add --no-cache \
     pip install --upgrade --requirement requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \
     && apk del --purge .build-deps \
-    && rm -rf /root/.cache /root/.cargo /tmp/*
+    && rm -rf /root/.cache /root/.cargo /tmp/* /app/maps
 
 COPY . /
 
