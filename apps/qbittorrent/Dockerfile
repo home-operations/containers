@@ -1,6 +1,6 @@
-FROM docker.io/library/python:3.13-alpine
+# syntax=docker/dockerfile:1
 
-ARG TARGETPLATFORM
+FROM docker.io/library/python:3.13-alpine
 ARG VERSION
 
 ENV UMASK="0002" \
@@ -15,7 +15,6 @@ ENV QBT_CONFIRM_LEGAL_NOTICE=1 \
 
 USER root
 
-#hadolint ignore=DL3018,DL3059
 RUN \
     apk add --no-cache \
         bash \

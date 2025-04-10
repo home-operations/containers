@@ -1,5 +1,6 @@
-FROM docker.io/library/ubuntu:24.04
+# syntax=docker/dockerfile:1
 
+FROM docker.io/library/ubuntu:24.04
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
@@ -18,7 +19,6 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
 USER root
 WORKDIR /app
 
-# hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update \
     && \

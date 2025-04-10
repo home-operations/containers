@@ -1,7 +1,8 @@
-FROM docker.io/library/python:3.13-alpine
+# syntax=docker/dockerfile:1
 
+FROM docker.io/library/python:3.13-alpine
 ARG TARGETARCH
-ARG TARGETPLATFORM
+ARG HOME_ASSISTANT_ARCH=${TARGETARCH/arm64/aarch64}
 ARG VERSION
 
 ENV UMASK="0002" \
@@ -25,7 +26,6 @@ ENV \
 USER root
 WORKDIR /app
 
-#hadolint ignore=DL3018,DL3013,DL3059,DL4006
 RUN \
     apk add --no-cache \
         bash \
@@ -80,16 +80,7 @@ RUN \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \
     && \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') \
-            export ARCH='amd64'; \
-        ;; \
-        'linux/arm64') \
-            export ARCH='aarch64'; \
-        ;; \
-    esac \
-    && \
-    HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
+    HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${HOME_ASSISTANT_ARCH}: " | cut -d ":" -f3) \
     && \
     uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \

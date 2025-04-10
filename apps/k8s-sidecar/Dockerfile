@@ -1,8 +1,8 @@
+# syntax=docker/dockerfile:1
+
 ARG VERSION
 FROM ghcr.io/kiwigrid/k8s-sidecar:${VERSION}
-
 USER root
-
 RUN \
     apk add --no-cache \
         bash \
@@ -11,5 +11,4 @@ RUN \
         jq \
         tzdata \
     && rm -rf /tmp/*
-
 USER nobody:nogroup

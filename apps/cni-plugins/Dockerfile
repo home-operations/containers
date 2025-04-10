@@ -1,5 +1,6 @@
-FROM docker.io/library/alpine:3.21
+# syntax=docker/dockerfile:1
 
+FROM docker.io/library/alpine:3.21
 ARG TARGETARCH
 ARG VERSION
 
@@ -7,7 +8,6 @@ ENV CNI_BIN_DIR=/host/opt/cni/bin
 
 USER root
 
-#hadolint ignore=DL3018,DL3013,DL3059,DL4006
 RUN \
     apk add --no-cache \
         rsync \

@@ -1,12 +1,13 @@
-FROM docker.io/library/alpine:3.21
+# syntax=docker/dockerfile:1
 
-ARG TARGETPLATFORM
-ARG VENDOR
+FROM docker.io/library/alpine:3.21
+ARG TARGETARCH
+ARG TARGETARCH=${TARGETARCH/arm64/ARM64}
+ARG TARGETARCH=${TARGETARCH/amd64/AMDx64}
 ARG VERSION
 
 ENV XDG_CONFIG_HOME=/config
 
-# hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apk add --no-cache \
         bash \
@@ -20,13 +21,8 @@ RUN \
         libintl \
         nano \
         tzdata \
-    && \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') export ARCH='AMDx64' ;; \
-        'linux/arm64') export ARCH='ARM64' ;; \
-    esac \
     && mkdir -p /app/bin \
-    && curl -fsSL "https://github.com/Jackett/Jackett/releases/download/${VERSION}/Jackett.Binaries.LinuxMusl${ARCH}.tar.gz" \
+    && curl -fsSL "https://github.com/Jackett/Jackett/releases/download/${VERSION}/Jackett.Binaries.LinuxMusl${TARGETARCH}.tar.gz" \
         | tar xzf - -C /app/bin --strip-components 1 \
     && chown -R root:root /app && chmod -R 755 /app \
     && rm -rf /tmp/* /app/bin/JackettUpdater*

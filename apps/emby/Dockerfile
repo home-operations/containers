@@ -1,7 +1,7 @@
-FROM docker.io/library/ubuntu:24.04
+# syntax=docker/dockerfile:1
 
+FROM docker.io/library/ubuntu:24.04
 ARG TARGETARCH
-ARG VENDOR
 ARG VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -12,7 +12,6 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 USER root
 
-#hadolint ignore=DL3018,DL3013
 RUN \
     apt-get update \
     && \

@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG VERSION
 FROM ghcr.io/actions/actions-runner:${VERSION}
 ARG TARGETARCH

@@ -1,5 +1,6 @@
-FROM docker.io/library/python:3.13-alpine
+# syntax=docker/dockerfile:1
 
+FROM docker.io/library/python:3.13-alpine
 ARG VERSION
 
 ENV \
@@ -21,7 +22,6 @@ ENV \
 USER root
 WORKDIR /app
 
-#hadolint ignore=DL3018,DL3013
 RUN \
     apk add --no-cache \
         build-base \

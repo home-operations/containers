@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM docker.io/lukemathwalker/cargo-chef:latest-rust-1.86.0-alpine3.21 AS chef
 ARG VERSION
 WORKDIR /tmp

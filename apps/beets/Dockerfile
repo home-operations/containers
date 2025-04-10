@@ -1,4 +1,6 @@
-FROM docker.io/library/node:16-alpine3.18 AS betanin-client
+# syntax=docker/dockerfile:1
+
+FROM docker.io/library/node:16-alpine3.18 AS betanin
 WORKDIR /src
 RUN apk add git && \
     git clone https://github.com/sentriz/betanin.git . && \
@@ -7,9 +9,6 @@ RUN apk add git && \
     PRODUCTION=true npm run-script build
 
 FROM docker.io/library/python:3.12-alpine
-
-ARG TARGETARCH
-ARG TARGETPLATFORM
 ARG VERSION
 
 WORKDIR /src
@@ -76,7 +75,7 @@ RUN \
     && apk del --purge .build-deps \
     && rm -rf /tmp/*
 
-COPY --from=betanin-client /src/betanin_client/dist/ /usr/local/lib/python3.12/site-packages/betanin_client/dist/
+COPY --from=betanin /src/betanin_client/dist/ /usr/local/lib/python3.12/site-packages/betanin_client/dist/
 COPY . /
 
 USER nobody:nogroup

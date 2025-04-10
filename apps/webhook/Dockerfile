@@ -1,8 +1,8 @@
-FROM docker.io/library/python:3.13-alpine
+# syntax=docker/dockerfile:1
 
+FROM docker.io/library/python:3.13-alpine
 ARG TARGETARCH
 ARG VERSION
-ARG CHANNEL
 
 ENV UMASK="0002" \
     TZ="Etc/UTC"
@@ -24,7 +24,6 @@ ENV \
 USER root
 WORKDIR /app
 
-#hadolint ignore=DL3013,DL3018
 RUN \
     apk add --no-cache \
         bash \

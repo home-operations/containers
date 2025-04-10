@@ -1,16 +1,16 @@
+# syntax=docker/dockerfile:1
+
 FROM docker.io/library/python:3.13-alpine AS builder
-ARG TARGETPLATFORM
 ARG VERSION
-#hadolint ignore=DL3008
 RUN \
     apk add --no-cache \
-    curl \
-    grep \
-    sed \
-    tar \
+        curl \
+        grep \
+        sed \
+        tar \
     && \
     curl -fsSL "https://github.com/themepark-dev/theme.park/archive/${VERSION}.tar.gz" \
-    | tar xzf - -C /tmp --strip-components 1 \
+        | tar xzf - -C /tmp --strip-components 1 \
     && python /tmp/themes.py \
     && grep -rl 'https://theme-park.dev' /tmp | xargs sed -i 's|https\://theme-park.dev||g'
 

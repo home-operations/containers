@@ -1,6 +1,6 @@
-FROM docker.io/library/python:3.13-alpine
+# syntax=docker/dockerfile:1
 
-ARG TARGETPLATFORM
+FROM docker.io/library/python:3.13-alpine
 ARG VERSION
 
 ENV UMASK="0002" \

@@ -1,21 +1,15 @@
+# syntax=docker/dockerfile:1
+
 FROM docker.io/library/alpine:3.21
-
-ARG TARGETPLATFORM
 ARG VERSION
-
 USER root
-WORKDIR /app
-
-#hadolint ignore=DL3018
 RUN \
     apk add --no-cache \
         bash \
         ca-certificates \
         catatonit \
-        postgresql17-client=="${VERSION}"
-
+        postgresql17-client=="${VERSION}" \
+    && rm -rf /tmp/*
 COPY . /
-
 USER nobody:nogroup
-
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]

@@ -1,9 +1,11 @@
+# syntax=docker/dockerfile:1
+
 # NOTE: Alpine version is tied to the version in the Renovate annotation in docker-bake.hcl
 FROM docker.io/library/python:3.13-alpine3.21
-
-ARG TARGETPLATFORM
+ARG TARGETARCH
+ARG MINIJINJA_ARCH=${TARGETARCH/arm64/aarch64}
+ARG MINIJINJA_ARCH=${MINIJINJA_ARCH/amd64/x86_64}
 ARG VERSION
-ARG CHANNEL
 
 ENV HOME=/config \
     XDG_CONFIG_HOME=/config \
@@ -11,7 +13,6 @@ ENV HOME=/config \
     TRANSMISSION__RPC_PORT=9091 \
     TRANSMISSION_WEB_HOME=/usr/share/transmission/public_html
 
-#hadolint ignore=DL3018
 RUN \
     apk add --no-cache \
         bash \
@@ -28,12 +29,7 @@ RUN \
         transmission-remote=="${VERSION}" \
         tzdata \
     && \
-    case "${TARGETPLATFORM}" in \
-        'linux/amd64') export ARCH="x86_64" ;; \
-        'linux/arm64') export ARCH="aarch64" ;; \
-    esac \
-    && \
-    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.8.0/minijinja-cli-${ARCH}-unknown-linux-musl.tar.xz \
+    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.8.0/minijinja-cli-${MINIJINJA_ARCH}-unknown-linux-musl.tar.xz \
         | tar xJf - -C /usr/local/bin/ --strip-components=1 \
     && \
     rm -rf /tmp/*
