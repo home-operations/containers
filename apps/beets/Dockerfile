@@ -2,11 +2,10 @@
 
 FROM docker.io/library/node:16-alpine3.18 AS betanin
 WORKDIR /src
-RUN apk add git && \
-    git clone https://github.com/sentriz/betanin.git . && \
-    cd /src/betanin_client && \
-    npm install && \
-    PRODUCTION=true npm run-script build
+ADD https://github.com/sentriz/betanin.git .
+WORKDIR /src/betanin_client
+ENV PRODUCTION=true
+RUN npm install && npm run-script build
 
 FROM docker.io/library/python:3.12-alpine
 ARG VERSION
