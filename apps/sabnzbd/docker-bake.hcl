@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=sabnzbd/sabnzbd
-  default = "4.5.0"
+  default = "4.5.1"
 }
 
 variable "SOURCE" {
