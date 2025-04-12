@@ -48,6 +48,7 @@ RUN \
         libpcap-dev \
         libstdc++ \
         libxslt \
+        mailcap \
         mariadb-connector-c \
         mariadb-connector-c-dev \
         nano \
