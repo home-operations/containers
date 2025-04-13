@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=custom.servarr depName=radarr versioning=loose
-  default = "5.22.1.9832"
+  default = "5.22.2.9862"
 }
 
 variable "SOURCE" {
