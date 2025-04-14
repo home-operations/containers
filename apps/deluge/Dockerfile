@@ -7,8 +7,6 @@ ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 ENV DELUGE_BIN="deluged" \
-    DELUGE_WEB_PORT="8112" \
-    DELUGE_DAEMON_PORT="58846" \
     XDG_CONFIG_HOME="/config" \
     PYTHON_EGG_CACHE="/config/plugins/.python-eggs"
 
