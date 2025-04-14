@@ -3,3 +3,6 @@
 file:
   /bin/smartctl_exporter:
     exists: true
+port:
+  tcp6:9633:
+    listening: true
