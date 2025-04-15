@@ -51,6 +51,7 @@ RUN \
         libftdi1 \
         libgpiod \
         libturbojpeg \
+        libturbojpeg-dev \
         libpulse \
         libstdc++ \
         libxslt \
