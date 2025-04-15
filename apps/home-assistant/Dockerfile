@@ -41,40 +41,65 @@ RUN \
         eudev-libs \
         ffmpeg \
         git \
+        hwdata-usb \
+        imlib2 \
+        iperf3 \
         iputils \
         jq \
         libcap \
-        libjpeg-turbo-dev \
-        libpcap-dev \
+        libftdi1 \
+        libgpiod \
+        libturbojpeg \
+        libpulse \
         libstdc++ \
         libxslt \
+        libzbar \
         mailcap \
         mariadb-connector-c \
-        mariadb-connector-c-dev \
         nano \
+        net-tools \
+        nmap \
         openssh-client \
         openssl \
+        pianobar \
         postgresql-libs \
+        pulseaudio-alsa \
         socat \
         tiff \
         tzdata \
         unzip \
+        xz \
     && \
     apk add --no-cache --virtual=.build-deps \
         autoconf \
+        bluez-dev \
         build-base \
-        cargo \
-        cmake \
-        cups-dev \
-        eudev-dev \
-        ffmpeg-dev \
-        glib-dev \
-        jpeg-dev \
+        bzip2-dev \
+        coreutils \
+        dpkg \
+        dpkg-dev \
+        expat-dev \
+        findutils \
+        gdbm-dev \
+        libc-dev \
         libffi-dev \
-        libxml2-dev \
-        libxslt-dev \
-        postgresql-dev \
-        unixodbc-dev \
+        libnsl-dev \
+        libtirpc-dev \
+        linux-headers \
+        make \
+        mpdecimal-dev \
+        ncurses-dev \
+        openssl \
+        openssl-dev \
+        patch \
+        pax-utils \
+        readline-dev \
+        sqlite-dev \
+        tcl-dev \
+        tk \
+        tk-dev \
+        xz-dev \
+        zlib-dev \
     && \
     pip install uv \
     && \
