@@ -8,7 +8,8 @@ ENV UMASK="0002" \
 
 ENV DELUGE_BIN="deluged" \
     XDG_CONFIG_HOME="/config" \
-    PYTHON_EGG_CACHE="/config/plugins/.python-eggs"
+    PYTHON_EGG_CACHE="/config/plugins/.python-eggs" \
+    TMPDIR="/tmp"
 
 USER root
 
