@@ -101,7 +101,7 @@ RUN \
 COPY . /
 
 # Ref: https://bugs.python.org/issue43642
-RUN /hack/fix-library-paths.sh
+RUN /hack/musl-library-hack.sh
 
 USER nobody:nogroup
 WORKDIR /config
