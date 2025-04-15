@@ -41,6 +41,7 @@ RUN \
         eudev-libs \
         ffmpeg \
         git \
+        grep \
         hwdata-usb \
         imlib2 \
         iperf3 \
@@ -72,34 +73,8 @@ RUN \
     && \
     apk add --no-cache --virtual=.build-deps \
         autoconf \
-        bluez-dev \
         build-base \
-        bzip2-dev \
-        coreutils \
-        dpkg \
-        dpkg-dev \
-        expat-dev \
-        findutils \
-        gdbm-dev \
-        libc-dev \
         libffi-dev \
-        libnsl-dev \
-        libtirpc-dev \
-        linux-headers \
-        make \
-        mpdecimal-dev \
-        ncurses-dev \
-        openssl \
-        openssl-dev \
-        patch \
-        pax-utils \
-        readline-dev \
-        sqlite-dev \
-        tcl-dev \
-        tk \
-        tk-dev \
-        xz-dev \
-        zlib-dev \
     && \
     pip install uv \
     && \
