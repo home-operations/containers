@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine
 ARG TARGETARCH
-ARG HOME_ASSISTANT_ARCH=${TARGETARCH/arm64/aarch64}
+ARG ARCH=${TARGETARCH/arm64/aarch64}
+FROM ghcr.io/home-assistant/${ARCH}-base-python:3.13-alpine3.21
+ARG TARGETARCH
+ARG ARCH=${TARGETARCH/arm64/aarch64}
 ARG VERSION
 
 ENV UMASK="0002" \
@@ -81,7 +83,7 @@ RUN \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \
     && \
-    HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${HOME_ASSISTANT_ARCH}: " | cut -d ":" -f3) \
+    HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
     && \
     uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
@@ -99,9 +101,6 @@ RUN \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
 COPY . /
-
-# Ref: https://bugs.python.org/issue43642
-RUN /hack/musl-library-hack.sh
 
 USER nobody:nogroup
 WORKDIR /config
