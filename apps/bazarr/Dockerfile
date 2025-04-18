@@ -53,13 +53,13 @@ RUN \
     && \
     curl -fsSL -o /tmp/app.zip "https://github.com/morpheus65535/bazarr/releases/download/${VERSION}/bazarr.zip" \
     && unzip -q /tmp/app.zip -d /app/bin \
-    && rm -rf /app/bin/bin \
-    && pip install --no-cache-dir \
+    && pip install uv \
+    && uv pip install --system \
         --requirement /app/bin/requirements.txt \
         --requirement /app/bin/postgres-requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \
-    && apk del --purge .build-deps \
-    && rm -rf /root/.cache /root/.cargo /tmp/*
+    && pip uninstall --yes uv && apk del --purge .build-deps \
+    && rm -rf /root/.cache /root/.cargo /tmp/* /app/bin/bin
 
 COPY . /
 
