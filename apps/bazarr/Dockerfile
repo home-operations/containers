@@ -53,7 +53,7 @@ RUN \
     && \
     curl -fsSL -o /tmp/app.zip "https://github.com/morpheus65535/bazarr/releases/download/${VERSION}/bazarr.zip" \
     && unzip -q /tmp/app.zip -d /app/bin \
-    && sed -i '/--only-binary=/d; /Pillow/s/ --only-binary=Pillow//' /app/bin/requirements.txt \
+    && sed -i '/Pillow>/s/ --only-binary=Pillow//; /Pillow>/a --only-binary=Pillow' /app/bin/requirements.txt \
     && pip install uv \
     && uv pip install --system \
         --requirement /app/bin/requirements.txt \
