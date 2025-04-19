@@ -7,8 +7,6 @@ ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 ENV QBT_CONFIRM_LEGAL_NOTICE=1 \
-    QBT_WEBUI_PORT=8080 \
-    QBT_TORRENTING_PORT=50413 \
     HOME="/config" \
     XDG_CONFIG_HOME="/config" \
     XDG_DATA_HOME="/config"
