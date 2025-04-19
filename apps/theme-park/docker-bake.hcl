@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=themepark-dev/theme.park
-  default = "1.20.0"
+  default = "1.20.1"
 }
 
 variable "SOURCE" {
