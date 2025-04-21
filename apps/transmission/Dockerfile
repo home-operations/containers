@@ -10,8 +10,6 @@ ARG VERSION
 ENV HOME="/config" \
     XDG_CONFIG_HOME="/config" \
     XDG_DATA_HOME="/config" \
-    TRANSMISSION__USE_ENV="true" \
-    TRANSMISSION__RPC_PORT="9091" \
     TRANSMISSION_WEB_HOME="/usr/share/transmission/public_html"
 
 RUN \
