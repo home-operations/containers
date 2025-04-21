@@ -7,11 +7,12 @@ ARG MINIJINJA_ARCH=${TARGETARCH/arm64/aarch64}
 ARG MINIJINJA_ARCH=${MINIJINJA_ARCH/amd64/x86_64}
 ARG VERSION
 
-ENV HOME=/config \
-    XDG_CONFIG_HOME=/config \
-    XDG_DATA_HOME=/config \
-    TRANSMISSION__RPC_PORT=9091 \
-    TRANSMISSION_WEB_HOME=/usr/share/transmission/public_html
+ENV HOME="/config" \
+    XDG_CONFIG_HOME="/config" \
+    XDG_DATA_HOME="/config" \
+    TRANSMISSION__USE_ENV="true" \
+    TRANSMISSION__RPC_PORT="9091" \
+    TRANSMISSION_WEB_HOME="/usr/share/transmission/public_html"
 
 RUN \
     apk add --no-cache \
