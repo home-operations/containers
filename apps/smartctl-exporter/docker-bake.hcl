@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=prometheus-community/smartctl_exporter
-  default = "0.13.0"
+  default = "0.14.0"
 }
 
 variable "SOURCE" {
