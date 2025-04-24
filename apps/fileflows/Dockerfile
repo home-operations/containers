@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     NVIDIA_VISIBLE_DEVICES="all" \
     LIBVA_DRIVERS_PATH="/usr/lib/x86_64-linux-gnu/dri" \
-    LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu" \
+    LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/jellyfin-ffmpeg" \
     DOTNET_CLI_TELEMETRY_OPTOUT=true \
     # Default run mode: server
     FFNODE="0" \
@@ -47,8 +47,12 @@ RUN \
     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
     /app/*-upgrade*
 
-COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg
-COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
+# Install ffmpeg from Jellyfin for hardware support
+COPY --from=ghcr.io/jellyfin/jellyfin:latest \
+    /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
+RUN ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg  /usr/local/bin/ffmpeg \
+    && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
+
 COPY . /
 RUN chmod +x /entrypoint.sh
 
