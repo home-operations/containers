@@ -49,13 +49,14 @@ COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffprobe /u
 COPY . /
 RUN chmod +x /entrypoint.sh
 
-# Set perms
-RUN chown -R nobody:nogroup /app \
-    && chmod -R 755 "/app" \
-    # Dotnet mutex catch
-    && mkdir -p /tmp/.dotnet/shm \
-    && chmod 1777 /tmp/.dotnet/shm
-    
+RUN \
+    # Init directories
+    mkdir -p /app/Plugins /app/DockerMods /app/common \
+        /app/Logs /app/ManuallyAdded /app/Data \
+    # Set perms
+    && chown -R nobody:nogroup /app \
+    && chmod -R 755 "/app"
+
 USER nobody:nogroup
 WORKDIR /app
 VOLUME ["/app/Data"]
