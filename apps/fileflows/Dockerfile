@@ -55,10 +55,11 @@ RUN \
 # Init directories
 RUN \
     mkdir -p /app/Plugins /app/DockerMods /app/common \
-    /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config
+    /app/Logs /app/ManuallyAdded /app/Templates /app/Data \
+    && chown -R nobody:nogroup /app
 USER nobody:nogroup
 RUN \
-    && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
+    curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip -q /tmp/fileflows.zip -d /app \
     && chmod -R 755 "/app"
 # Clean up image
