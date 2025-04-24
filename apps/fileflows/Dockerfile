@@ -24,11 +24,19 @@ USER root
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        # Install
+        # Uninstall before build
         apt-transport-https \
         curl \
         gnupg \
-        unzip
+        unzip \
+        # Needed for FF to run
+        aspnetcore-runtime-8.0 \
+        ca-certificates \
+        catatonit \
+        libfontconfig1 \
+        libfreetype6 \
+        pciutils \
+        vainfo
 # Install ffmpeg
 RUN \
     VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
@@ -39,14 +47,6 @@ RUN \
     && apt-get update \
     && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
-        # Other packages needed
-        aspnetcore-runtime-8.0 \
-        ca-certificates \
-        catatonit \
-        libfontconfig1 \
-        libfreetype6 \
-        pciutils \
-        vainfo \
     # ffmpeg link
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
