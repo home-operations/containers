@@ -26,7 +26,6 @@ RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         # Install
         apt-transport-https \
-        ca-certificates \
         curl \
         gnupg \
         unzip
@@ -58,7 +57,6 @@ RUN \
 RUN \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
-        ca-certificates \
         curl \
         gnupg \
         unzip \
@@ -68,15 +66,10 @@ RUN \
 RUN \
      # Clean up image
      rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
-     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
-     /app/*-upgrade* \
+     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes *.* \
     # Init directories
     && mkdir -p /app/Plugins /app/DockerMods /app/common \
         /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config \
-    # i18n hack, to be copied back in entrypoint
-    /app/Data/i18n /var/tmp/i18n \
-    && cp -r /app/Server/wwwroot/i18n/* /var/tmp/i18n 2>/dev/null || true \
-    # Set perms
     && chown -R nobody:nogroup /app \
     && chmod -R 755 "/app"
 
