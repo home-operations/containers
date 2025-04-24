@@ -52,7 +52,7 @@ RUN chmod +x /entrypoint.sh
 RUN \
     # Init directories
     mkdir -p /app/Plugins /app/DockerMods /app/common \
-        /app/Logs /app/ManuallyAdded /app/Data \
+        /app/Logs /app/ManuallyAdded /app/Data /app/Templates \
     # Set perms
     && chown -R nobody:nogroup /app \
     && chmod -R 755 "/app"
