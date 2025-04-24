@@ -1,6 +1,0 @@
----
-schemaVersion: "2.0.0"
-fileExistenceTests:
-  - name: terraform
-    path: /usr/local/bin/terraform
-    shouldExist: true

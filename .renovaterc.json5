@@ -1,6 +1,5 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["github>home-operations/renovate-config"],
   customManagers: [
     {
       customType: "regex",
@@ -14,23 +13,11 @@
     },
   ],
   customDatasources: {
-    servarr: {
-      defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
-      format: "json",
-      transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
-    },
-    sonarr: {
-      defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/update/develop/changes?os=linux&runtime=netcore&version=4.0",
-      format: "json",
-      transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
-    },
-    plex: {
-      defaultRegistryUrlTemplate: "https://plex.tv/api/downloads/5.json",
-      format: "json",
-      transformTemplates: [
-        '{"releases":[{"version": computer.Linux.version}]}',
-      ],
-    },
+    fileflows: {
+    defaultRegistryUrlTemplate: "https://fileflows.com/auto-update/latest-version?platform=docker",
+    format: "plain",
+    transformTemplates: ['{"releases":[{"version": "$"}]}']
+  }
   },
   packageRules: [
     {
@@ -45,35 +32,6 @@
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
       allowedVersions: "/24\\.04/",
-    },
-    {
-      description: ["Allowed Python Version for Bazarr"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/bazarr/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
-    },
-    {
-      description: ["Allowed Python Version for Beets"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/beets/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
-    },
-    {
-      description: ["Allowed Python Version for ESPHome"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/esphome/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
-    },
-
-    {
-      description: ["Allowed Node Version for Beets"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/beets/Dockerfile"],
-      matchPackageNames: ["/node/"],
-      allowedVersions: "/16-alpine3\\.18/",
     },
   ],
 }

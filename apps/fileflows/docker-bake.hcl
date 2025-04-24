@@ -1,12 +1,12 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=morpheus65535/bazarr
-  default = "v1.5.1"
+  // renovate: datasource=custom.fileflows depName=fileflows versioning=loose
+  default = "25.4.5.5322"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/morpheus65535/bazarr"
+  default = "https://github.com/revenz/fileflows"
 }
 
 group "default" {
