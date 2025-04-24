@@ -15,7 +15,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu" \
     DOTNET_CLI_TELEMETRY_OPTOUT=true \
     # Default run mode: server
-    MODE="server"
+    FFNODE="0"
 
 USER root
 
@@ -33,8 +33,7 @@ RUN \
         vainfo; \
     # Install Fileflows
     curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
-    && unzip -q /tmp/fileflows.zip -d /app \
-    && chmod -R 755 "/app"; \
+    && unzip -q /tmp/fileflows.zip -d /app; \
     # Clean up unnecessary packages
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         curl \
@@ -50,6 +49,9 @@ COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffprobe /u
 COPY . /
 RUN chmod +x /entrypoint.sh
 
+# Set perms
+RUN chown -R nobody:nogroup /app \
+    && chmod -R 755 "/app"
 USER nobody:nogroup
 WORKDIR /app
 VOLUME ["/app/Data"]
