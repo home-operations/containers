@@ -31,6 +31,7 @@ RUN \
         aspnetcore-runtime-8.0 \
         ca-certificates \
         catatonit \
+        libopenmpt0 \
         ocl-icd-libopencl1 \
         pciutils \
         vainfo; \
