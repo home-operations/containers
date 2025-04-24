@@ -66,7 +66,7 @@ RUN \
 RUN \
      # Clean up image
      rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
-     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes *.bat *.sh \
+     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
     # Init directories
     && mkdir -p /app/Plugins /app/DockerMods /app/common \
         /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config \
