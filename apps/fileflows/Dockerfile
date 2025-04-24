@@ -51,7 +51,11 @@ RUN chmod +x /entrypoint.sh
 
 # Set perms
 RUN chown -R nobody:nogroup /app \
-    && chmod -R 755 "/app"
+    && chmod -R 755 "/app" \
+    # Dotnet mutex catch
+    && mkdir -p /tmp/.dotnet/shm \
+    && chmod 1777 /tmp/.dotnet/shm
+    
 USER nobody:nogroup
 WORKDIR /app
 VOLUME ["/app/Data"]
