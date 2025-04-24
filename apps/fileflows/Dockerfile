@@ -51,15 +51,11 @@ RUN \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
-# Install Fileflows and set perms
+# Install fileflows
 RUN \
-    mkdir -p /app/Plugins /app/DockerMods /app/common \
-    /app/Logs /app/ManuallyAdded /app/Templates /app/Data \
-    && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
-    && unzip -q /tmp/fileflows.zip -d /app \
-    && chown -R nobody:nogroup /app \
-    && chmod -R u+rwX /app
-# Clean up image
+    curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
+    && unzip -q /tmp/fileflows.zip -d /app
+# Clean up unnecessary packages
 RUN \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
@@ -67,9 +63,18 @@ RUN \
         gnupg \
         unzip \
     && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
-    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.*
+    && apt-get clean
+
+RUN \
+     # Clean up image
+     rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
+     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
+    # Init directories
+    && mkdir -p /app/Plugins /app/DockerMods /app/common \
+        /app/Logs /app/ManuallyAdded /app/Templates \
+    && chown -R nobody:nogroup /app \
+    && chmod -R 755 "/app"
+
 COPY . /
 RUN chmod +x /entrypoint.sh
 
