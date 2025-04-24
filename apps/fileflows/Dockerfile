@@ -15,7 +15,9 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu" \
     DOTNET_CLI_TELEMETRY_OPTOUT=true \
     # Default run mode: server
-    FFNODE="0"
+    FFNODE="0" \
+    # Default port: 5000
+    PORT="5000"
 
 USER root
 
@@ -42,7 +44,8 @@ RUN \
     && apt-get clean; \
     # Clean up image
     rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
-    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes
+    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
+    /app/*-upgrade.*
 
 COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
