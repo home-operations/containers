@@ -29,9 +29,10 @@ RUN \
         ca-certificates \
         curl \
         gnupg \
-        unzip \
-    # Install ffmpeg
-    && . /etc/os-release \
+        unzip
+# Install ffmpeg
+RUN \
+    . /etc/os-release \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
@@ -51,10 +52,10 @@ RUN \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
-    # Install Fileflows
     && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
-    && unzip -q /tmp/fileflows.zip -d /app; \
-    # Clean up unnecessary packages
+    && unzip -q /tmp/fileflows.zip -d /app
+# Clean up unnecessary packages
+RUN \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
         ca-certificates \
@@ -62,25 +63,25 @@ RUN \
         gnupg \
         unzip \
     && apt-get autoremove -y \
-    && apt-get clean; \
-    # Clean up image
-    rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
-    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
-    /app/*-upgrade*
-
-COPY . /
-RUN chmod +x /entrypoint.sh
+    && apt-get clean
 
 RUN \
+     # Clean up image
+     rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
+     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
+     /app/*-upgrade* \
     # Init directories
-    mkdir -p /app/Plugins /app/DockerMods /app/common \
+    && mkdir -p /app/Plugins /app/DockerMods /app/common \
         /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config \
     # i18n hack, to be copied back in entrypoint
-    /app/Data/i18n /var/tmp/i18n /app/Server/wwwroot/i18n/ \
-    && cp -r /app/Server/wwwroot/i18n/* /var/tmp/i18n \
+    /app/Data/i18n /var/tmp/i18n \
+    && cp -r /app/Server/wwwroot/i18n/* /var/tmp/i18n 2>/dev/null || true \
     # Set perms
     && chown -R nobody:nogroup /app \
     && chmod -R 755 "/app"
+
+COPY . /
+RUN chmod +x /entrypoint.sh
 
 USER nobody:nogroup
 WORKDIR /app
