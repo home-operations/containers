@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=opentofu/opentofu
-  default = "1.9.0"
+  default = "1.9.1"
 }
 
 variable "SOURCE" {
