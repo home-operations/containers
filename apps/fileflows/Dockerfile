@@ -45,7 +45,7 @@ RUN \
     # Clean up image
     rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
-    /app/*-upgrade.*
+    /app/*-upgrade*
 
 COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
@@ -55,7 +55,7 @@ RUN chmod +x /entrypoint.sh
 RUN \
     # Init directories
     mkdir -p /app/Plugins /app/DockerMods /app/common \
-        /app/Logs /app/ManuallyAdded /app/Data /app/Templates \
+        /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config \
     # Set perms
     && chown -R nobody:nogroup /app \
     && chmod -R 755 "/app"
