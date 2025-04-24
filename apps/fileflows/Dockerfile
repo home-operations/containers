@@ -69,7 +69,7 @@ RUN \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
-    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
+    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.*
 COPY . /
 RUN chmod +x /entrypoint.sh
 
