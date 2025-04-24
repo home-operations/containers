@@ -74,9 +74,9 @@ RUN chmod +x /entrypoint.sh
 RUN \
     # Init directories
     mkdir -p /app/Plugins /app/DockerMods /app/common \
-        /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config /app/Data/i18n \
+        /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config \
     # i18n hack, to be copied back in entrypoint
-    mkdir -p /var/tmp/i18n \
+    /app/Data/i18n /var/tmp/i18n \
     && cp -r /app/Server/wwwroot/i18n/* /var/tmp/i18n \
     # Set perms
     && chown -R nobody:nogroup /app \
