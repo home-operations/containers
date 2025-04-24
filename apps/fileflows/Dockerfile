@@ -33,14 +33,14 @@ RUN \
     && mkdir -p /etc/apt/keyrings \
     && curl -m15 -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg \
-    && echo \
-            "Types: deb \
-            URIs: https://repo.jellyfin.org/ubuntu \
-            Suites: $(lsb_release -cs) \
-            Components: main \
-            Architectures: $(dpkg --print-architecture) \
-            Signed-By: /etc/apt/keyrings/jellyfin.gpg" \
-        > /etc/apt/sources.list.d/jellyfin.sources \
+    && bash -c "cat > /etc/apt/sources.list.d/jellyfin.sources <<EOF
+        Types: deb
+        URIs: https://repo.jellyfin.org/ubuntu
+        Suites: \$(lsb_release -cs)
+        Components: main
+        Architectures: \$(dpkg --print-architecture)
+        Signed-By: /etc/apt/keyrings/jellyfin.gpg
+    EOF" \
     && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
     # Install Fileflows
