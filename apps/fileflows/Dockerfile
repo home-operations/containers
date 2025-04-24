@@ -28,35 +28,33 @@ RUN \
         ca-certificates \
         catatonit \
         pciutils \
-        vainfo \
+        vainfo; \
     # Install jellyfin-ffmpeg7
-    && mkdir -p /etc/apt/keyrings \
-    && curl -m15 -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key \
-        | gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg \
-    && bash -c "cat > /etc/apt/sources.list.d/jellyfin.sources <<EOF
-        Types: deb
-        URIs: https://repo.jellyfin.org/ubuntu
-        Suites: \$(lsb_release -cs)
-        Components: main
-        Architectures: \$(dpkg --print-architecture)
-        Signed-By: /etc/apt/keyrings/jellyfin.gpg
-    EOF" \
-    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        jellyfin-ffmpeg7 \
+    curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key \
+        | gpg --dearmor \
+        > /usr/share/keyrings/jellyfin-archive-keyring.gpg; \
+    \
+    echo "deb [signed-by=/usr/share/keyrings/jellyfin-archive-keyring.gpg] \
+        https://repo.jellyfin.org/ubuntu \
+        $(lsb_release -cs) main" \
+        > /etc/apt/sources.list.d/jellyfin.list; \
+    \
+    apt-get update && apt-get install -y --no-install-recommends \
+        jellyfin-ffmpeg7; \
     # Install Fileflows
     && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip -q /tmp/fileflows.zip -d /app \
-    && chmod -R 755 "/app" \
+    && chmod -R 755 "/app"; \
     # Clean up unnecessary packages
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
         curl \
         gnupg \
         lsb-release \
         unzip \
     && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /tmp/* /var/lib/apt/lists/*
+    && apt-get clean; \
+    rm -rf /tmp/* /var/lib/apt/lists/*
 
 USER nobody:nogroup
 WORKDIR /config
