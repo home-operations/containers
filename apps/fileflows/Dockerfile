@@ -21,7 +21,8 @@ RUN \
         apt-transport-https \
         curl \
         gnupg \
-        curl \
+        lsb-release \
+        unzip \
         # Needed to run
         aspnetcore-runtime-8.0 \
         ca-certificates \
@@ -29,11 +30,17 @@ RUN \
         pciutils \
         vainfo \
     # Install jellyfin-ffmpeg7
+    && mkdir -p /etc/apt/keyrings \
     && curl -m15 -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key \
-        | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin.gpg \
-    && . /etc/os-release \
-    && echo "deb [arch=$(dpkg --print-architecture)] https://repo.jellyfin.org/$ID $VERSION_CODENAME main" \
-        > /etc/apt/sources.list.d/jellyfin.list \
+        | gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg \
+    && echo \
+            "Types: deb \
+            URIs: https://repo.jellyfin.org/ubuntu \
+            Suites: $(lsb_release -cs) \
+            Components: main \
+            Architectures: $(dpkg --print-architecture) \
+            Signed-By: /etc/apt/keyrings/jellyfin.gpg" \
+        > /etc/apt/sources.list.d/jellyfin.sources \
     && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
     # Install Fileflows
@@ -45,10 +52,11 @@ RUN \
         apt-transport-https \
         curl \
         gnupg \
+        lsb-release \
         unzip \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/
+    && rm -rf /tmp/* /var/lib/apt/lists/*
 
 USER nobody:nogroup
 WORKDIR /config
