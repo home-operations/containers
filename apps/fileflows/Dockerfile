@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     NVIDIA_VISIBLE_DEVICES="all" \
     LIBVA_DRIVERS_PATH="/usr/lib/x86_64-linux-gnu/dri" \
-    LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:/usr/lib/jellyfin-ffmpeg" \
+    LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu" \
     DOTNET_CLI_TELEMETRY_OPTOUT=true \
     # Default run mode: server
     FFNODE="0" \
@@ -25,22 +25,41 @@ USER root
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         # Install
+        apt-transport-https \
+        ca-certificates \
         curl \
+        gnupg \
         unzip \
-        # Needed to run
+    # Install ffmpeg
+    && . /etc/os-release \
+    && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
+        | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
+    && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
+        > /etc/apt/sources.list.d/jellyfin.list \
+    && apt-get update \
+    && apt-get intall -y --no-install-recommends --no-install-suggests \
+        jellyfin-ffmpeg7 \
+        # Other packages needed
         aspnetcore-runtime-8.0 \
         ca-certificates \
         catatonit \
-        libopenmpt0 \
-        ocl-icd-libopencl1 \
+        libfontconfig1 \
+        libfreetype6 \
         pciutils \
-        vainfo; \
+        vainfo \
+    # ffmpeg link
+    && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
+    && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
+    && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
     # Install Fileflows
-    curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
+    && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip -q /tmp/fileflows.zip -d /app; \
     # Clean up unnecessary packages
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        apt-transport-https \
+        ca-certificates \
         curl \
+        gnupg \
         unzip \
     && apt-get autoremove -y \
     && apt-get clean; \
@@ -48,12 +67,6 @@ RUN \
     rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes \
     /app/*-upgrade*
-
-# Install ffmpeg from Jellyfin for hardware support
-COPY --from=ghcr.io/jellyfin/jellyfin:latest \
-    /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
-RUN ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg  /usr/local/bin/ffmpeg \
-    && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
 
 COPY . /
 RUN chmod +x /entrypoint.sh
