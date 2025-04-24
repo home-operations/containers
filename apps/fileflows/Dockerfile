@@ -51,19 +51,15 @@ RUN \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
-# Install Fileflows as nobody user
-# Init directories
+# Install Fileflows and set perms
 RUN \
     mkdir -p /app/Plugins /app/DockerMods /app/common \
     /app/Logs /app/ManuallyAdded /app/Templates /app/Data \
-    && chown -R nobody:nogroup /app
-USER nobody:nogroup
-RUN \
-    curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
+    && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip -q /tmp/fileflows.zip -d /app \
-    && chmod -R 755 "/app"
+    && chown -R nobody:nogroup /app \
+    && chmod -R u+rwX /app
 # Clean up image
-USER root
 RUN \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
@@ -74,9 +70,6 @@ RUN \
     && apt-get clean \
     && rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
-    #  Set perms
-    && chown -R nobody:nogroup /app
-
 COPY . /
 RUN chmod +x /entrypoint.sh
 
