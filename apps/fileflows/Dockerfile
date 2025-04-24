@@ -41,11 +41,14 @@ RUN \
         unzip \
     && apt-get autoremove -y \
     && apt-get clean; \
-    rm -rf /tmp/* /var/lib/apt/lists/*
+    # Clean up image
+    rm -rf /tmp/* /var/lib/apt/lists/* /app/{FlowRunner,Node,Server}/runtimes \
+    /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes
 
 COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=ghcr.io/jellyfin/jellyfin:latest /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
 COPY . /
+RUN chmod +x /entrypoint.sh
 
 USER nobody:nogroup
 WORKDIR /app
