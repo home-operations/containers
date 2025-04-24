@@ -42,7 +42,7 @@ RUN \
     apt-get update && apt-get install -y --no-install-recommends \
         jellyfin-ffmpeg7; \
     # Install Fileflows
-    && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
+    curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip -q /tmp/fileflows.zip -d /app \
     && chmod -R 755 "/app"; \
     # Clean up unnecessary packages
