@@ -37,7 +37,7 @@ RUN \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
         > /etc/apt/sources.list.d/jellyfin.list \
     && apt-get update \
-    && apt-get intall -y --no-install-recommends --no-install-suggests \
+    && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
         # Other packages needed
         aspnetcore-runtime-8.0 \
@@ -76,7 +76,7 @@ RUN \
     mkdir -p /app/Plugins /app/DockerMods /app/common \
         /app/Logs /app/ManuallyAdded /app/Templates app/Data/Config \
     # i18n hack, to be copied back in entrypoint
-    /app/Data/i18n /var/tmp/i18n \
+    /app/Data/i18n /var/tmp/i18n /app/Server/wwwroot/i18n/ \
     && cp -r /app/Server/wwwroot/i18n/* /var/tmp/i18n \
     # Set perms
     && chown -R nobody:nogroup /app \
