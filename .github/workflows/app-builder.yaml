@@ -131,7 +131,8 @@ jobs:
           targets: image
           workdir: ./apps/${{ inputs.app }}
 
-      - name: Run Application Tests
+      - if: ${{ ! inputs.release }}
+        name: Run Application Tests
         uses: ./.github/actions/app-tests
         with:
           app: ${{ inputs.app }}
