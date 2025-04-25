@@ -22,17 +22,24 @@ outputs:
 runs:
   using: composite
   steps:
-    - name:  Application Options
+    - name: Application Options
       id: options
       shell: bash
+      working-directory: ./apps/${{ inputs.app }}
       run: |
-        BAKE_OPTS=$(docker buildx bake --file ./apps/${{ inputs.app }}/docker-bake.hcl image-all --print 2>/dev/null)
+        PLATFORMS=$(\
+            docker buildx bake image-all --print --progress=quiet \
+                | jq --raw-output --compact-output '.target."image-all".platforms' \
+        )
+        SOURCE=$(\
+            docker buildx bake --list type=variables,format=json --progress=quiet \
+                | jq --raw-output '.[] | select(.name == "SOURCE") | .value' \
+        )
+        VERSION=$(\
+            docker buildx bake --list type=variables,format=json --progress=quiet \
+                | jq --raw-output '.[] | select(.name == "VERSION") | .value' \
+        )
 
-        PLATFORMS=$(jq --raw-output --compact-output '.target."image-all".platforms' <<< "$BAKE_OPTS")
         echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
-
-        SOURCE=$(jq --raw-output --compact-output '.target."image-all".labels."org.opencontainers.image.source"' <<< "$BAKE_OPTS")
         echo "source=${SOURCE}" >> $GITHUB_OUTPUT
-
-        VERSION=$(jq --raw-output --compact-output '.target."image-all".args.VERSION' <<< "$BAKE_OPTS")
         echo "version=${VERSION}" >> $GITHUB_OUTPUT

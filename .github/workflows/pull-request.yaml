@@ -3,8 +3,8 @@
 name: Pull Request
 
 on:
+  merge_group:
   pull_request:
-    branches: ["main"]
 
 jobs:
   prepare:
