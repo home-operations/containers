@@ -67,7 +67,7 @@ RUN \
     /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
     # Init directories
     && mkdir -p /app/Plugins /app/DockerMods /app/common \
-        /app/Logs /app/ManuallyAdded /app/Templates \
+        /app/Logs /app/ManuallyAdded /app/Templates /app/Data/Data \
     && chown -R nobody:nogroup /app \
     && chmod -R 755 "/app" \
     # i18n hack
