@@ -17,7 +17,6 @@
     fileflows: {
     defaultRegistryUrlTemplate: "https://fileflows.com/auto-update/latest-version?platform=docker",
     format: "plain",
-    transformTemplates: ['{"releases":[{"version": "$"}]}']
   }
   },
   packageRules: [
