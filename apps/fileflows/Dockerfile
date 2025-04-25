@@ -74,7 +74,9 @@ RUN \
     && mkdir -p /app/Plugins /app/DockerMods /app/common \
         /app/Logs /app/ManuallyAdded /app/Templates \
     && chown -R nobody:nogroup /app \
-    && chmod -R 755 "/app"
+    && chmod -R 755 "/app" \
+    # i18n hack
+    && mkdir -p /var/tmp/i18n && cp -r /app/Server/wwwroot/i18n/* /var/tmp/i18n
 
 COPY . /
 RUN chmod +x /entrypoint.sh

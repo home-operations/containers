@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# i18n hack
+cp -r /var/tmp/i18n/* /app/Server/wwwroot/i18n/
+
 # Start proper process
 if [ "$FFNODE" = "0" ]; then
     echo "Starting Fileflows Server..."
@@ -14,7 +17,7 @@ elif [ "$FFNODE" = "1" ]; then
 
     echo "Starting FileFlows Node..."
     cd /app/Node
-    exec dotnet FileFlows.Node.dll --docker true
+    exec dotnet FileFlows.Node.dll --docker
 else
     echo "Unknown FFNODE value: '$FFNODE'"
     echo "To run the node set the FFNODE env to '1'"
