@@ -12,7 +12,7 @@ elif [ "$FFNODE" = "1" ]; then
 
     cd /app/Node
     echo "Starting FileFlows Node..."
-    dotnet /app/Node/FileFlows.Node.dll --docker true
+    dotnet /app/Node/FileFlows.Node.dll --docker
 else
     echo "Unknown FFNODE value: '$FFNODE'"
     echo "To run the node set the FFNODE env to '1'"
