@@ -20,6 +20,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PORT="5000"
 
 USER root
+WORKDIR /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
@@ -79,7 +80,6 @@ COPY . /
 RUN chmod +x /entrypoint.sh
 
 USER nobody:nogroup
-WORKDIR /app
 VOLUME ["/app/Data"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
