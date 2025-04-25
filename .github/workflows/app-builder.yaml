@@ -278,30 +278,30 @@ jobs:
           tag: ${{ steps.release.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
 
-  notify:
-    if: ${{ inputs.release && !cancelled() }}
-    needs: ["prepare", "build", "merge", "attest", "release"]
-    name: Notify
-    runs-on: ubuntu-latest
-    steps:
-      - if: ${{ contains(needs.*.result, 'failure') }}
-        name: Get Application Options
-        id: app-options
-        uses: ./.github/actions/app-options
-        with:
-          app: ${{ inputs.app }}
+  # notify:
+  #   if: ${{ inputs.release && !cancelled() }}
+  #   needs: ["prepare", "build", "merge", "attest", "release"]
+  #   name: Notify
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - if: ${{ contains(needs.*.result, 'failure') }}
+  #       name: Get Application Options
+  #       id: app-options
+  #       uses: ./.github/actions/app-options
+  #       with:
+  #         app: ${{ inputs.app }}
 
-      - if: ${{ contains(needs.*.result, 'failure') }}
-        name: Send Discord Webhook
-        uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
-        with:
-          color: "0xFF0000"
-          description: |
-            Application: `${{ inputs.app }}`
-            Version: `${{ steps.app-options.outputs.version }}`
-            [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
-          nodetail: true
-          title: Container build failed
-          username: GitHub Actions
-          url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+  #     - if: ${{ contains(needs.*.result, 'failure') }}
+  #       name: Send Discord Webhook
+  #       uses: sarisia/actions-status-discord@5ddd3b114a98457dd80a39b2f00b6a998cd69008 # v1.15.3
+  #       with:
+  #         color: "0xFF0000"
+  #         description: |
+  #           Application: `${{ inputs.app }}`
+  #           Version: `${{ steps.app-options.outputs.version }}`
+  #           [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
+  #         nodetail: true
+  #         title: Container build failed
+  #         username: GitHub Actions
+  #         url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  #         webhook: ${{ secrets.DISCORD_WEBHOOK }}

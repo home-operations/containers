@@ -1,16 +1,16 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-tags depName=conradludgate/atuin-server-sqlite/tags
-  default = "v18.4.0"
-}
-
-variable "SOURCE" {
-  default = "https://github.com/conradludgate/atuin-server-sqlite"
+  // renovate: datasource=github-releases depName=moghtech/komodo versioning=loose
+  default = "1.17.3"
 }
 
 group "default" {
   targets = ["image-local"]
+}
+
+variable "SOURCE" {
+  default = "https://github.com/moghtech/komodo"
 }
 
 target "image" {
