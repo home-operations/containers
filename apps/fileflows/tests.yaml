@@ -1,10 +1,10 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 port:
-  tcp6:5000:
+  tcp:5000:
     listening: true
 http:
-  http://localhost/api/status:
+  http://localhost:5000/api/status:
     status: 200
 link:
   /usr/local/bin/ffmpeg:
@@ -20,4 +20,4 @@ command:
   "ffmpeg -version":
     exit-status: 0
     stdout:
-      - '^[Ff]fmpeg version [0-9]+\.[0-9]+\.[0-9]+-Jellyfin'
+      - '^[Ff]fmpeg version [0-9]+\.[0-9]+\.[0-9]+-Jellyfin.*'
