@@ -1,6 +1,23 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 port:
-  tcp:5000:
+  tcp6:5000:
     listening: true
-  
+http:
+  http://localhost/api/status:
+    status: 200
+link:
+  /usr/local/bin/ffmpeg:
+    exists: true
+    target: "/usr/lib/jellyfin-ffmpeg/ffmpeg"
+  /usr/local/bin/ffmpeg7:
+    exists: true
+    target: "/usr/lib/jellyfin-ffmpeg/ffmpeg"
+  /usr/local/bin/ffprobe:
+    exists: true
+    target: "/usr/lib/jellyfin-ffmpeg/ffprobe"
+command:
+  "ffmpeg -version":
+    exit-status: 0
+    stdout:
+      - '^[Ff]fmpeg version [0-9]+\.[0-9]+\.[0-9]+-Jellyfin'
