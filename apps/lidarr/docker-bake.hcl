@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=custom.servarr depName=lidarr versioning=loose
-  default = "2.11.1.4621"
+  default = "2.11.2.4629"
 }
 
 variable "SOURCE" {
