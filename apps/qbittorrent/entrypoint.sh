@@ -17,4 +17,4 @@ if [[ ! -f "${LOG_FILE}" ]]; then
 fi
 
 # Execute qBittorrent
-exec /usr/bin/qbittorrent-nox "$@"
+exec /app/qbittorrent-nox "$@"

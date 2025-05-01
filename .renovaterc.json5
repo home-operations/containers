@@ -14,6 +14,11 @@
     },
   ],
   customDatasources: {
+    qbittorrent: {
+      defaultRegistryUrlTemplate: "https://github.com/userdocs/qbittorrent-nox-static/releases/latest/download/dependency-version.json",
+      format: "json",
+      transformTemplates: ['{"releases":[{"version": qbittorrent}]}'],
+    },
     servarr: {
       defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
       format: "json",
