@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_edge/qbittorrent-nox
-  default = "5.0.4-r0"
+  default = "5.1.0-libtorrentv1"
 }
 
 variable "SOURCE" {
