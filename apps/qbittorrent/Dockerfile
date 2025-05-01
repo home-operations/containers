@@ -6,7 +6,7 @@ ARG TARGETARCH=${TARGETARCH/arm64/aarch64}
 ARG TARGETARCH=${TARGETARCH/amd64/x86_64}
 ARG VERSION
 
-ENV LD_PRELOAD=/usr/lib/libmimalloc.so \
+ENV LD_PRELOAD=/usr/lib/libmimalloc.so.2 \
     MIMALLOC_LARGE_OS_PAGES=1
 
 ENV UMASK="0002" \
