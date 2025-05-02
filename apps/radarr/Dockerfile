@@ -5,6 +5,9 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 
+ENV LD_PRELOAD=/usr/lib/libmimalloc.so.2 \
+    MIMALLOC_LARGE_OS_PAGES=1
+
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
@@ -24,6 +27,7 @@ RUN \
         icu-libs \
         jq \
         libintl \
+        mimalloc2 \
         nano \
         sqlite-libs \
         tzdata \
