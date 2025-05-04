@@ -4,9 +4,6 @@ FROM docker.io/library/python:3.12-alpine
 ARG VENDOR
 ARG VERSION
 
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
-
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

@@ -5,9 +5,6 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
-
 ENV COMPlus_EnableDiagnostics=0 \
     READARR__UPDATE__BRANCH=develop
 

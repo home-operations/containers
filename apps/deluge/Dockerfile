@@ -3,9 +3,6 @@
 FROM docker.io/library/alpine:3.21
 ARG VERSION
 
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
-
 ENV DELUGE_BIN="deluged" \
     XDG_CONFIG_HOME="/config" \
     PYTHON_EGG_CACHE="/config/plugins/.python-eggs" \

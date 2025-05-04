@@ -3,9 +3,6 @@
 FROM docker.io/library/python:3.13-alpine
 ARG VERSION
 
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
-
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

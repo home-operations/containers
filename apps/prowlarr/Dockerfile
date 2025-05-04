@@ -5,9 +5,6 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 
-ENV UMASK="0002" \
-    TZ="Etc/UTC"
-
 ENV DOTNET_EnableDiagnostics=0 \
     PROWLARR__UPDATE__BRANCH=develop
 
