@@ -73,12 +73,5 @@
       matchPackageNames: ["/python/"],
       allowedVersions: "/3\\.12/",
     },
-    {
-      description: ["Allowed Node Version for Beets"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/beets/Dockerfile"],
-      matchPackageNames: ["/node/"],
-      allowedVersions: "/16-alpine3\\.18/",
-    },
   ],
 }

@@ -1,10 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/node:16-alpine3.18 AS betanin
+FROM docker.io/library/node:22-alpine AS betanin
 WORKDIR /src
 ADD https://github.com/sentriz/betanin.git .
 WORKDIR /src/betanin_client
 ENV PRODUCTION=true
+ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install && npm run-script build
 
 FROM docker.io/library/python:3.12-alpine
@@ -58,8 +59,10 @@ RUN \
     apk add --no-cache --virtual=.build-deps \
         git \
     && \
-    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
+    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/community/" \
         mp3gain \
+    && \
+    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
         mp3val \
     && \
     pip install uv \
