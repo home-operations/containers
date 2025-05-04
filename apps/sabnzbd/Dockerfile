@@ -3,9 +3,6 @@
 FROM docker.io/library/python:3.13-alpine
 ARG VERSION
 
-ENV LD_PRELOAD=/usr/lib/libmimalloc.so.2 \
-    MIMALLOC_LARGE_OS_PAGES=1
-
 ENV UMASK="0002" \
     TZ="Etc/UTC"
 
@@ -32,7 +29,6 @@ RUN \
         coreutils \
         curl \
         jq \
-        mimalloc2 \
         nano \
         p7zip \
         tzdata \
