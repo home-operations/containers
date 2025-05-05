@@ -20,13 +20,15 @@ RUN \
         jq \
         nano \
         p7zip \
+        py3-future \
+        py3-requests \
         tzdata \
     && \
-    apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/community" \
         deluge=="${VERSION}" \
-        py3-future \
+    && \
+    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing" \
         py3-geoip \
-        py3-requests \
     && \
     mkdir -p /usr/share/GeoIP \
     && \
