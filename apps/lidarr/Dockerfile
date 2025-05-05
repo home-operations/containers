@@ -6,7 +6,7 @@ ARG VENDOR
 ARG VERSION
 
 ENV DOTNET_EnableDiagnostics=0 \
-    LIDARR__UPDATE__BRANCH=develop
+    LIDARR__UPDATE__BRANCH=plugins
 
 USER root
 WORKDIR /app
