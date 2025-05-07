@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=beetbox/beets
-  default = "v2.2.0"
+  default = "v2.3.0"
 }
 
 variable "SOURCE" {
