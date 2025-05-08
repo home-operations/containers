@@ -26,8 +26,7 @@ ENV \
 
 ENV HOME=/config \
     BETANIN_HOST=0.0.0.0 \
-    BETANIN_PORT=8080 \
-    FPCALC=/usr/bin/fpcalc
+    BETANIN_PORT=8080
 
 RUN \
     apk add --no-cache \
@@ -37,18 +36,16 @@ RUN \
         curl \
         expat \
         ffmpeg \
-        ffmpeg-libs \
         fftw \
         flac \
         gdbm \
+        gobject-introspection \
         gst-plugins-good \
         gstreamer \
         imagemagick \
         jpeg \
         jq \
-        keyfinder-cli \
         lame \
-        libev \
         libffi \
         libpng \
         mpg123 \
