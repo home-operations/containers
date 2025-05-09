@@ -1,0 +1,6 @@
+# NOTE: This file automatically copied to
+# each container directory during build
+/*
+!defaults/
+!scripts/
+!entrypoint.sh
