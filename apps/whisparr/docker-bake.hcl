@@ -1,7 +1,7 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=custom.servarrNightly depName=whisparr versioning=loose
+  // renovate: datasource=custom.servarr-nightly depName=whisparr versioning=loose
   default = "2.0.0.987"
 }
 

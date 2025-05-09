@@ -19,17 +19,17 @@
       format: "json",
       transformTemplates: ['{"releases":[{"version": qbittorrent}]}'],
     },
-    servarrDevelop: {
+    "servarr-develop": {
       defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
-    servarrNightly: {
+    "servarr-nightly": {
       defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/nightly/changes?os=linux&runtime=netcore",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
-    sonarrDevelop: {
+    "sonarr-develop": {
       defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/update/develop/changes?os=linux&runtime=netcore&version=4.0",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
