@@ -1,7 +1,7 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=custom.sonarr depName=sonarr versioning=loose
+  // renovate: datasource=custom.sonarrDevelop depName=sonarr versioning=loose
   default = "4.0.14.2938"
 }
 

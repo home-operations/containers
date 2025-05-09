@@ -1,12 +1,12 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=custom.servarrDevelop depName=radarr versioning=loose
-  default = "5.23.1.9914"
+  // renovate: datasource=custom.servarrNightly depName=whisparr versioning=loose
+  default = "2.0.0.987"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/Radarr/Radarr"
+  default = "https://github.com/Whisparr/Whisparr"
 }
 
 group "default" {
