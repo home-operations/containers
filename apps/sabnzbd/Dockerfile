@@ -44,6 +44,7 @@ RUN \
     && mkdir -p /app \
     && curl -fsSL "https://github.com/sabnzbd/sabnzbd/releases/download/${VERSION}/SABnzbd-${VERSION}-src.tar.gz" \
         | tar xzf - -C /app --strip-components=1 \
+    && python tools/make_mo.py \
     && pip install uv \
     && uv pip install \
         --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
