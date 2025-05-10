@@ -16,6 +16,7 @@ WORKDIR /app
 
 RUN \
     apk add --no-cache \
+        7zip \
         bash \
         ca-certificates \
         catatonit \
@@ -23,7 +24,6 @@ RUN \
         curl \
         jq \
         nano \
-        p7zip \
         tzdata \
     && \
     mkdir -p /app \

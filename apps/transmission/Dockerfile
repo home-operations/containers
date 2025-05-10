@@ -14,6 +14,7 @@ ENV HOME="/config" \
 
 RUN \
     apk add --no-cache \
+        7zip \
         bash \
         ca-certificates \
         catatonit \
@@ -21,7 +22,6 @@ RUN \
         curl \
         jq \
         nano \
-        p7zip \
         transmission-daemon=="${VERSION}" \
         transmission-cli=="${VERSION}" \
         transmission-extra=="${VERSION}" \

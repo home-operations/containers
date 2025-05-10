@@ -12,6 +12,7 @@ USER root
 
 RUN \
     apk add --no-cache \
+        7zip \
         bash \
         ca-certificates \
         catatonit \
@@ -19,7 +20,6 @@ RUN \
         curl \
         jq \
         nano \
-        p7zip \
         py3-future \
         py3-requests \
         tzdata \
