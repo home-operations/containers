@@ -28,7 +28,7 @@ tasks:
     desc: Build and Test an app via Docker Buildx
     dir: '{{.ROOT_DIR}}/apps/{{.APP}}'
     cmds:
-      - docker buildx bake --metadata-file docker-bake.json --load
+      - docker buildx bake --no-cache --metadata-file docker-bake.json --load
       - |
         IMAGE=$(jq --raw-output '."image-local"."image.name"' docker-bake.json)
         case "{{.TEST_TOOL}}" in

@@ -5,13 +5,15 @@ ARG VENDOR
 ARG VERSION
 
 ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1
+    UV_NO_CACHE=true \
+    UV_SYSTEM_PYTHON=true
 
 ENV \
     BAZARR__PORT=6767 \
@@ -52,7 +54,8 @@ RUN \
     && unzip -q /tmp/app.zip -d /app/bin \
     && sed -i '/Pillow>/s/ --only-binary=Pillow//; /Pillow>/a --only-binary=Pillow' /app/bin/requirements.txt \
     && pip install uv \
-    && uv pip install --system \
+    && uv pip install \
+        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
         --requirement /app/bin/requirements.txt \
         --requirement /app/bin/postgres-requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \

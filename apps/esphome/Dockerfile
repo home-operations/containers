@@ -4,13 +4,13 @@ FROM docker.io/library/python:3.13-alpine
 ARG VERSION
 
 ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
     UV_SYSTEM_PYTHON=true
 
 ENV \
@@ -29,8 +29,11 @@ RUN \
         gcompat \
         git \
     && pip install uv \
-    && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "setuptools" "esphome[displays]==${VERSION}" \
-    && rm -rf /wheels /tmp/*
+    && uv pip install \
+        --find-links "https://wheels.home-assistant.io/musllinux/" \
+        setuptools \
+        "esphome[displays]==${VERSION}" \
+    && rm -rf /tmp/*
 
 COPY . /
 

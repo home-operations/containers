@@ -8,17 +8,16 @@ ARG ARCH=${TARGETARCH/arm64/aarch64}
 ARG VERSION
 
 ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    UV_SYSTEM_PYTHON=true \
-    UV_NO_CACHE=true \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
-    HOMEASSISTANT_WHEELS="https://wheels.home-assistant.io/musllinux/" \
-    HOME="/config" \
+    UV_SYSTEM_PYTHON=true
+
+ENV HOME="/config" \
     PYTHONUSERBASE="/usr/local" \
     VENV_FOLDER="/config/.venv"
 
@@ -82,13 +81,13 @@ RUN \
     && \
     HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
     && \
-    uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --only-binary=:all: --find-links "https://wheels.home-assistant.io/musllinux/" \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
     && \
-    uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --only-binary=:all: --find-links "https://wheels.home-assistant.io/musllinux/" \
         --requirement /tmp/requirements_all.txt \
     && \
-    uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --only-binary=:all: --find-links "https://wheels.home-assistant.io/musllinux/" \
         homeassistant=="${VERSION}" \
     && curl -fsSL -o /bin/go2rtc \
         "https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_${TARGETARCH}" \
