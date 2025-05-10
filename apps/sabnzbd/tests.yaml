@@ -14,14 +14,14 @@ file:
     exists: true
   /usr/bin/unrar:
     exists: true
-  /usr/local/bin/par2:
+  /usr/bin/par2:
     exists: true
-  /usr/local/bin/par2create:
-    exists: true
-    filetype: symlink
-  /usr/local/bin/par2repair:
+  /usr/bin/par2create:
     exists: true
     filetype: symlink
-  /usr/local/bin/par2verify:
+  /usr/bin/par2repair:
+    exists: true
+    filetype: symlink
+  /usr/bin/par2verify:
     exists: true
     filetype: symlink

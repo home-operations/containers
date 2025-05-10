@@ -30,6 +30,9 @@ RUN \
         p7zip \
         tzdata \
     && \
+    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
+        par2cmdline-turbo \
+    && \
     apk add --no-cache --virtual=.build-deps \
         build-base \
         cargo \
@@ -48,11 +51,6 @@ RUN \
 COPY . /
 
 COPY --from=ghcr.io/linuxserver/unrar:latest /usr/bin/unrar-alpine /usr/bin/unrar
-
-COPY --from=ghcr.io/linuxserver/sabnzbd:latest /usr/local/bin/par2 /usr/local/bin/par2
-RUN ln -s /usr/local/bin/par2 /usr/local/bin/par2create \
-    && ln -s /usr/local/bin/par2 /usr/local/bin/par2repair \
-    && ln -s /usr/local/bin/par2 /usr/local/bin/par2verify
 
 USER nobody:nogroup
 WORKDIR /config
