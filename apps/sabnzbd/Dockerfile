@@ -22,6 +22,7 @@ WORKDIR /app
 
 RUN \
     apk add --no-cache \
+        7zip \
         bash \
         ca-certificates \
         catatonit \
@@ -29,7 +30,6 @@ RUN \
         curl \
         jq \
         nano \
-        p7zip \
         tzdata \
     && \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
