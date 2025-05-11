@@ -1,4 +1,8 @@
 ---
+area/apps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - apps/**/*
 area/github:
   - changed-files:
       - any-glob-to-any-file:

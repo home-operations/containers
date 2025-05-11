@@ -1,5 +1,7 @@
 ---
 # Areas
+- name: area/apps
+  color: 0e8a16
 - name: area/github
   color: 0e8a16
 - name: area/renovate
