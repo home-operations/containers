@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=morpheus65535/bazarr
-  default = "v1.5.1"
+  default = "v1.5.2"
 }
 
 variable "SOURCE" {
