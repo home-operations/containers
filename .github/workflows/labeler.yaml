@@ -4,7 +4,6 @@ name: Labeler
 
 on:
   pull_request_target:
-    branches: ["main"]
 
 permissions:
   contents: read
