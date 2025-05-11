@@ -72,8 +72,23 @@ tasks:
       - for: { var: apps }
         cmd: |
           yq --inplace '. += [{"name": "app/{{.ITEM}}", "color": "0e8a16"}]' {{.ROOT_DIR}}/.github/labels.yaml
+      - for: { var: apps }
+        cmd: |
+          yq --inplace '. += {"app/{{.ITEM}}": [{"changed-files": [{"any-glob-to-any-file": "app/{{.ITEM}}/**"}]}]}' {{.ROOT_DIR}}/.github/labeler.yaml
     vars:
       apps:
         sh: ls --directory {{.ROOT_DIR}}/apps/*/ | xargs --max-args=1 basename
     preconditions:
       - sh: '[[ -z {{.CLI_FORCE}} ]]'
+
+# {
+#   "area/bootstrap": [
+#     {
+#       "changed-files": [
+#         {
+#           "any-glob-to-any-file": "bootstrap/**/*"
+#         }
+#       ]
+#     }
+#   ]
+# }
