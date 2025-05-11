@@ -5,7 +5,6 @@ name: Labeler
 on:
   pull_request_target:
     branches: ["main"]
-  workflow_dispatch:
 
 permissions:
   contents: read
