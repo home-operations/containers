@@ -66,8 +66,8 @@ tasks:
       - test -f {{.ROOT_DIR}}/.github/workflows/release.yaml
       - which gh
 
-  generate-app-labels:
-    desc: Generate app labels in the labels config file
+  generate-labels:
+    desc: Generate labels and labeler config
     cmds:
       - for: { var: apps }
         cmd: |

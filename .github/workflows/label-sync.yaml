@@ -30,8 +30,8 @@ jobs:
       - name: Setup Workflow Tools
         run: brew install go-task
 
-      - name: Generate App Labels
-        run: task generate-app-labels --force
+      - name: Generate Labels
+        run: task generate-labels --force
 
       - name: Sync Labels
         uses: EndBug/label-sync@52074158190acb45f3077f9099fea818aa43f97a # v2.3.3
