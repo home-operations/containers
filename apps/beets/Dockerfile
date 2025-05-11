@@ -8,7 +8,7 @@ ENV PRODUCTION=true
 ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install && npm run-script build
 
-FROM docker.io/library/python:3.13-alpine
+FROM docker.io/library/python:3.13-alpine3.21
 ARG VERSION
 
 WORKDIR /src

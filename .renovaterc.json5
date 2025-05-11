@@ -71,11 +71,25 @@
       allowedVersions: "/24\\.04/",
     },
     {
+      description: ["Allowed Alpine Version"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: ["/alpine/"],
+      allowedVersions: "/3\\.21/",
+    },
+    {
+      description: ["Allowed Python Version"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.13-alpine3\\.21/",
+    },
+    {
       description: ["Allowed Python Version for Bazarr"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/bazarr/Dockerfile"],
       matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
+      allowedVersions: "/3\\.12-alpine3\\.21//",
     },
   ],
 }
