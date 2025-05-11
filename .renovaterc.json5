@@ -81,12 +81,5 @@
       matchPackageNames: ["/python/"],
       allowedVersions: "/3\\.13-alpine3\\.21/",
     },
-    {
-      description: ["Allowed Python Version for Bazarr"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["apps/bazarr/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12-alpine3\\.21//",
-    },
   ],
 }
