@@ -114,7 +114,7 @@ jobs:
 
       - name: Add Include Directory to Build Context
         run: |
-          cp -r --update=none ./include/* ./apps/${{ inputs.app }}/
+          cp -r --update=none ./include/. ./apps/${{ inputs.app }}/
 
       - name: Build Application
         uses: docker/bake-action@76f9fa3a758507623da19f6092dc4089a7e61592 # v6.6.0
