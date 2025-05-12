@@ -105,7 +105,7 @@ args:
 
 ### Controlling the Default Umask in Our Images
 
-For most of our images, you can override the default `umask` setting of `0002` for services started within the containers using the optional `UMASK` environment variable.
+For most of our images, you can override the default `umask` setting of `0022` for services started within the containers using the optional `UMASK` environment variable.
 
 Keep in mind that `umask` is not the same as `chmod`. Instead of adding permissions, `umask` subtracts from the default permissions based on its value. For a deeper understanding, please refer to the [umask Wikipedia page](https://en.wikipedia.org/wiki/Umask) before reaching out for support.
 
@@ -113,13 +113,13 @@ Keep in mind that `umask` is not the same as `chmod`. Instead of adding permissi
 
 Here are some examples of how different `umask` values affect file and folder permissions:
 
-- **Umask `0002`** (default):
-  - Files: `0664`
-  - Folders: `0775`
-
-- **Umask `0022`**:
+- **Umask `0022`** (default):
   - Files: `0644`
   - Folders: `0755`
+
+- **Umask `0002`**:
+  - Files: `0664`
+  - Folders: `0775`
 
 ### Configuration Volume
 

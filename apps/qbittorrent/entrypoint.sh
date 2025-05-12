@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2086,SC2090
 
-#shellcheck disable=SC1091
 [[ -f /umask.sh ]] && source /umask.sh
 
 CONFIG_FILE="/config/qBittorrent/qBittorrent.conf"
