@@ -24,7 +24,7 @@ jobs:
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
     needs: ["prepare"]
-    name: Build ${{ matrix.app || 'Skipped' }}
+    name: Build ${{ matrix.app }}
     uses: ./.github/workflows/app-builder.yaml
     permissions:
       contents: read
