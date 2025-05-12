@@ -3,6 +3,7 @@ area/apps:
   - changed-files:
       - any-glob-to-any-file:
           - apps/**/*
+          - .dockerignore
 area/github:
   - changed-files:
       - any-glob-to-any-file:
