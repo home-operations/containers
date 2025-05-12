@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=nzbgetcom/nzbget versioning=loose
-  default = "24.8"
+  default = "25.0"
 }
 
 variable "SOURCE" {
