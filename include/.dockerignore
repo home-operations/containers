@@ -5,3 +5,4 @@
 !defaults/
 !scripts/
 !entrypoint.sh
+!umask.sh
