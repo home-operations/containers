@@ -26,8 +26,10 @@ tasks:
 
   local-build-*:
     desc: Build and Test an app via Docker Buildx
-    dir: '{{.ROOT_DIR}}/apps/{{.APP}}'
+    dir: '{{.WORK_DIR}}'
     cmds:
+      - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/include/ {{.WORK_DIR}}
+      - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/apps/{{.APP}}/ {{.WORK_DIR}}
       - docker buildx bake --no-cache --metadata-file docker-bake.json --load
       - |
         IMAGE=$(jq --raw-output '."image-local"."image.name"' docker-bake.json)
@@ -39,7 +41,7 @@ tasks:
                 {{.BIN_DIR}}/dgoss/dgoss run "${IMAGE}"
                 ;;
         esac
-      - defer: rm -f docker-bake.json
+      - defer: rm -rf {{.WORK_DIR}}
     env:
       GOSS_FILE: tests.yaml
       GOSS_OPTS: --retry-timeout 60s --sleep 1s
@@ -48,6 +50,8 @@ tasks:
       APP: '{{index .MATCH 0}}'
       TEST_TOOL:
         sh: yq --exit-status '.schemaVersion' {{.ROOT_DIR}}/apps/{{.APP}}/tests.yaml &>/dev/null && echo "cst" || echo "goss"
+      WORK_DIR:
+        sh: mktemp -d
     preconditions:
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/docker-bake.hcl
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/tests.yaml
