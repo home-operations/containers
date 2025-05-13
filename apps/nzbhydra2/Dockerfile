@@ -27,6 +27,7 @@ RUN \
     && curl -fsSL -o /defaults/nzbhydra.yml \
       "https://raw.githubusercontent.com/theotherp/nzbhydra2/${VERSION}/core/src/main/resources/config/baseConfig.yml" \
     && sed -i 's/mapIpToHost: true/mapIpToHost: false/' /defaults/nzbhydra.yml \
+    && sed -i 's/checkOpenPort: true/checkOpenPort: false/' /defaults/nzbhydra.yml \
     && chown -R root:root /app && chmod -R 755 /app \
     && rm -rf /tmp/*
 
