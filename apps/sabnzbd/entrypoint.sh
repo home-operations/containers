@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2086
 
 if [[ ! -f "/config/sabnzbd.ini" ]]; then
     printf "Copying over default configuration ...\n"

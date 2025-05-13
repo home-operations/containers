@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2086,SC2155
 
 export PLEX_MEDIA_SERVER_INFO_MODEL=$(uname -m)
 export PLEX_MEDIA_SERVER_INFO_PLATFORM_VERSION=$(uname -r)
