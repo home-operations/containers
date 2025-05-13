@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2086
 
 unset UV_SYSTEM_PYTHON
 
