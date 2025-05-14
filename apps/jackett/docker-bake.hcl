@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=Jackett/Jackett
-  default = "v0.22.1893"
+  default = "v0.22.1895"
 }
 
 variable "SOURCE" {
