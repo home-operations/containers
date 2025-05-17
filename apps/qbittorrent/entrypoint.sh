@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[[ -f /umask.sh ]] && source /umask.sh
+
 CONFIG_FILE="/config/qBittorrent/qBittorrent.conf"
 LOG_FILE="/config/qBittorrent/logs/qbittorrent.log"
 
