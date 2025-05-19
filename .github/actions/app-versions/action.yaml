@@ -51,7 +51,7 @@ runs:
               return `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
           }
 
-          const upstreamVersion = '${{ inputs.upstream-version }}';'
+          const upstreamVersion = '${{ inputs.upstream-version }}';
           const strictSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
 
           const parsedVersion = strictSemverRegex.exec(upstreamVersion);
