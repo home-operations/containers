@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=custom.plex depName=plex versioning=loose
-  default = "1.41.6.9685-d301f511a"
+  default = "1.41.7.9799-5bce000f7"
 }
 
 variable "SOURCE" {
