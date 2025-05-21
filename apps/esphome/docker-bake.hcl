@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=pypi depName=esphome
-  default = "2025.4.2"
+  default = "2025.5.0"
 }
 
 variable "SOURCE" {
