@@ -32,7 +32,7 @@ tasks:
       - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/apps/{{.APP}}/ {{.WORK_DIR}}
       - docker buildx bake --no-cache --metadata-file docker-bake.json --load
       - |
-        IMAGE=$(jq --raw-output '."image-local"."image.name" // ."image-local"."containerimage.config.digest"' docker-bake.json)
+        IMAGE=$(jq --raw-output '."image-local"."image.name"' docker-bake.json)
         case "{{.TEST_TOOL}}" in
             "cst")
                 container-structure-test test --image "${IMAGE}" --config tests.yaml
@@ -55,11 +55,11 @@ tasks:
       WORK_DIR:
         sh: mktemp -d
     preconditions:
+      - test -f {{.BIN_DIR}}/dgoss/dgoss
+      - test -f {{.BIN_DIR}}/goss/goss
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/docker-bake.hcl
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/tests.yaml
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/Dockerfile
-      - test -f {{.BIN_DIR}}/goss/goss
-      - test -f {{.BIN_DIR}}/dgoss/dgoss
       - which container-structure-test docker gh jq yq
 
   remote-build-*:
