@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "whisparr"
+}
+
 variable "VERSION" {
   // renovate: datasource=custom.servarr-nightly depName=whisparr versioning=loose
   default = "2.0.0.987"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

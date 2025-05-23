@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "irqbalance"
+}
+
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_3_21/irqbalance
   default = "1.9.4-r1"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

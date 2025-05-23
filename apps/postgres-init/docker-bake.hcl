@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "postgres-init"
+}
+
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_3_21/postgresql17-client versioning=loose
   default = "17.5-r0"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

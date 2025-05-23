@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "nzbget"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=nzbgetcom/nzbget versioning=loose
   default = "25.0"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

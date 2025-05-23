@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "atuin-server-sqlite"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-tags depName=conradludgate/atuin-server-sqlite/tags
   default = "v18.4.0"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

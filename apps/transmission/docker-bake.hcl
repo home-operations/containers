@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "transmission"
+}
+
 variable "VERSION" {
   // NOTE: Alpine version is tied to the version of the base image in the Dockerfile
   // renovate: datasource=repology depName=alpine_3_21/transmission-daemon versioning=loose
@@ -27,6 +31,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

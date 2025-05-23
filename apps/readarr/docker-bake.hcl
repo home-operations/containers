@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "readarr"
+}
+
 variable "VERSION" {
   // renovate: datasource=custom.servarr-develop depName=readarr versioning=loose
   default = "0.4.16.2793"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

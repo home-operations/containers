@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "opentofu-runner"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=opentofu/opentofu
   default = "1.9.1"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

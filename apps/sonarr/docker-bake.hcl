@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "sonarr"
+}
+
 variable "VERSION" {
   // renovate: datasource=custom.sonarr-develop depName=sonarr versioning=loose
   default = "4.0.14.2938"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {
