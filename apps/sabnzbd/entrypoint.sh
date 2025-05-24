@@ -15,6 +15,7 @@ fi
 [[ -n "${SABNZBD__API_KEY}" ]] && sed -i -e "s/^api_key *=.*$/api_key = ${SABNZBD__API_KEY}/g" /config/sabnzbd.ini
 [[ -n "${SABNZBD__NZB_KEY}" ]] && sed -i -e "s/^nzb_key *=.*$/nzb_key = ${SABNZBD__NZB_KEY}/g" /config/sabnzbd.ini
 [[ -n "${SABNZBD__HOST_WHITELIST_ENTRIES}" ]] && sed -i -e "s/^host_whitelist *=.*$/host_whitelist = ${HOSTNAME:-sabnzbd}, ${SABNZBD__HOST_WHITELIST_ENTRIES}/g" /config/sabnzbd.ini
+[[ -n "${SABNZBD__LOCAL_RANGES_ENTRIES}" ]] && sed -i -e "s/^local_ranges *=.*$/local_ranges = ${SABNZBD__LOCAL_RANGES_ENTRIES}/g" /config/sabnzbd.ini
 
 exec \
     /usr/local/bin/python \
