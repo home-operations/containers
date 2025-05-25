@@ -1,5 +1,5 @@
 [tools]
-"aqua:cli/cli" = "2.72.0"
+"aqua:cli/cli" = "2.73.0"
 "aqua:go-task/task" = "3.43.3"
 "aqua:GoogleContainerTools/container-structure-test" = "1.19.3"
 "aqua:jqlang/jq" = "1.7.1"
