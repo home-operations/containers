@@ -15,8 +15,8 @@ on:
         required: true
 
 jobs:
-  prepare:
-    name: Prepare
+  plan:
+    name: Plan
     runs-on: ubuntu-latest
     outputs:
       app-exists: ${{ steps.app-exists.outputs.exists }}
@@ -71,11 +71,11 @@ jobs:
 
   build:
     name: Build (${{ matrix.platform }})
-    needs: ["prepare"]
+    needs: ["plan"]
     strategy:
       fail-fast: false
       matrix:
-        platform: ${{ fromJson(needs.prepare.outputs.platforms) }}
+        platform: ${{ fromJson(needs.plan.outputs.platforms) }}
     runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
@@ -163,9 +163,9 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  merge:
+  release:
     if: ${{ inputs.release }}
-    name: Merge
+    name: Release
     runs-on: ubuntu-latest
     needs: ["build"]
     outputs:
@@ -217,7 +217,7 @@ jobs:
   attest:
     if: ${{ inputs.release }}
     name: Attest
-    needs: ["merge"]
+    needs: ["release"]
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
@@ -231,25 +231,25 @@ jobs:
         uses: anchore/sbom-action@e11c554f704a0b820cbf8c51673f6945e0731532 # v0.20.0
         with:
           dependency-snapshot: true
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
 
       - name: Attestation
         uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
         with:
           push-to-registry: true
           subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
-          subject-digest: ${{ needs.merge.outputs.digest }}
+          subject-digest: ${{ needs.release.outputs.digest }}
 
       - name: Verify Attestation
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
 
-  release:
-    if: ${{ inputs.release && needs.prepare.outputs.app-exists != 'true' }}
-    name: Release
-    needs: ["prepare", "attest"]
+  announce:
+    if: ${{ inputs.release && needs.plan.outputs.app-exists != 'true' }}
+    name: Announce
+    needs: ["plan", "attest"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -292,7 +292,7 @@ jobs:
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["prepare", "build", "merge", "attest", "release"]
+    needs: ["plan", "build", "release", "attest", "announce"]
     name: Notify
     runs-on: ubuntu-latest
     steps:

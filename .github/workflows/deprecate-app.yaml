@@ -22,8 +22,8 @@ permissions:
   contents: read
 
 jobs:
-  deprecate:
-    name: Deprecate (${{ inputs.app }})
+  plan:
+    name: Plan (${{ inputs.app }})
     runs-on: ubuntu-latest
     outputs:
       pull-number: ${{ steps.pr.outputs.pull-request-number }}
@@ -51,23 +51,18 @@ jobs:
           body: |
             **Reason**: ${{ inputs.reason }}
           branch: deprecate/${{ inputs.app }}
-          commit-message: "feat: deprecate ${{ inputs.app }}"
+          commit-message: "release(${{ inputs.app }})!: deprecate container image"
           sign-commits: true
           signoff: true
-          title: "feat: deprecate ${{ inputs.app }}"
+          title: "release(${{ inputs.app }})!: deprecate container image"
           token: ${{ steps.app-token.outputs.token }}
 
-  release:
+  merge:
     if: ${{ inputs.release }}
-    name: Release (${{ inputs.app }})
-    needs: ["deprecate"]
+    name: Merge (${{ inputs.app }})
+    needs: ["plan"]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-
       - name: Generate Token
         uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
         id: app-token
@@ -83,9 +78,27 @@ jobs:
             await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: ${{ needs.deprecate.outputs.pull-number }},
+              pull_number: ${{ needs.plan.outputs.pull-number }},
               merge_method: 'squash',
             });
+
+  announce:
+    if: ${{ inputs.release }}
+    name: Announce (${{ inputs.app }})
+    needs: ["merge"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Generate Token
+        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Get Release Tag
         uses: ./.github/actions/release-tag
