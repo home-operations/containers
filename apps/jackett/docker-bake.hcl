@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=Jackett/Jackett
-  default = "v0.22.1960"
+  default = "v0.22.1967"
 }
 
 variable "SOURCE" {
