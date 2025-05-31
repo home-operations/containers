@@ -69,7 +69,7 @@
       matchDatasources: ["docker"],
       matchFileNames: ["**/Dockerfile"],
       matchPackageNames: ["/alpine/"],
-      allowedVersions: "/3\\.21/",
+      allowedVersions: "/3\\.22/",
     },
     {
       description: ["Allowed Python Version for Base Images"],
