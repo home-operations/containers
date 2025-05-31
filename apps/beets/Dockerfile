@@ -8,7 +8,7 @@ ENV PRODUCTION=true
 ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install && npm run-script build
 
-FROM docker.io/library/python:3.13-alpine3.21
+FROM docker.io/library/python:3.13-alpine3.22
 ARG VERSION
 
 WORKDIR /src
@@ -65,7 +65,7 @@ RUN \
     pip install uv \
     && \
     uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
+        --find-links "https://wheel-index.linuxserver.io/alpine-3.22/" \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
         git+https://github.com/sentriz/betanin.git \
         beetcamp \

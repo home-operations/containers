@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine3.21
+FROM docker.io/library/python:3.13-alpine3.22
 ARG VENDOR
 ARG VERSION
 
@@ -55,7 +55,7 @@ RUN \
     && sed -i '/Pillow>/s/ --only-binary=Pillow//; /Pillow>/a --only-binary=Pillow' /app/bin/requirements.txt \
     && pip install uv \
     && uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
+        --find-links "https://wheel-index.linuxserver.io/alpine-3.22/" \
         --requirement /app/bin/requirements.txt \
         --requirement /app/bin/postgres-requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \

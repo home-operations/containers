@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # NOTE: Alpine version is tied to the version in the Renovate annotation in docker-bake.hcl
-FROM docker.io/library/python:3.13-alpine3.21
+FROM docker.io/library/python:3.13-alpine3.22
 ARG TARGETARCH
 ARG MINIJINJA_ARCH=${TARGETARCH/arm64/aarch64}
 ARG MINIJINJA_ARCH=${MINIJINJA_ARCH/amd64/x86_64}
