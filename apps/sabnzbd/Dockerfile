@@ -12,7 +12,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 ENV SABNZBD__ADDRESS="[::]" \
     SABNZBD__PORT="8080"
@@ -46,9 +47,7 @@ RUN \
         | tar xzf - -C /app --strip-components=1 \
     && python tools/make_mo.py \
     && pip install uv \
-    && uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.22/" \
-        --requirement /app/requirements.txt \
+    && uv pip install --requirement /app/requirements.txt \
     && chown -R root:root /app && chmod -R 755 /app \
     && pip uninstall --yes uv && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*

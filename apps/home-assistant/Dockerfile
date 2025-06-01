@@ -16,7 +16,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheels.home-assistant.io/musllinux-index/"
 
 ENV HOME="/config" \
     PYTHONUSERBASE="/usr/local" \
@@ -82,14 +83,12 @@ RUN \
     && \
     HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
     && \
-    uv pip install --only-binary=:all: --find-links "https://wheels.home-assistant.io/musllinux/" \
+    uv pip install --only-binary=:all: \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
     && \
-    uv pip install --only-binary=:all: --find-links "https://wheels.home-assistant.io/musllinux/" \
-        --requirement /tmp/requirements_all.txt \
+    uv pip install --only-binary=:all: --requirement /tmp/requirements_all.txt \
     && \
-    uv pip install --only-binary=:all: --find-links "https://wheels.home-assistant.io/musllinux/" \
-        homeassistant=="${VERSION}" \
+    uv pip install --only-binary=:all: homeassistant=="${VERSION}" \
     && curl -fsSL -o /bin/go2rtc \
         "https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_${TARGETARCH}" \
     && chmod +x /bin/go2rtc \

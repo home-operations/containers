@@ -12,7 +12,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 ENV TAUTULLI_DOCKER="True" \
     TAUTULLI__PORT=8181
@@ -39,7 +40,6 @@ RUN \
         openssl-dev \
     && pip install uv \
     && uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.22/" \
         --requirement "https://raw.githubusercontent.com/Tautulli/tautulli-baseimage/python3/requirements.txt" \
     && mkdir -p /app \
     && curl -fsSL "https://github.com/Tautulli/Tautulli/archive/v${VERSION}.tar.gz" \

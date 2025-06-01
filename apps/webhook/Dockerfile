@@ -13,7 +13,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 ENV \
     WEBHOOK__PORT="9000" \
@@ -39,9 +40,7 @@ RUN \
         | tar xzf - -C /app/bin --strip-components=1 \
     && \
     pip install uv \
-    && uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.22/" \
-        "apprise>=1, <2" \
+    && uv pip install "apprise>=1, <2" \
     && chown -R root:root /app && chmod -R 755 /app \
     && pip uninstall --yes uv \
     && rm -rf /tmp/*

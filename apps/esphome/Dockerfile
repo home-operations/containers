@@ -12,7 +12,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheels.home-assistant.io/musllinux/"
 
 ENV \
     HOME="/config" \
@@ -31,7 +32,6 @@ RUN \
         git \
     && pip install uv \
     && uv pip install \
-        --find-links "https://wheels.home-assistant.io/musllinux/" \
         setuptools \
         "esphome[displays]==${VERSION}" \
     && rm -rf /tmp/*

@@ -12,7 +12,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 USER root
 WORKDIR /app
@@ -34,11 +35,7 @@ RUN \
     && \
     sh /tmp/nzbget.run --destdir /app \
     && pip install uv \
-    && uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.22/" \
-        apprise \
-        pynzb \
-        requests \
+    && uv pip install apprise pynzb requests \
     && chown -R root:root /app && chmod -R 755 /app \
     && pip uninstall --yes uv \
     && rm -rf /root/.cache /root/.cargo /tmp/*
