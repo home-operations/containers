@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=opentofu/opentofu
-  default = "1.10.0"
+  default = "1.10.1"
 }
 
 variable "SOURCE" {
