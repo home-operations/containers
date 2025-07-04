@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine3.22
+FROM docker.io/library/python:3.13
 ARG VERSION
 
 ENV \
@@ -25,15 +25,20 @@ USER root
 WORKDIR /app
 
 RUN \
-    apk add --no-cache \
-        build-base \
+    apt-get update \
+    && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
+        build-essential \
+        ca-certificates \
         catatonit \
-        gcompat \
         git \
     && pip install uv \
     && uv pip install \
         setuptools \
         "esphome[displays]==${VERSION}" \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get autoremove -y \
+    && apt-get clean \
     && rm -rf /tmp/*
 
 COPY . /
