@@ -23,6 +23,5 @@ exec \
         --browser 0 \
         --server ${SABNZBD__ADDRESS}:${SABNZBD__PORT} \
         --config-file /config/sabnzbd.ini \
-        --disable-file-log \
         --console \
         "$@"
