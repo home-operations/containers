@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=themepark-dev/theme.park
-  default = "1.21.0"
+  default = "1.21.1"
 }
 
 variable "SOURCE" {
