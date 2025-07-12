@@ -8,13 +8,13 @@ _An opinionated collection of container images_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/home-operations/containers?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/home-operations/containers?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/home-operations/containers/release.yaml?style=for-the-badge&label=Release)
+![GitHub Repo stars](https://img.shields.io/github/stars/stevewm/containers?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/stevewm/containers?style=for-the-badge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/stevewm/containers/release.yaml?style=for-the-badge&label=Release)
 
 </div>
 
-Welcome to our container images! If you are looking for a container, start by [browsing the GitHub Packages page for this repository's packages](https://github.com/orgs/home-operations/packages?repo_name=containers).
+Welcome to our container images! If you are looking for a container, start by [browsing the GitHub Packages page for this repository's packages](https://github.com/orgs/stevewm/packages?repo_name=containers).
 
 ## Mission Statement
 
@@ -30,10 +30,10 @@ Containers built here do not use immutable tags in the traditional sense, as see
 
 | Container | Immutable |
 |-----------------------|----|
-| `ghcr.io/home-operations/home-assistant:rolling` | ❌ |
-| `ghcr.io/home-operations/home-assistant:2025.5.1` | ❌ |
-| `ghcr.io/home-operations/home-assistant:rolling@sha256:8053...` | ✅ |
-| `ghcr.io/home-operations/home-assistant:2025.5.1@sha256:8053...` | ✅ |
+| `ghcr.io/stevewm/vintage-story:rolling` | ❌ |
+| `ghcr.io/stevewm/vintage-story:1.20.12` | ❌ |
+| `ghcr.io/stevewm/vintage-story:rolling@sha256:8053...` | ✅ |
+| `ghcr.io/stevewm/vintage-story:1.20.12sha256:8053...` | ✅ |
 
 _If pinning an image to the `sha256` digest, tools like [Renovate](https://github.com/renovatebot/renovate) can update containers based on digest or version changes._
 
@@ -45,9 +45,9 @@ By default the majority of our containers run as a non-root user (`65534:65534`)
 
 ```yaml
 services:
-  home-assistant:
-    image: ghcr.io/home-operations/home-assistant:2025.5.1
-    container_name: home-assistant
+  vintage-story:
+    image: ghcr.io/stevewm/vintage-story:1.20.12
+    container_name: vintage-story
     user: 1000:1000 # The data volume permissions must match this user:group
     read_only: true # May require mounting in additional dirs as tmpfs
     tmpfs:
@@ -61,7 +61,7 @@ services:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: home-assistant
+  name: vintage-story
 # ...
 spec:
   # ...
@@ -69,8 +69,8 @@ spec:
     # ...
     spec:
       containers:
-        - name: home-assistant
-          image: ghcr.io/home-operations/home-assistant:2025.5.1
+        - name: vintage-story
+          image: ghcr.io/stevewm/vintage-story:1.20.12
           securityContext: # May require mounting in additional dirs as emptyDir
             allowPrivilegeEscalation: false
             capabilities:
@@ -114,7 +114,7 @@ These container images are signed using the [attest-build-provenance](https://gi
 To verify that the image was built by GitHub CI, use the following command:
 
 ```sh
-gh attestation verify --repo home-operations/containers oci://ghcr.io/home-operations/${APP}:${TAG}
+gh attestation verify --repo stevewm/containers oci://ghcr.io/stevewm/${APP}:${TAG}
 ```
 
 or by using [cosign](https://github.com/sigstore/cosign):
@@ -122,8 +122,8 @@ or by using [cosign](https://github.com/sigstore/cosign):
 ```sh
 cosign verify-attestation --new-bundle-format --type slsaprovenance1 \
     --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-    --certificate-identity-regexp "^https://github.com/home-operations/containers/.github/workflows/app-builder.yaml@refs/heads/main" \
-    ghcr.io/home-operations/${APP}:${TAG}
+    --certificate-identity-regexp "^https://github.com/stevewm/containers/.github/workflows/app-builder.yaml@refs/heads/main" \
+    ghcr.io/stevewm/${APP}:${TAG}
 ```
 
 ### Eschewed Features
@@ -160,7 +160,7 @@ Containers in this repository may be deprecated for the following reasons:
 Forking this repository is straightforward. Keep the following in mind:
 
 1. **Renovate Bot**: Set up a GitHub Bot for Renovate by following the instructions [here](https://github.com/renovatebot/github-action).
-2. **Renovate Configuration**: Configuration files are located in the [`.github`](https://github.com/home-operations/.github) and [renovate-config](https://github.com/home-operations/renovate-config) repositories.
+2. **Renovate Configuration**: Configuration files are located in the [`.github`](https://github.com/stevewm/.github) and [renovate-config](https://github.com/stevewm/renovate-config) repositories.
 3. **Lowercase Naming**: Ensure your GitHub username/organization and repository names are entirely lowercase to comply with GHCR requirements. Rename them or update workflows as needed.
 
 ## Credits

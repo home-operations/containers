@@ -1,3 +1,4 @@
 .bin
 .private
+.DS_Store
 docker-bake.json

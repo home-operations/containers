@@ -1,16 +1,16 @@
 target "docker-metadata-action" {}
 
 variable "APP" {
-  default = "jackett"
+  default = "vintagestory"
 }
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=Jackett/Jackett
-  default = "v0.22.2024"
+  // renovate: datasource=custom.vintagestory depName=vintagestory
+  default = "1.21.12"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/Jackett/Jackett"
+  default = "https://vintagestory.at/"
 }
 
 group "default" {
@@ -37,6 +37,5 @@ target "image-all" {
   inherits = ["image"]
   platforms = [
     "linux/amd64",
-    "linux/arm64"
   ]
 }
