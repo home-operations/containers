@@ -83,7 +83,7 @@
       matchDatasources: ["docker"],
       matchFileNames: ["apps/nzbhydra2/Dockerfile"],
       matchPackageNames: ["/amazoncorretto/"],
-      allowedVersions: "/17-alpine3\\.21/",
+      allowedVersions: "/17-alpine3\\.22/",
     },
   ],
 }
