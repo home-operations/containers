@@ -44,7 +44,7 @@ RUN \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /tmp/*
+    && rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/* /usr/src/*
 
 COPY . /
 
