@@ -28,10 +28,15 @@ RUN \
     apt-get update \
     && \
     apt-get install -y --no-install-recommends --no-install-suggests \
-        build-essential \
         ca-certificates \
         catatonit \
+        curl \
         git \
+        iputils-ping \
+        libcairo2 \
+        libmagic1 \
+        openssh-client \
+        patch \
     && pip install uv \
     && uv pip install \
         setuptools \
