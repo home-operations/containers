@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=autobrr/tqm
-  default = "v1.15.0"
+  default = "v1.16.0"
 }
 
 variable "SOURCE" {
