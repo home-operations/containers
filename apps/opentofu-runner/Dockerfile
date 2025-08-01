@@ -9,5 +9,5 @@ RUN apk add --no-cache curl \
 
 FROM ghcr.io/flux-iac/tf-runner:v0.16.0-rc.5
 USER root
-COPY --from=builder --chown=65532:65532 --chmod=755 /tmp/tofu /usr/local/bin/terraform
+COPY --link --from=builder --chown=65532:65532 --chmod=755 /tmp/tofu /usr/local/bin/terraform
 USER 65532:65532

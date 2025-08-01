@@ -16,8 +16,8 @@ RUN \
 
 FROM ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine
 ENV NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE=1
-COPY --from=builder --chown=nginx:nginx /tmp/index.html /usr/share/nginx/html/
-COPY --from=builder --chown=nginx:nginx /tmp/css /usr/share/nginx/html/css/
-COPY --from=builder --chown=nginx:nginx /tmp/resources /usr/share/nginx/html/resources/
+COPY --link --from=builder --chown=nginx:nginx /tmp/index.html /usr/share/nginx/html/
+COPY --link --from=builder --chown=nginx:nginx /tmp/css /usr/share/nginx/html/css/
+COPY --link --from=builder --chown=nginx:nginx /tmp/resources /usr/share/nginx/html/resources/
 USER nginx
 WORKDIR /usr/share/nginx/html

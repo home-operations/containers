@@ -12,6 +12,6 @@ RUN npm install -g corepack@latest \
 
 FROM ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine
 ENV NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE=1
-COPY --from=builder --chown=nginx:nginx /tmp/dist/ /usr/share/nginx/html
+COPY --link --from=builder --chown=nginx:nginx /tmp/dist/ /usr/share/nginx/html
 USER nginx
 WORKDIR /usr/share/nginx/html

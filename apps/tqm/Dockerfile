@@ -16,5 +16,5 @@ RUN apk add --no-cache git \
         -o tqm ./cmd/tqm
 
 FROM scratch
-COPY --from=builder /app/tqm /tqm
+COPY --link --from=builder /app/tqm /tqm
 ENTRYPOINT ["/tqm"]
