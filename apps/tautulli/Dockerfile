@@ -15,8 +15,7 @@ ENV \
     UV_SYSTEM_PYTHON=true \
     UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
-ENV TAUTULLI_DOCKER="True" \
-    TAUTULLI__PORT=8181
+ENV TAUTULLI_DOCKER="True"
 
 USER root
 WORKDIR /app
