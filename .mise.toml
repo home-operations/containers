@@ -1,9 +1,9 @@
 [tools]
 "aqua:cli/cli" = "2.76.2"
 "aqua:go-task/task" = "3.44.1"
-"aqua:GoogleContainerTools/container-structure-test" = "1.19.3"
 "aqua:jqlang/jq" = "1.8.0"
 "aqua:mikefarah/yq" = "4.47.1"
+container-structure-test = "latest"
 
 [hooks]
 postinstall = [

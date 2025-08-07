@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+process:
+  bw:
+    running: true
+port:
+  tcp:8087:
+    listening: true
+http:
+  http://localhost:8087/status:
+    status: 200
+    timeout: 30000
+file:
+  /usr/sbin/bw:
+    exists: true
+    mode: "0755"
+  /entrypoint.sh:
+    exists: true
+    mode: "0755"
+  /healthcheck.sh:
+    exists: true
+    mode: "0755"
+command:
+  bw --version:
+    exit-status: 0
+    timeout: 10000
