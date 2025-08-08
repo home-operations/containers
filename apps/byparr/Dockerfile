@@ -16,7 +16,7 @@ ENV \
 
 ENV \
     GITHUB_BUILD="false" \
-    VERSION=${VERSION}\
+    VERSION=${VERSION} \
     DISPLAY=:0
 
 USER root
