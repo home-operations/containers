@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine3.22
+FROM docker.io/library/python:3.13-slim
 ARG VERSION
 
 ENV \
@@ -23,35 +23,27 @@ USER root
 WORKDIR /app
 
 RUN \
-    apk add --no-cache \
-        bash \
+    apt-get update \
+    && \
+    apt-get install -y --no-install-recommends --no-install-suggests \
         ca-certificates \
         catatonit \
-        coreutils \
+        chromium \
+        chromium-driver \
         curl \
-        jq \
-        nano \
-        tzdata \
+        scrot \
         xauth \
         xvfb \
-        scrot \
-        chromium \
-        chromium-chromedriver \
-    && \
-    apk add --no-cache --virtual=.build-deps \
-        build-base \
-        libffi-dev \
-        openssl-dev \
-        musl-dev \
-        git \
     && \
     git clone --single-branch --branch "${VERSION}" https://github.com/ThePhaseless/Byparr.git . \
     && pip install uv \
     && uv sync \
     && cd .venv/lib/*/site-packages/seleniumbase/drivers && rm -f uc_driver && ln -s /usr/bin/chromedriver uc_driver \
     && chown -R root:root /app && chmod -R 755 /app \
-    && apk del --purge .build-deps \
-    && rm -rf /root/.cache /root/.cargo /tmp/*
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /tmp/* /var/{cache,log}/* /var/lib/apt/lists/* /usr/src/*
 
 COPY . /
 
