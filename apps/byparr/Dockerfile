@@ -22,6 +22,8 @@ ENV \
 USER root
 WORKDIR /app
 
+ADD https://github.com/ThePhaseless/Byparr.git#${VERSION} .
+
 RUN \
     apt-get update \
     && \
@@ -35,8 +37,7 @@ RUN \
         xauth \
         xvfb \
     && \
-    git clone --single-branch --branch "${VERSION}" https://github.com/ThePhaseless/Byparr.git . \
-    && pip install uv \
+    pip install uv \
     && uv sync \
     && cd .venv/lib/*/site-packages/seleniumbase/drivers && rm -f uc_driver && ln -s /usr/bin/chromedriver uc_driver \
     && chown -R root:root /app && chmod -R 755 /app \
