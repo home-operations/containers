@@ -27,7 +27,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Check For Exising Application
+      - name: Check For Existing Application
         uses: ./.github/actions/app-exists
         id: app-exists
         with:
