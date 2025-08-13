@@ -24,6 +24,9 @@ RUN \
         catatonit \
         curl \
         bash \
+        jq \
+        nano \
+        tzdata \
     && \
     mkdir -p /app/bin \
     && curl -fsSL "https://github.com/kopia/kopia/releases/download/${VERSION}/kopia-${VERSION#*v}-linux-${TARGETARCH}.tar.gz" \
