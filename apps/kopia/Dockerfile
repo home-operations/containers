@@ -9,6 +9,7 @@ ENV \
     KOPIA_CHECK_FOR_UPDATES=false \
     KOPIA_CONFIG_PATH=/config/repository.config \
     KOPIA_CACHE_DIRECTORY=/cache \
+    KOPIA_LOG_DIR=/logs \
     KOPIA_PERSIST_CREDENTIALS_ON_CONNECT=false
 
 ENV \
