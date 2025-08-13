@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "it-tools"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=CorentinTh/it-tools
   default = "v2024.10.22-7ca5933"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

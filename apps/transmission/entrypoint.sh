@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2086
 
 # Only template the config file if our custom env variables are present
 if env | grep -q "^TRANSMISSION__"; then

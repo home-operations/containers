@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "deluge"
+}
+
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_edge/deluge
-  default = "2.1.1-r10"
+  default = "2.2.0-r1"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

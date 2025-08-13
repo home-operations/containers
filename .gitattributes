@@ -2,6 +2,7 @@
 *.env linguist-detectable linguist-language=SHELL
 *.json linguist-detectable linguist-language=JSON
 *.json5 linguist-detectable linguist-language=JSON5
+*.hcl linguist-detectable linguist-language=HCL
 *.md linguist-detectable linguist-language=MARKDOWN
 *.sh linguist-detectable linguist-language=SHELL
 *.toml linguist-detectable linguist-language=TOML

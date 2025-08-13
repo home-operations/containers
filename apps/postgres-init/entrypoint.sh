@@ -3,6 +3,7 @@
 # This is most commonly set to the user 'postgres'
 export INIT_POSTGRES_SUPER_USER=${INIT_POSTGRES_SUPER_USER:-postgres}
 export INIT_POSTGRES_PORT=${INIT_POSTGRES_PORT:-5432}
+export INIT_POSTGRES_UTF8=${INIT_POSTGRES_UTF8:-"false"}
 
 if [[ -z "${INIT_POSTGRES_HOST}"       ||
       -z "${INIT_POSTGRES_SUPER_PASS}" ||
@@ -53,8 +54,13 @@ for dbname in ${INIT_POSTGRES_DBNAME}; do
             --command "SELECT 1 FROM pg_database WHERE datname = '${dbname}'"
     )
     if [[ -z "${database_exists}" ]]; then
-        printf "\e[1;32m%-6s\e[m\n" "Create Database ${dbname} ..."
-        createdb --owner "${INIT_POSTGRES_USER}" "${dbname}"
+        if [[ "${INIT_POSTGRES_UTF8}" == "true" ]]; then
+            printf "\e[1;32m%-6s\e[m\n" "Create Database ${dbname} with UTF8 encoding ..."
+            createdb --template template0 --encoding UTF8 --owner "${INIT_POSTGRES_USER}" "${dbname}" 
+        else
+            printf "\e[1;32m%-6s\e[m\n" "Create Database ${dbname} ..."
+            createdb --owner "${INIT_POSTGRES_USER}" "${dbname}" 
+        fi
         database_init_file="/initdb/${dbname}.sql"
         if [[ -f "${database_init_file}" ]]; then
             printf "\e[1;32m%-6s\e[m\n" "Initialize Database ..."

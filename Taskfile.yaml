@@ -14,21 +14,13 @@ tasks:
     cmd: task --list
     silent: true
 
-  init:
-    desc: Initialize the project
-    cmds:
-      - mkdir -p {{.BIN_DIR}}/{goss,dgoss}
-      - gh release download --repo goss-org/goss --skip-existing --pattern "*-linux-{{ARCH}}" --output {{.BIN_DIR}}/goss/goss
-      - gh release download --repo goss-org/goss --skip-existing --pattern "dgoss" --output {{.BIN_DIR}}/goss/dgoss
-      - chmod +x {{.BIN_DIR}}/goss/goss {{.BIN_DIR}}/dgoss/dgoss
-    preconditions:
-      - which gh
-
   local-build-*:
     desc: Build and Test an app via Docker Buildx
-    dir: '{{.ROOT_DIR}}/apps/{{.APP}}'
+    dir: '{{.WORK_DIR}}'
     cmds:
-      - docker buildx bake --metadata-file docker-bake.json --load
+      - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/include/ {{.WORK_DIR}}
+      - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/apps/{{.APP}}/ {{.WORK_DIR}}
+      - docker buildx bake --no-cache --metadata-file docker-bake.json --load
       - |
         IMAGE=$(jq --raw-output '."image-local"."image.name"' docker-bake.json)
         case "{{.TEST_TOOL}}" in
@@ -36,10 +28,12 @@ tasks:
                 container-structure-test test --image "${IMAGE}" --config tests.yaml
                 ;;
             "goss")
-                {{.ROOT_DIR}}/.bin/dgoss/dgoss run "${IMAGE}"
+                {{.BIN_DIR}}/goss/dgoss run "${IMAGE}"
                 ;;
         esac
-      - defer: rm -f docker-bake.json
+        echo "To run this image, use the following command:"
+        echo "docker run --rm -it ${IMAGE}"
+      - defer: rm -rf {{.WORK_DIR}}
     env:
       GOSS_FILE: tests.yaml
       GOSS_OPTS: --retry-timeout 60s --sleep 1s
@@ -48,7 +42,11 @@ tasks:
       APP: '{{index .MATCH 0}}'
       TEST_TOOL:
         sh: yq --exit-status '.schemaVersion' {{.ROOT_DIR}}/apps/{{.APP}}/tests.yaml &>/dev/null && echo "cst" || echo "goss"
+      WORK_DIR:
+        sh: mktemp -d
     preconditions:
+      - test -f {{.BIN_DIR}}/goss/dgoss
+      - test -f {{.BIN_DIR}}/goss/goss
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/docker-bake.hcl
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/tests.yaml
       - test -f {{.ROOT_DIR}}/apps/{{.APP}}/Dockerfile
@@ -66,12 +64,15 @@ tasks:
       - test -f {{.ROOT_DIR}}/.github/workflows/release.yaml
       - which gh
 
-  generate-app-labels:
-    desc: Generate app labels in the labels config file
+  generate-label-config:
+    desc: Generate labels and labeler config
     cmds:
       - for: { var: apps }
         cmd: |
-          yq --inplace '. += [{"name": "app/{{.ITEM}}", "color": "0e8a16"}]' {{.ROOT_DIR}}/.github/labels.yaml
+          yq --inplace '. += [{"name": "app/{{.ITEM}}", "color": "027fa0"}]' {{.ROOT_DIR}}/.github/labels.yaml
+      - for: { var: apps }
+        cmd: |
+          yq --inplace '. += {"app/{{.ITEM}}": [{"changed-files": [{"any-glob-to-any-file": ["apps/{{.ITEM}}/**"]}]}]}' {{.ROOT_DIR}}/.github/labeler.yaml
     vars:
       apps:
         sh: ls --directory {{.ROOT_DIR}}/apps/*/ | xargs --max-args=1 basename

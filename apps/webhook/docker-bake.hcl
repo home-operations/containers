@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "webhook"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=adnanh/webhook
   default = "2.8.2"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

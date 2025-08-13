@@ -1,6 +1,14 @@
 [tools]
-"aqua:cli/cli" = "2.70.0"
-"aqua:go-task/task" = "3.43.2"
+"aqua:cli/cli" = "2.76.2"
+"aqua:go-task/task" = "3.44.1"
 "aqua:GoogleContainerTools/container-structure-test" = "1.19.3"
-"aqua:jqlang/jq" = "1.7.1"
-"aqua:mikefarah/yq" = "4.45.1"
+"aqua:jqlang/jq" = "1.8.0"
+"aqua:mikefarah/yq" = "4.47.1"
+
+[hooks]
+postinstall = [
+  "mkdir -p {{config_root}}/.bin/goss",
+  "gh release download --repo goss-org/goss --skip-existing --pattern *-linux-amd64 --output {{config_root}}/.bin/goss/goss",
+  "gh release download --repo goss-org/goss --skip-existing --pattern dgoss --output {{config_root}}/.bin/goss/dgoss",
+  "chmod +x {{config_root}}/.bin/goss/{goss,dgoss}",
+]

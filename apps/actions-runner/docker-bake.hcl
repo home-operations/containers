@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "actions-runner"
+}
+
 variable "VERSION" {
   // renovate: datasource=docker depName=ghcr.io/actions/actions-runner
-  default = "2.323.0"
+  default = "2.327.1"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

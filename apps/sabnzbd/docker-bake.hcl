@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "sabnzbd"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=sabnzbd/sabnzbd
-  default = "4.5.1"
+  default = "4.5.2"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

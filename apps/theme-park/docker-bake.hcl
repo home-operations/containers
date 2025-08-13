@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "theme-park"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=themepark-dev/theme.park
-  default = "1.20.1"
+  default = "1.21.2"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

@@ -56,7 +56,7 @@ runs:
 
           const parsedVersion = strictSemverRegex.exec(upstreamVersion);
           const isValidSemver = parsedVersion !== null;
-          const parsedSemver = isValidSemver ? semver.coerce(parsedVersion[0]) : null;
+          const parsedSemver = isValidSemver ? semver.coerce(parsedVersion[0], {loose: true }) : null;
           const semanticVersion = isValidSemver ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}` : calver();
           const rawVersion = isValidSemver ? sanitize(upstreamVersion) : upstreamVersion;
 

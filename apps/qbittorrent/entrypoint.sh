@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#shellcheck disable=SC2086,SC2090
 
 CONFIG_FILE="/config/qBittorrent/qBittorrent.conf"
 LOG_FILE="/config/qBittorrent/logs/qbittorrent.log"

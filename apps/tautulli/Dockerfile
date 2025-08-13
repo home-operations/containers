@@ -1,19 +1,21 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine
+FROM docker.io/library/python:3.13-alpine3.22
 ARG VERSION
 
 ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1
+    UV_NO_CACHE=true \
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
-ENV TAUTULLI_DOCKER="True" \
-    TAUTULLI__PORT=8181
+ENV TAUTULLI_DOCKER="True"
 
 USER root
 WORKDIR /app
@@ -36,7 +38,7 @@ RUN \
         musl-dev \
         openssl-dev \
     && pip install uv \
-    && uv pip install --system \
+    && uv pip install \
         --requirement "https://raw.githubusercontent.com/Tautulli/tautulli-baseimage/python3/requirements.txt" \
     && mkdir -p /app \
     && curl -fsSL "https://github.com/Tautulli/Tautulli/archive/v${VERSION}.tar.gz" \

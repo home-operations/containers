@@ -5,9 +5,19 @@
     {
       customType: "regex",
       description: "Process Annotations in Docker Bake",
-      fileMatch: ["(^|/)docker-bake\\.hcl$"],
+      managerFilePatterns: ["/(^|/)docker-bake\\.hcl$/"],
       matchStrings: [
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\n.+ = \"(?<currentValue>[^\"]+)\"",
+      ],
+      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+      versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
+    },
+    {
+      customType: "regex",
+      description: "Process Annotations in Dockerfiles",
+      managerFilePatterns: ["/(^|/)Dockerfile$/"],
+      matchStrings: [
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\\n.+(:\\s|=)(&\\S+\\s)?(?<currentValue>\\S+)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
@@ -19,17 +29,17 @@
       format: "json",
       transformTemplates: ['{"releases":[{"version": qbittorrent}]}'],
     },
-    servarr: {
+    "servarr-develop": {
       defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/develop/changes?os=linux&runtime=netcore",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
-    lidarr: {
-      defaultRegistryUrlTemplate: "https://lidarr.servarr.com/v1/update/plugins/changes?os=linux&runtime=netcore",
+    "servarr-nightly": {
+      defaultRegistryUrlTemplate: "https://{{packageName}}.servarr.com/v1/update/nightly/changes?os=linux&runtime=netcore",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
     },
-    sonarr: {
+    "sonarr-develop": {
       defaultRegistryUrlTemplate: "https://services.sonarr.tv/v1/update/develop/changes?os=linux&runtime=netcore&version=4.0",
       format: "json",
       transformTemplates: ['{"releases":[{"version": $[0].version}]}'],
@@ -37,12 +47,20 @@
     plex: {
       defaultRegistryUrlTemplate: "https://plex.tv/api/downloads/5.json",
       format: "json",
-      transformTemplates: [
-        '{"releases":[{"version": computer.Linux.version}]}',
-      ],
+      transformTemplates: ['{"releases":[{"version": computer.Linux.version}]}'],
     },
   },
   packageRules: [
+    {
+      description: ["Release Rules for Application Updates"],
+      addLabels: ["app/{{parentDir}}"],
+      additionalBranchPrefix: "{{parentDir}}-",
+      commitMessageExtra: "( {{currentVersion}} → {{newVersion}} )",
+      commitMessageTopic: "{{depName}}",
+      matchFileNames: ["**/docker-bake.hcl", "**/Dockerfile"],
+      semanticCommitScope: "{{parentDir}}",
+      semanticCommitType: "release",
+    },
     {
       description: ["Auto-merge Application Updates"],
       matchFileNames: ["**/docker-bake.hcl"],
@@ -51,32 +69,31 @@
       ignoreTests: false,
     },
     {
-      description: ["Assign Application Labels"],
-      addLabels: ["app/{{parentDir}}"],
-      matchFileNames: [
-        "**/docker-bake.hcl",
-        "**/Dockerfile",
-      ],
-    },
-    {
-      description: ["Allowed Ubuntu Version"],
+      description: ["Allowed Ubuntu Version for Base Images"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
       allowedVersions: "/24\\.04/",
     },
     {
-      description: ["Allowed Python Version for Bazarr"],
+      description: ["Allowed Alpine Version for Base Images"],
       matchDatasources: ["docker"],
-      matchFileNames: ["apps/bazarr/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: ["/alpine/"],
+      allowedVersions: "/3\\.22/",
     },
     {
-      description: ["Allowed Python Version for Beets"],
+      description: ["Allowed Python Version for Base Images"],
       matchDatasources: ["docker"],
-      matchFileNames: ["apps/beets/Dockerfile"],
+      matchFileNames: ["**/Dockerfile"],
       matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.12/",
+      allowedVersions: "/3\\.13-alpine3\\.22/",
+    },
+    {
+      description: ["Allowed Java Version for NZBHydra2 Base Image"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/nzbhydra2/Dockerfile"],
+      matchPackageNames: ["/amazoncorretto/"],
+      allowedVersions: "/17-alpine3\\.22/",
     },
   ],
 }

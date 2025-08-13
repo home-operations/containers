@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "home-assistant"
+}
+
 variable "VERSION" {
   // renovate: datasource=pypi depName=homeassistant
-  default = "2025.4.4"
+  default = "2025.8.1"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

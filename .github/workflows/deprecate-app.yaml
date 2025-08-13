@@ -18,18 +18,23 @@ on:
         description: Create Release
         default: true
 
+permissions:
+  contents: read
+
 jobs:
-  deprecate:
-    name: Deprecate (${{ inputs.app }})
+  plan:
+    name: Plan (${{ inputs.app }})
     runs-on: ubuntu-latest
     outputs:
       pull-number: ${{ steps.pr.outputs.pull-request-number }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Generate Token
-        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        uses: actions/create-github-app-token@a8d616148505b5069dccd32f177bb87d7f39123b # v2.1.1
         id: app-token
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
@@ -46,23 +51,20 @@ jobs:
           body: |
             **Reason**: ${{ inputs.reason }}
           branch: deprecate/${{ inputs.app }}
-          commit-message: "feat: deprecate ${{ inputs.app }}"
+          commit-message: "release(${{ inputs.app }})!: deprecate container image"
           sign-commits: true
           signoff: true
-          title: "feat: deprecate ${{ inputs.app }}"
+          title: "release(${{ inputs.app }})!: deprecate container image"
           token: ${{ steps.app-token.outputs.token }}
 
-  release:
+  merge:
     if: ${{ inputs.release }}
-    name: Release (${{ inputs.app }})
-    needs: ["deprecate"]
+    name: Merge (${{ inputs.app }})
+    needs: ["plan"]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
       - name: Generate Token
-        uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+        uses: actions/create-github-app-token@a8d616148505b5069dccd32f177bb87d7f39123b # v2.1.1
         id: app-token
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
@@ -76,9 +78,27 @@ jobs:
             await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: ${{ needs.deprecate.outputs.pull-number }},
+              pull_number: ${{ needs.plan.outputs.pull-number }},
               merge_method: 'squash',
             });
+
+  announce:
+    if: ${{ inputs.release }}
+    name: Announce (${{ inputs.app }})
+    needs: ["merge"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Generate Token
+        uses: actions/create-github-app-token@a8d616148505b5069dccd32f177bb87d7f39123b # v2.1.1
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Get Release Tag
         uses: ./.github/actions/release-tag
@@ -87,7 +107,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Create Release
-        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
+        uses: ncipollo/release-action@bcfe5470707e8832e12347755757cec0eb3c22af # v1.18.0
         with:
           body: |
             > [!WARNING]

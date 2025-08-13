@@ -19,10 +19,8 @@ runs:
   steps:
     - name: Setup Actions Script Path
       shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
       run: |
-        echo "$GITHUB_ACTION_PATH" >> "$GITHUB_PATH"
+        echo "${{ github.action_path }}" >> $GITHUB_PATH
 
     - name: Setup Testing Tools
       shell: bash

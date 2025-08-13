@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "prowlarr"
+}
+
 variable "VERSION" {
-  // renovate: datasource=custom.servarr depName=prowlarr versioning=loose
-  default = "1.35.1.5034"
+  // renovate: datasource=custom.servarr-develop depName=prowlarr versioning=loose
+  default = "2.0.3.5130"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "beets"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=beetbox/beets
-  default = "v2.2.0"
+  default = "v2.3.1"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

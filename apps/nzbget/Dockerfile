@@ -1,13 +1,26 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine
+FROM docker.io/library/python:3.13-alpine3.22
 ARG VERSION
+
+ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_NO_CACHE=true \
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 USER root
 WORKDIR /app
 
 RUN \
     apk add --no-cache \
+        7zip \
         bash \
         ca-certificates \
         catatonit \
@@ -15,16 +28,17 @@ RUN \
         curl \
         jq \
         nano \
-        p7zip \
         tzdata \
     && \
     curl -fsSL -o /tmp/nzbget.run \
         "https://github.com/nzbgetcom/nzbget/releases/download/v${VERSION}/nzbget-${VERSION}-bin-linux.run" \
     && \
     sh /tmp/nzbget.run --destdir /app \
-    && chown -R root:root /app \
-    && chmod -R 755 /app \
-    && rm -rf /tmp/*
+    && pip install uv \
+    && uv pip install apprise pynzb requests \
+    && chown -R root:root /app && chmod -R 755 /app \
+    && pip uninstall --yes uv \
+    && rm -rf /root/.cache /root/.cargo /tmp/*
 
 COPY . /
 

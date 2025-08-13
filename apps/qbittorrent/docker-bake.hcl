@@ -1,8 +1,12 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "qbittorrent"
+}
+
 variable "VERSION" {
   // renovate: datasource=custom.qbittorrent depName=qbittorrent
-  default = "5.1.0"
+  default = "5.1.2"
 }
 
 variable "SOURCE" {
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

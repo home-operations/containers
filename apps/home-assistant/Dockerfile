@@ -2,23 +2,24 @@
 
 ARG TARGETARCH
 ARG ARCH=${TARGETARCH/arm64/aarch64}
-FROM ghcr.io/home-assistant/${ARCH}-base-python:3.13-alpine3.21
+FROM ghcr.io/home-assistant/${ARCH}-base-python:3.13-alpine3.22
 ARG TARGETARCH
 ARG ARCH=${TARGETARCH/arm64/aarch64}
 ARG VERSION
 
 ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    UV_SYSTEM_PYTHON=true \
     UV_NO_CACHE=true \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
-    HOMEASSISTANT_WHEELS="https://wheels.home-assistant.io/musllinux/" \
-    HOME="/config" \
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheels.home-assistant.io/musllinux-index/"
+
+ENV HOME="/config" \
     PYTHONUSERBASE="/usr/local" \
     VENV_FOLDER="/config/.venv"
 
@@ -82,14 +83,12 @@ RUN \
     && \
     HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
     && \
-    uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
+    uv pip install --only-binary=:all: \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
     && \
-    uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
-        --requirement /tmp/requirements_all.txt \
+    uv pip install --only-binary=:all: --requirement /tmp/requirements_all.txt \
     && \
-    uv pip install --only-binary=:all: --find-links "${HOMEASSISTANT_WHEELS}" \
-        homeassistant=="${VERSION}" \
+    uv pip install --only-binary=:all: homeassistant=="${VERSION}" \
     && curl -fsSL -o /bin/go2rtc \
         "https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_${TARGETARCH}" \
     && chmod +x /bin/go2rtc \

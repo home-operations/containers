@@ -13,7 +13,6 @@ if [[ ! -f "${CONFIG_FILE}" ]]; then
         "${CONFIG_FILE}"
 fi
 
-#shellcheck disable=SC2086
 exec \
     /app/nzbget \
         --server \
