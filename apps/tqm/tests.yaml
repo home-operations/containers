@@ -2,5 +2,5 @@
 schemaVersion: "2.0.0"
 fileExistenceTests:
   - name: tqm
-    path: /tqm
+    path: /app/bin/tqm
     shouldExist: true

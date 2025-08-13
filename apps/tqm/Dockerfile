@@ -1,20 +1,31 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/golang:1.24-alpine AS builder
+FROM docker.io/library/alpine:3.22
+ARG TARGETARCH
 ARG VERSION
 
 USER root
-WORKDIR /app
 
-RUN apk add --no-cache git \
-    && git clone --single-branch --branch "${VERSION}" https://github.com/autobrr/tqm.git . \
-    && go mod download \
+RUN \
+    apk add --no-cache \
+        ca-certificates \
+        catatonit \
+        curl \
+        bash \
+        jq \
+        nano \
+        tzdata \
     && \
-    CGO_ENABLED=0 go build \
-        -trimpath \
-        -ldflags "-s -w -X github.com/autobrr/tqm/runtime.Version=${VERSION}" \
-        -o tqm ./cmd/tqm
+    mkdir -p /app/bin \
+    && curl -fsSL "https://github.com/autobrr/tqm/releases/download/${VERSION}/tqm_${VERSION#*v}_linux_${TARGETARCH}.tar.gz" \
+        | tar xzf - -C /app/bin \
+    && chown -R root:root /app && chmod -R 755 /app \
+    && rm -rf /tmp/*
 
-FROM scratch
-COPY --from=builder /app/tqm /tqm
-ENTRYPOINT ["/tqm"]
+COPY . /
+
+USER nobody:nogroup
+WORKDIR /config
+VOLUME ["/config"]
+
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
