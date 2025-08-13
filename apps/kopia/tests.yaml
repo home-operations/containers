@@ -4,5 +4,5 @@ process:
   kopia:
     running: true
 file:
-  /usr/bin/kopia:
+  /app/bin/kopia:
     exists: true
