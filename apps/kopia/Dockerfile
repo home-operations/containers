@@ -27,11 +27,8 @@ RUN \
         jq \
         nano \
         tzdata \
-    && \
-    mkdir -p /app/bin \
     && curl -fsSL "https://github.com/kopia/kopia/releases/download/${VERSION}/kopia-${VERSION#*v}-linux-${TARGETARCH}.tar.gz" \
-        | tar xzf - -C /app/bin --strip-components 1 \
-    && chown -R root:root /app && chmod -R 755 /app \
+        | tar xzf - -C /usr/local/bin --strip-components 1 \
     && rm -rf /tmp/*
 
 COPY . /
