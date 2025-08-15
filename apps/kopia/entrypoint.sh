@@ -2,7 +2,7 @@
 
 if [[ ${KOPIA_WEB_ENABLED} == "true" ]]; then
     exec \
-        /app/bin/kopia \
+        /usr/local/bin/kopia \
             server \
             start \
             --insecure \
@@ -10,6 +10,6 @@ if [[ ${KOPIA_WEB_ENABLED} == "true" ]]; then
             "$@"
 else
     exec \
-        /app/bin/kopia \
+        /usr/local/bin/kopia \
             "$@"
 fi
