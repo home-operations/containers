@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_3_22/postgresql17-client versioning=loose
-  default = "17.5-r0"
+  default = "17.6-r0"
 }
 
 variable "SOURCE" {
