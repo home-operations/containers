@@ -71,12 +71,15 @@ jobs:
 
   build:
     name: Build (${{ matrix.platform }})
+    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     needs: ["plan"]
     strategy:
       fail-fast: false
       matrix:
         platform: ${{ fromJson(needs.plan.outputs.platforms) }}
-    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    outputs:
+      linux/amd64: ${{ steps.digest.outputs.'linux/amd64' }}
+      linux/arm64: ${{ steps.digest.outputs.'linux/arm64' }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -144,24 +147,15 @@ jobs:
         uses: ./.github/actions/app-tests
         with:
           app: ${{ inputs.app }}
-          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
+          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}
           token: ${{ github.token }}
 
       - if: ${{ inputs.release }}
         name: Export Digest
+        id: digest
         run: |
-          mkdir -p ${{ runner.temp }}/digests
           DIGEST="${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}"
-          touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
-
-      - if: ${{ inputs.release }}
-        name: Upload Digest
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: ${{ inputs.app }}-digests-${{ steps.target.outputs.arch }}
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
+          echo "${{ matrix.platform }}=${DIGEST}" >> $GITHUB_OUTPUT
 
   release:
     if: ${{ inputs.release }}
@@ -182,12 +176,11 @@ jobs:
           name: ${{ inputs.app }}-bake-metadata
           path: ${{ runner.temp }}
 
-      - name: Download Digests
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
-        with:
-          path: ${{ runner.temp }}/digests
-          pattern: ${{ inputs.app }}-digests-*
-          merge-multiple: true
+      - name: Get Tags
+        id: tags
+        run: |
+          TAGS=$(jq --raw-output --compact-output '.target."docker-metadata-action".tags | map(select(startswith("ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}")) | "-t " + .) | join(" ")' ${{ runner.temp }}/docker-metadata-action-bake.json)
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
@@ -196,23 +189,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Create Manifest List and Push
-        working-directory: ${{ runner.temp }}/digests
-        run: |
-          docker buildx imagetools create \
-              $(jq --raw-output --compact-output '.target."docker-metadata-action".tags | map(select(startswith("ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}")) | "-t " + .) | join(" ")' ${{ runner.temp }}/docker-metadata-action-bake.json) \
-              $(printf 'ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@sha256:%s ' *)
-
-      - name: Inspect Image
-        run: |
-          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/docker-metadata-action-bake.json)
+      - name: Push Images
+        uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
+        id: push
+        with:
+          inputs: ${{ steps.tags.outputs.tags }}
+          images: >-
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs."linux/amd64" }},
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs."linux/arm64" }}
+          push: true
 
       - name: Export Digest
         id: digest
         run: |
-          TAG=$(jq --raw-output '.target."docker-metadata-action".args.DOCKER_META_VERSION' ${{ runner.temp }}/docker-metadata-action-bake.json)
-          DIGEST=$(docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${TAG} --format '{{ json . }}' | jq --raw-output '.manifest.digest')
-          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
+          echo "digest=${digest}" >> $GITHUB_OUTPUT
+
+      - name: Inspect Image
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${{ steps.digest.outputs.digest }}
 
   attest:
     if: ${{ inputs.release }}
