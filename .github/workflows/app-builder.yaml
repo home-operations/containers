@@ -195,8 +195,8 @@ jobs:
         with:
           inputs: ${{ steps.tags.outputs.tags }}
           images: >-
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs."linux/amd64" }},
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs."linux/arm64" }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs['linux/amd64'] }},
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs['linux/arm64'] }}
           push: true
 
       - name: Export Digest
