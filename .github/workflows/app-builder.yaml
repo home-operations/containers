@@ -78,8 +78,8 @@ jobs:
       matrix:
         platform: ${{ fromJson(needs.plan.outputs.platforms) }}
     outputs:
-      linux/amd64: ${{ steps.digest.outputs.'linux/amd64' }}
-      linux/arm64: ${{ steps.digest.outputs.'linux/arm64' }}
+      amd64: ${{ steps.digest.outputs.x86 }}
+      arm64: ${{ steps.digest.outputs.arm64 }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -155,7 +155,7 @@ jobs:
         id: digest
         run: |
           DIGEST="${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}"
-          echo "${{ matrix.platform }}=${DIGEST}" >> $GITHUB_OUTPUT
+          echo "${{ runner.arch }}=${DIGEST}" >> $GITHUB_OUTPUT
 
   release:
     if: ${{ inputs.release }}
@@ -195,8 +195,8 @@ jobs:
         with:
           inputs: ${{ steps.tags.outputs.tags }}
           images: >-
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs['linux/amd64'] }},
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs['linux/arm64'] }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true
 
       - name: Export Digest
