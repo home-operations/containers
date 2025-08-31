@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=custom.servarr-develop depName=lidarr versioning=loose
-  default = "2.14.0.4694"
+  default = "2.14.1.4714"
 }
 
 variable "SOURCE" {
