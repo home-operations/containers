@@ -9,5 +9,5 @@ if yq --exit-status '.schemaVersion' "./apps/${APP}/tests.yaml" &>/dev/null; the
 else
     export GOSS_FILE="./apps/${APP}/tests.yaml"
     export GOSS_OPTS="--retry-timeout 60s --sleep 1s"
-    dgoss run "${IMAGE}"
+    ./.bin/dgoss run "${IMAGE}"
 fi

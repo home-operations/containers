@@ -1,7 +1,6 @@
 [env]
 GOSS_FILE = "tests.yaml"
 GOSS_OPTS = "--retry-timeout 60s --sleep 1s"
-GOSS_PATH = "{{config_root}}/.bin/goss/goss"
 
 [tools]
 "aqua:casey/just" = "1.42.4"
@@ -14,7 +13,7 @@ GOSS_PATH = "{{config_root}}/.bin/goss/goss"
 [hooks]
 postinstall = [
   "mkdir -p {{config_root}}/.cache",
-  "mkdir -p {{config_root}}/.bin/goss",
-  "gh release download --repo goss-org/goss --skip-existing --pattern dgoss --output {{config_root}}/.bin/goss/dgoss",
-  "chmod +x {{config_root}}/.bin/goss/dgoss",
+  "mkdir -p {{config_root}}/.bin",
+  "gh release download --repo goss-org/goss --skip-existing --pattern dgoss --output {{config_root}}/.bin/dgoss",
+  "chmod +x {{config_root}}/.bin/dgoss",
 ]
