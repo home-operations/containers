@@ -147,6 +147,11 @@ jobs:
           experimental: true
 
       - if: ${{ ! inputs.release }}
+        name: Test
+        run: |
+          tree ./.bin
+
+      - if: ${{ ! inputs.release }}
         name: Run Application Tests
         uses: ./.github/actions/app-tests
         with:
