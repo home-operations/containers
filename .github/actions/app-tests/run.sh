@@ -10,5 +10,5 @@ else
     export GOSS_PATH="./.bin/goss/goss"
     export GOSS_OPTS="--retry-timeout 60s --sleep 1s"
     export GOSS_FILE="./apps/${APP}/tests.yaml"
-    dgoss run "${IMAGE}"
+    ./.bin/goss/goss/dgoss run "${IMAGE}"
 fi
