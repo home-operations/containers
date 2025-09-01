@@ -140,6 +140,12 @@ jobs:
           workdir: ./apps/${{ inputs.app }}
 
       - if: ${{ ! inputs.release }}
+        name: Setup mise
+        uses: jdx/mise-action@5ac50f778e26fac95da98d50503682459e86d566 # v3.2.0
+        with:
+          cache: true
+
+      - if: ${{ ! inputs.release }}
         name: Run Application Tests
         uses: ./.github/actions/app-tests
         with:

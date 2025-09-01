@@ -22,13 +22,6 @@ runs:
       run: |
         echo "${{ github.action_path }}" >> $GITHUB_PATH
 
-    - name: Setup Testing Tools
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ inputs.token }}
-      run: |
-        setup.sh "${{ inputs.app }}"
-
     - name: Run Tests
       shell: bash
       run: |
