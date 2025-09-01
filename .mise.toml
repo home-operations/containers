@@ -14,7 +14,7 @@ GOSS_PATH = "{{config_root}}/.bin/goss/goss"
 postinstall = [
   "mkdir -p {{config_root}}/.cache",
   "mkdir -p {{config_root}}/.bin/goss",
-  "gh release download --repo goss-org/goss --skip-existing --pattern *-linux-amd64 --output {{config_root}}/.bin/goss/goss",
+  "gh release download --repo goss-org/goss --skip-existing --pattern *-linux-{{arch}} --output {{config_root}}/.bin/goss/goss",
   "gh release download --repo goss-org/goss --skip-existing --pattern dgoss --output {{config_root}}/.bin/goss/dgoss",
   "chmod +x {{config_root}}/.bin/goss/{goss,dgoss}",
 ]
