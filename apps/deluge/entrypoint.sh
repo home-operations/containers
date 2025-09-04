@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 if [[ ! -f /config/core.conf ]]; then
     cp /defaults/core.conf /config/core.conf
