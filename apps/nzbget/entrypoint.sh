@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 CONFIG_FILE="/config/nzbget.conf"
 
 if [[ ! -f "${CONFIG_FILE}" ]]; then
-    mkdir -p "${CONFIG_FILE%/*}"
     cp /app/nzbget.conf "${CONFIG_FILE}"
     sed -i \
         -e "s|^MainDir=.*|MainDir=/config|g" \
@@ -24,23 +24,14 @@ if [[ -f /config/nzbget.lock ]]; then
     rm /config/nzbget.lock
 fi
 
-OPTIONS="-o OutputMode=log "
-if [ ! -z "${NZBGET_USER}" ]; then
-    OPTIONS="${OPTIONS}-o ControlUsername=${NZBGET_USER} "
-fi
-if [ ! -z "${NZBGET_PASS}" ]; then
-    OPTIONS="${OPTIONS}-o ControlPassword=${NZBGET_PASS} "
-fi
-if [ ! -z "${NZBGET_RESTRICTED_USER}" ]; then
-    OPTIONS="${OPTIONS}-o RestrictedUsername=${NZBGET_RESTRICTED_USER} "
-fi
-if [ ! -z "${NZBGET_RESTRICTED_PASS}" ]; then
-    OPTIONS="${OPTIONS}-o RestrictedPassword=${NZBGET_RESTRICTED_PASS} "
-fi
+OPTIONS=(-o OutputMode=log)
+[[ -n "${NZBGET_USER:-}" ]] && OPTIONS+=(-o "ControlUsername=${NZBGET_USER}")
+[[ -n "${NZBGET_PASS:-}" ]] && OPTIONS+=(-o "ControlPassword=${NZBGET_PASS}")
+[[ -n "${NZBGET_RESTRICTED_USER:-}" ]] && OPTIONS+=(-o "RestrictedUsername=${NZBGET_RESTRICTED_USER}")
+[[ -n "${NZBGET_RESTRICTED_PASS:-}" ]] && OPTIONS+=(-o "RestrictedPassword=${NZBGET_RESTRICTED_PASS}")
 
-exec \
-    /app/nzbget \
-        --server \
-        --configfile "${CONFIG_FILE}" \
-        ${OPTIONS} \
-        "$@"
+exec /app/nzbget \
+    --server \
+    --configfile "${CONFIG_FILE}" \
+    "${OPTIONS[@]}" \
+    "$@"
