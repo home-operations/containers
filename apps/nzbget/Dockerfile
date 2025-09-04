@@ -15,7 +15,7 @@ ENV \
     UV_SYSTEM_PYTHON=true \
     UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
-ENV NZBGET_PORT=6789
+ENV NZBGET__PORT=6789
 
 USER root
 WORKDIR /app

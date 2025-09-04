@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 PLATFORMIO_CORE_DIR=${PLATFORMIO_CORE_DIR:-/cache/pio}
 ESPHOME_BUILD_PATH=${ESPHOME_BUILD_PATH:-/cache/build}
