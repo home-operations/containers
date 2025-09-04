@@ -3,6 +3,7 @@
 CONFIG_FILE="/config/nzbget.conf"
 
 if [[ ! -f "${CONFIG_FILE}" ]]; then
+    mkdir -p "${CONFIG_FILE%/*}"
     cp /app/nzbget.conf "${CONFIG_FILE}"
     sed -i \
         -e "s|^MainDir=.*|MainDir=/config|g" \
