@@ -25,11 +25,11 @@ if [[ -f /config/nzbget.lock ]]; then
 fi
 
 OPTIONS=(-o OutputMode=log)
-[[ -n "${NZBGET_PORT:-}" ]] && OPTIONS+=(-o "ControlPort=${NZBGET_PORT}")
-[[ -n "${NZBGET_USER:-}" ]] && OPTIONS+=(-o "ControlUsername=${NZBGET_USER}")
-[[ -n "${NZBGET_PASS:-}" ]] && OPTIONS+=(-o "ControlPassword=${NZBGET_PASS}")
-[[ -n "${NZBGET_RESTRICTED_USER:-}" ]] && OPTIONS+=(-o "RestrictedUsername=${NZBGET_RESTRICTED_USER}")
-[[ -n "${NZBGET_RESTRICTED_PASS:-}" ]] && OPTIONS+=(-o "RestrictedPassword=${NZBGET_RESTRICTED_PASS}")
+[[ -n "${NZBGET__PORT:-}" ]] && OPTIONS+=(-o "ControlPort=${NZBGET__PORT}")
+[[ -n "${NZBGET__USER:-}" ]] && OPTIONS+=(-o "ControlUsername=${NZBGET__USER}")
+[[ -n "${NZBGET__PASS:-}" ]] && OPTIONS+=(-o "ControlPassword=${NZBGET__PASS}")
+[[ -n "${NZBGET__RESTRICTED_USER:-}" ]] && OPTIONS+=(-o "RestrictedUsername=${NZBGET__RESTRICTED_USER}")
+[[ -n "${NZBGET__RESTRICTED_PASS:-}" ]] && OPTIONS+=(-o "RestrictedPassword=${NZBGET__RESTRICTED_PASS}")
 
 exec /app/nzbget \
     --server \

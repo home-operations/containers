@@ -22,8 +22,8 @@ if [[ ! -f "${BETANINDIR}/config.toml" ]]; then
     echo "API Key: ${api_key}"
 fi
 
-[[ -n "${BETANIN__PASSWORD}" ]] && sed -i -e "s/^password *=.*$/password = \"${BETANIN__PASSWORD}\"/g" "${BETANINDIR}/config.toml"
-[[ -n "${BETANIN__API_KEY}" ]] && sed -i -e "s/^api_key *=.*$/api_key = \"${BETANIN__API_KEY}\"/g" "${BETANINDIR}/config.toml"
+[[ -n "${BETANIN__PASSWORD:-}" ]] && sed -i -e "s/^password *=.*$/password = \"${BETANIN__PASSWORD}\"/g" "${BETANINDIR}/config.toml"
+[[ -n "${BETANIN__API_KEY:-}" ]] && sed -i -e "s/^api_key *=.*$/api_key = \"${BETANIN__API_KEY}\"/g" "${BETANINDIR}/config.toml"
 
 exec \
     /usr/local/bin/betanin \
