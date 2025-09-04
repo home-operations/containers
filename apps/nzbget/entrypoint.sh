@@ -23,9 +23,24 @@ if [[ -f /config/nzbget.lock ]]; then
     rm /config/nzbget.lock
 fi
 
+OPTIONS=""
+if [ ! -z "${NZBGET_USER}" ]; then
+    OPTIONS="${OPTIONS}-o ControlUsername=${NZBGET_USER} "
+fi
+if [ ! -z "${NZBGET_PASS}" ]; then
+    OPTIONS="${OPTIONS}-o ControlPassword=${NZBGET_PASS} "
+fi
+if [ ! -z "${NZBGET_RESTRICTED_USER}" ]; then
+    OPTIONS="${OPTIONS}-o RestrictedUsername=${NZBGET_RESTRICTED_USER} "
+fi
+if [ ! -z "${NZBGET_RESTRICTED_PASS}" ]; then
+    OPTIONS="${OPTIONS}-o RestrictedPassword=${NZBGET_RESTRICTED_PASS} "
+fi
+
 exec \
     /app/nzbget \
         --server \
         --option "OutputMode=log" \
         --configfile "${CONFIG_FILE}" \
+        ${OPTIONS} \
         "$@"
