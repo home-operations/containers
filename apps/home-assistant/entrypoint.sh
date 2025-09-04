@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 unset UV_SYSTEM_PYTHON
 
