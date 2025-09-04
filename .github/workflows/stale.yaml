@@ -35,7 +35,7 @@ jobs:
             This issue has been marked as stale due to 60 days of inactivity. Please remove the stale label or leave a comment to keep it open.
             If no action is taken, it will be automatically closed in 7 days.
           stale-pr-message: |
-            This pull request has been marked as stale due to 60 days of inactivity. Please remove the stale label or leave a comment to prevent it from being closed.
+            This pull request has been marked as stale due to 60 days of inactivity. Please remove the stale label or leave a comment to keep it open.
             If no action is taken, it will be automatically closed in 7 days.
           close-issue-message: |
             This issue has been automatically closed after 7 days of inactivity following the stale status.
