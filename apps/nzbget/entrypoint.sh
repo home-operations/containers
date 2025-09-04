@@ -25,6 +25,7 @@ if [[ -f /config/nzbget.lock ]]; then
 fi
 
 OPTIONS=(-o OutputMode=log)
+[[ -n "${NZBGET_PORT:-}" ]] && OPTIONS+=(-o "ControlPort=${NZBGET_PORT}")
 [[ -n "${NZBGET_USER:-}" ]] && OPTIONS+=(-o "ControlUsername=${NZBGET_USER}")
 [[ -n "${NZBGET_PASS:-}" ]] && OPTIONS+=(-o "ControlPassword=${NZBGET_PASS}")
 [[ -n "${NZBGET_RESTRICTED_USER:-}" ]] && OPTIONS+=(-o "RestrictedUsername=${NZBGET_RESTRICTED_USER}")
