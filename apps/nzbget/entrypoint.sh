@@ -24,7 +24,7 @@ if [[ -f /config/nzbget.lock ]]; then
     rm /config/nzbget.lock
 fi
 
-OPTIONS=""
+OPTIONS="-o OutputMode=log "
 if [ ! -z "${NZBGET_USER}" ]; then
     OPTIONS="${OPTIONS}-o ControlUsername=${NZBGET_USER} "
 fi
@@ -41,7 +41,6 @@ fi
 exec \
     /app/nzbget \
         --server \
-        --option "OutputMode=log" \
         --configfile "${CONFIG_FILE}" \
         ${OPTIONS} \
         "$@"
