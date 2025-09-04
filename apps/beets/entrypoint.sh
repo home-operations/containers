@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 export BEETSDIR="/config/.config/beets"
 export BETANINDIR="/config/.config/betanin"
