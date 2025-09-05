@@ -31,7 +31,6 @@ runs:
         script: |
           const { execFileSync } = require('child_process');
 
-          // Simple byte formatter
           function formatBytes(bytes) {
               if (bytes === 0) return '0 B';
               const k = 1024;

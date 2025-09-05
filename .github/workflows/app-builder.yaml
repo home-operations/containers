@@ -273,7 +273,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           header: container-size-diff-${{ inputs.app }}
           message: |
-            ${{ steps.container-size-diff.outputs.size-diff-markdown }}
+            ${{ steps.container-size-diff.outputs.markdown }}
 
   announce:
     if: ${{ inputs.release && needs.plan.outputs.app-exists != 'true' }}
