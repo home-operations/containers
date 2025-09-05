@@ -27,8 +27,10 @@ jobs:
     needs: ["prepare"]
     uses: ./.github/workflows/app-builder.yaml
     permissions:
+      attestations: write
       contents: read
-      packages: read
+      id-token: write
+      packages: write
     secrets: inherit
     strategy:
       matrix:

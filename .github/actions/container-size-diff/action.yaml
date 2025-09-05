@@ -1,0 +1,32 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Container Size Diff
+description: Creates a Markdown summary of the size difference between two container versions
+
+inputs:
+  from-container:
+    description: Baseline container image for size comparison
+    required: true
+  to-container:
+    description: Container image to be compared to the baseline
+    required: true
+
+outputs:
+  size-diff-markdown:
+    description: Markdown formatted output of container size comparison
+    value: ${{ steps.size-diff.outputs.markdown }}
+
+runs:
+  using: composite
+  steps:
+    - name: container-size-diff
+      id: size-diff
+      shell: bash
+      env:
+        INPUT_FROM_CONTAINER: ${{ inputs.from-container }}
+        INPUT_TO_CONTAINER: ${{ inputs.to-container }}
+      run: |
+        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+        echo "markdown<<${EOF}" >> "${GITHUB_OUTPUT}"
+        echo "$(${GITHUB_ACTION_PATH}/container-size-diff.sh ${INPUT_FROM_CONTAINER} ${INPUT_TO_CONTAINER})" >> "${GITHUB_OUTPUT}"
+        echo "${EOF}" >> "${GITHUB_OUTPUT}"

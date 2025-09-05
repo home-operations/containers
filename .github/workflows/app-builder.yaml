@@ -55,11 +55,12 @@ jobs:
           images: |
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           tags: |
-            type=semver,pattern={{version}},value=${{ steps.app-versions.outputs.semantic }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
-            type=semver,pattern={{major}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
-            type=raw,value=${{ steps.app-versions.outputs.raw }},enable=${{ steps.app-versions.outputs.is-valid-semver }}
-            type=raw,value=rolling
+            type=semver,pattern={{version}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver && inputs.release }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver && inputs.release }}
+            type=semver,pattern={{major}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver && inputs.release }}
+            type=raw,value=${{ steps.app-versions.outputs.raw }},enable=${{ steps.app-versions.outputs.is-valid-semver && inputs.release }}
+            type=raw,value=rolling,enable=${{ inputs.release }}
+            type=raw,value=sandbox,enable=${{ ! inputs.release }}
 
       - name: Upload Bake Metadata
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -132,30 +133,20 @@ jobs:
             *.labels.org.opencontainers.image.version=${{ steps.app-options.outputs.version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
             *.labels.org.opencontainers.image.vendor=${{ github.repository_owner }}
-            ${{ inputs.release && format('*.output=type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true,compression=zstd,force-compression=true', github.repository_owner, inputs.app) || '*.output=type=docker' }}
+            *.output=type=image,name=ghcr.io/${{ github.repository_owner }}/${{ inputs.app }},push-by-digest=true,name-canonical=true,push=true,compression=zstd,force-compression=true
             *.platform=${{ matrix.platform }}
             *.tags=
           source: .
           targets: image
           workdir: ./apps/${{ inputs.app }}
 
-      - if: ${{ ! inputs.release }}
-        name: Run Application Tests
-        uses: ./.github/actions/app-tests
-        with:
-          app: ${{ inputs.app }}
-          image: ${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.config.digest'] }}
-          token: ${{ github.token }}
-
-      - if: ${{ inputs.release }}
-        name: Export Digest
+      - name: Export Digest
         run: |
           mkdir -p ${{ runner.temp }}/digests
           DIGEST="${{ fromJSON(steps.bake.outputs.metadata).image['containerimage.digest'] }}"
           touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
 
-      - if: ${{ inputs.release }}
-        name: Upload Digest
+      - name: Upload Digest
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ inputs.app }}-digests-${{ steps.target.outputs.arch }}
@@ -163,9 +154,8 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  release:
-    if: ${{ inputs.release }}
-    name: Release
+  merge:
+    name: Merge
     runs-on: ubuntu-latest
     needs: ["build"]
     outputs:
@@ -175,6 +165,13 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
+
+      - name: Generate Token
+        uses: actions/create-github-app-token@a8d616148505b5069dccd32f177bb87d7f39123b # v2.1.1
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Download Bake Metadata
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
@@ -214,10 +211,44 @@ jobs:
           DIGEST=$(docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${TAG} --format '{{ json . }}' | jq --raw-output '.manifest.digest')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
+      - if: ${{ ! inputs.release }}
+        name: Container Size Diff
+        uses: ./.github/actions/container-size-diff
+        id: container-size-diff
+        with:
+          from-container: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
+          to-container: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
+
+      - if: ${{ ! inputs.release }}
+        name: Post Container Size Diff Comment
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
+        with:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          header: container-size-diff-${{ inputs.app }}
+          message: |
+            ${{ steps.container-size-diff.outputs.size-diff-markdown }}
+
+  test:
+    if: ${{ ! inputs.release }}
+    name: Test
+    needs: ["merge"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Run Application Tests
+        uses: ./.github/actions/app-tests
+        with:
+          app: ${{ inputs.app }}
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+          token: ${{ github.token }}
+
   attest:
-    if: ${{ inputs.release }}
     name: Attest
-    needs: ["release"]
+    needs: ["merge"]
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
@@ -231,20 +262,20 @@ jobs:
         uses: anchore/sbom-action@da167eac915b4e86f08b264dbdbc867b61be6f0c # v0.20.5
         with:
           dependency-snapshot: true
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
 
       - name: Attestation
         uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
         with:
           push-to-registry: true
           subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
-          subject-digest: ${{ needs.release.outputs.digest }}
+          subject-digest: ${{ needs.merge.outputs.digest }}
 
       - name: Verify Attestation
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
 
   announce:
     if: ${{ inputs.release && needs.plan.outputs.app-exists != 'true' }}
@@ -292,7 +323,7 @@ jobs:
 
   notify:
     if: ${{ inputs.release && !cancelled() }}
-    needs: ["plan", "build", "release", "attest", "announce"]
+    needs: ["plan", "build", "merge", "attest", "announce"]
     name: Notify
     runs-on: ubuntu-latest
     steps:
