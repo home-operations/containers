@@ -24,17 +24,22 @@ runs:
       with:
         node-version: 22.x
 
-    - name: Install Pretty Bytes
-      shell: bash
-      run: npm install pretty-bytes
-
     - name: Container Size Diff
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       id: versions
       with:
         script: |
           const { execFileSync } = require('child_process');
-          const prettyBytes = require('pretty-bytes');
+
+          // Simple byte formatter
+          function formatBytes(bytes) {
+              if (bytes === 0) return '0 B';
+              const k = 1024;
+              const sizes = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+              const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(k));
+              const size = Math.abs(bytes) / Math.pow(k, i);
+              return `${size.toFixed(2)} ${sizes[i]}`;
+          }
 
           function getSizesFromManifest(container) {
             try {
@@ -93,7 +98,7 @@ runs:
               const icon = delta < 0 ? '🔽' : delta > 0 ? '🔼' : '🔄';
               const sign = delta >= 0 ? '+' : '';
 
-              output += `| ${platform} | ${prettyBytes(fromSize)} | ${prettyBytes(toSize)} | ${sign}${prettyBytes(Math.abs(delta))} (${percentChange}%) | ${icon} |\n`;
+              output += `| ${platform} | ${formatBytes(fromSize)} | ${formatBytes(toSize)} | ${sign}${formatBytes(Math.abs(delta))} (${percentChange}%) | ${icon} |\n`;
           }
 
           core.setOutput('markdown', output);
