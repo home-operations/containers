@@ -19,14 +19,81 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: container-size-diff
-      id: size-diff
+    - name: Setup Node
+      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      with:
+        node-version: 22.x
+
+    - name: Install Pretty Bytes
       shell: bash
-      env:
-        INPUT_FROM_CONTAINER: ${{ inputs.from-container }}
-        INPUT_TO_CONTAINER: ${{ inputs.to-container }}
-      run: |
-        EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-        echo "markdown<<${EOF}" >> "${GITHUB_OUTPUT}"
-        echo "$(${GITHUB_ACTION_PATH}/container-size-diff.sh ${INPUT_FROM_CONTAINER} ${INPUT_TO_CONTAINER})" >> "${GITHUB_OUTPUT}"
-        echo "${EOF}" >> "${GITHUB_OUTPUT}"
+      run: npm install pretty-bytes
+
+    - name: Container Size Diff
+      uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+      id: versions
+      with:
+        script: |
+          const { execFileSync } = require('child_process');
+          const prettyBytes = require('pretty-bytes');
+
+          function getSizesFromManifest(container) {
+            try {
+                const manifestJson = execFileSync("docker", ["manifest", "inspect", "-v", container], { encoding: "utf8" });
+                const manifests = JSON.parse(manifestJson.trim());
+                const manifestArray = Array.isArray(manifests) ? manifests : [manifests];
+
+                const sizeMap = {};
+                for (const manifest of manifestArray) {
+                    const platform = manifest.Descriptor?.platform;
+                    if (!platform) continue;
+
+                    const platformParts = [
+                        platform.os,
+                        platform.architecture,
+                        platform.variant,
+                        platform["os.version"]
+                    ].filter(Boolean);
+
+                    const platformString = platformParts.join("/");
+                    if (platformString !== "unknown/unknown") {
+                        const layers = manifest.OCIManifest?.layers || [];
+                        const totalSize = layers.reduce((sum, layer) => sum + (layer.size || 0), 0);
+                        sizeMap[platformString] = totalSize;
+                    }
+                }
+                return sizeMap;
+            } catch (error) {
+                console.error(`Failed to get manifest for ${container}:`, error.message);
+                return {};
+            }
+          }
+
+          const fromContainer = '${{ inputs.from-container }}';
+          const toContainer = '${{ inputs.to-container }}';
+          const fromSizes = getSizesFromManifest(fromContainer);
+          const toSizes = getSizesFromManifest(toContainer);
+
+          const allPlatforms = [...new Set([...Object.keys(fromSizes), ...Object.keys(toSizes)])];
+
+          let output = "## 📦 Container Size Analysis\n\n";
+          output += `Comparing \`${fromContainer}\` to \`${toContainer}\`\n\n`;
+          output += "### 📈 Size Comparison Table\n\n";
+          output += "| OS/Platform | Previous Size | Current Size | Change | Trend |\n";
+          output += "|-------------|:-------------:|:------------:|:------:|:-----:|\n";
+
+          for (const platform of allPlatforms) {
+              const fromSize = fromSizes[platform] || 0;
+              const toSize = toSizes[platform] || 0;
+              const delta = toSize - fromSize;
+
+              const percentChange = fromSize === 0
+                ? (toSize > 0 ? '+∞' : '+0.00')
+                : `${delta >= 0 ? '+' : ''}${(delta / fromSize * 100).toFixed(2)}`;
+
+              const icon = delta < 0 ? '🔽' : delta > 0 ? '🔼' : '🔄';
+              const sign = delta >= 0 ? '+' : '';
+
+              output += `| ${platform} | ${prettyBytes(fromSize)} | ${prettyBytes(toSize)} | ${sign}${prettyBytes(Math.abs(delta))} (${percentChange}%) | ${icon} |\n`;
+          }
+
+          core.setOutput('markdown', output);
