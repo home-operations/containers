@@ -204,10 +204,41 @@ jobs:
           DIGEST=$(docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:${TAG} --format '{{ json . }}' | jq --raw-output '.manifest.digest')
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
+  attest:
+    name: Attest
+    needs: ["merge"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Upload Dependency Snapshot
+        uses: anchore/sbom-action@da167eac915b4e86f08b264dbdbc867b61be6f0c # v0.20.5
+        with:
+          dependency-snapshot: true
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+
+      - name: Attestation
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
+        with:
+          push-to-registry: true
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+          subject-digest: ${{ needs.merge.outputs.digest }}
+
+      - name: Verify Attestation
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
+
   test:
     if: ${{ ! inputs.release }}
     name: Test
-    needs: ["merge"]
+    needs: ["merge", "attest"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -243,37 +274,6 @@ jobs:
           header: container-size-diff-${{ inputs.app }}
           message: |
             ${{ steps.container-size-diff.outputs.size-diff-markdown }}
-
-  attest:
-    name: Attest
-    needs: ["merge"]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Upload Dependency Snapshot
-        uses: anchore/sbom-action@da167eac915b4e86f08b264dbdbc867b61be6f0c # v0.20.5
-        with:
-          dependency-snapshot: true
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
-
-      - name: Attestation
-        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3.0.0
-        with:
-          push-to-registry: true
-          subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
-          subject-digest: ${{ needs.merge.outputs.digest }}
-
-      - name: Verify Attestation
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          gh attestation verify --repo ${{ github.repository }} oci://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
 
   announce:
     if: ${{ inputs.release && needs.plan.outputs.app-exists != 'true' }}
