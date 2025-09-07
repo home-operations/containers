@@ -19,6 +19,7 @@ if [[ ! -f "${CONFIG_FILE}" ]]; then
         -e "s|^UpdateCheck=.*|UpdateCheck=none|g" \
         -e "s|^ControlUsername=.*|ControlUsername=|g" \
         -e "s|^ControlPassword=.*|ControlPassword=|g" \
+        -e "s|^WriteLog=.*|WriteLog=none|g" \
         "${CONFIG_FILE}"
 fi
 
