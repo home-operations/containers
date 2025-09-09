@@ -26,7 +26,7 @@ runs:
 
     - name: Setup Node Dependencies
       shell: bash
-      run: npm install execa@9 filesize@11 markdown-table@3
+      run: npm install execa@9 filesize@11 lodash@4 markdown-table@3
 
     - name: Container Size Diff
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
@@ -36,6 +36,7 @@ runs:
           const { execaSync } = require("execa");
           const { filesize } = require("filesize");
           const { markdownTable } = require("markdown-table");
+          const _ = require("lodash");
 
           const fromContainer = '${{ inputs.from-container }}';
           const toContainer = '${{ inputs.to-container }}';
@@ -43,22 +44,25 @@ runs:
           async function getSizes(container) {
               try {
                   const { stdout } = execaSync("docker", ["manifest", "inspect", "-v", container]);
-                  const manifests = [].concat(JSON.parse(stdout.trim()));
+                  const manifests = _.castArray(JSON.parse(stdout.trim()));
 
-                  return Object.fromEntries(
-                      manifests.map(m => {
-                          const p = m.Descriptor?.platform || {};
-                          const key = [p.os, p.architecture, p.variant, p["os.version"]]
-                              .filter(Boolean)
-                              .join("/") || "unknown";
+                  return _(manifests)
+                      .map(m => {
+                          const platform = _.get(m, 'Descriptor.platform', {});
+                          const key = _.compact([
+                              platform.os,
+                              platform.architecture,
+                              platform.variant,
+                              platform["os.version"]
+                          ]).join("/") || "unknown";
 
-                          const layers = m.OCIManifest?.layers || m.layers || [];
-                          const total = layers.reduce((sum, l) => sum + (l.size || 0), 0);
+                          const layers = _.get(m, 'OCIManifest.layers') || _.get(m, 'layers', []);
+                          const total = _.sumBy(layers, 'size');
 
                           return [key, total];
                       })
-                      .filter(([key, _]) => key !== "unknown")
-                  );
+                      .fromPairs()
+                      .value();
               } catch (e) {
                   core.error(`Failed to inspect ${container}: ${e.message}`);
                   return {};
@@ -68,33 +72,48 @@ runs:
           const fromSizes = await getSizes(fromContainer);
           const toSizes   = await getSizes(toContainer);
 
-          const allPlatforms = [...new Set([...Object.keys(fromSizes), ...Object.keys(toSizes)])].sort();
+          const allPlatforms = _.union(_.keys(fromSizes), _.keys(toSizes)).sort();
 
-          const total = (sizes) => Object.values(sizes).reduce((a, b) => a + b, 0);
+          const total = sizes => _.sum(_.values(sizes));
           const delta = total(toSizes) - total(fromSizes);
 
+          const createPlatformRow = (platform) => {
+              const previous = _.get(fromSizes, platform, 0);
+              const current = _.get(toSizes, platform, 0);
+              const change = current - previous;
+
+              const percentage = previous
+                  ? `${change >= 0 ? "+" : ""}${_.round(change / previous * 100, 2)}%`
+                  : current ? "+∞" : "+0.00%";
+
+              const icon = _.cond([
+                  [change => change < 0, _.constant("🔽")],
+                  [change => change > 0, _.constant("🔼")],
+                  [_.stubTrue, _.constant("🔄")]
+              ])(change);
+
+              return [
+                  platform,
+                  filesize(previous),
+                  filesize(current),
+                  `${change >= 0 ? "+" : ""}${filesize(Math.abs(change))} (${percentage})`,
+                  icon
+              ];
+          };
+
           const rows = [
-            ["OS/Platform", "Previous", "Current", "Change", "Trend"], ...allPlatforms.map(p => {
-                const a = fromSizes[p] || 0;
-                const b = toSizes[p]   || 0;
-                const d = b - a;
-                const pct = a ? `${d >= 0 ? "+" : ""}${(d / a * 100).toFixed(2)}%` : (b ? "+∞" : "+0.00%");
-                const icon = d < 0 ? "🔽" : d > 0 ? "🔼" : "🔄";
-                return [
-                    p,
-                    filesize(a),
-                    filesize(b),
-                    `${d >= 0 ? "+" : ""}${filesize(Math.abs(d))} (${pct})`,
-                    icon
-                ];
-            })
+              ["OS/Platform", "Previous", "Current", "Change", "Trend"],
+              ..._.map(allPlatforms, createPlatformRow)
           ];
 
-          let output = `## 📦 Container Size Analysis
+          const totalFromSize = total(fromSizes) || 1;
+          const percentageChange = _.round(delta / totalFromSize * 100, 2);
+
+          const output = `## 📦 Container Size Analysis
 
           Comparing \`${fromContainer}\` → \`${toContainer}\`
 
-          📊 **Total Change:** ${filesize(delta)} (${((delta / (total(fromSizes) || 1)) * 100).toFixed(2)}%)
+          📊 **Total Change:** ${filesize(delta)} (${percentageChange}%)
 
           ### 📈 Size Comparison Table
 
