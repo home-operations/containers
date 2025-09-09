@@ -40,6 +40,10 @@ runs:
         cache-dependency-path: package.json
         node-version: 22.x
 
+    - name: Setup Node Dependencies
+      shell: bash
+      run: npm install
+
     - name: Container Size Diff
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       id: size-diff
