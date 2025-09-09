@@ -31,6 +31,9 @@ runs:
     - name: Container Size Diff
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       id: size-diff
+      env:
+        FROM_CONTAINER: ${{ inputs.from-container }}
+        TO_CONTAINER: ${{ inputs.to-container }}
       with:
         script: |
           const { execaSync } = require("execa");
@@ -38,8 +41,8 @@ runs:
           const { markdownTable } = require("markdown-table");
           const _ = require("lodash");
 
-          const fromContainer = '${{ inputs.from-container }}';
-          const toContainer = '${{ inputs.to-container }}';
+          const fromContainer = process.env.FROM_CONTAINER;
+          const toContainer = process.env.TO_CONTAINER;
 
           async function getSizes(container) {
               try {
@@ -89,7 +92,7 @@ runs:
               const change = current - previous;
 
               const percentage = previous
-                  ? `${change >= 0 ? "+" : ""}${_.round(change / previous * 100, 2)}%`
+                  ? `${change >= 0 ? "+" : "-"}${_.round(change / previous * 100, 2)}%`
                   : current ? "+∞" : "+0.00%";
 
               const icon = _.cond([
@@ -102,7 +105,7 @@ runs:
                   platform,
                   filesize(previous),
                   filesize(current),
-                  `${change >= 0 ? "+" : ""}${filesize(Math.abs(change))} (${percentage})`,
+                  `${change >= 0 ? "+" : "-"}${filesize(Math.abs(change))} (${percentage})`,
                   icon
               ];
           };
@@ -114,7 +117,7 @@ runs:
 
           const output = `## 📦 Container Size Analysis
 
-          > [!INFO]
+          > [!NOTE]
           > Comparing \`${fromContainer}\` ➔ \`${toContainer}\`
 
           ### 📈 Size Comparison Table
