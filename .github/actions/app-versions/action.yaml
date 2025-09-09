@@ -25,15 +25,28 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Create package.json
+      shell: bash
+      run: |-
+        cat > package.json << 'EOF'
+        {
+          "dependencies": {
+            "semver": "^7.7.2"
+          }
+        }
+        EOF
+
     - name: Setup Node
       uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
       with:
+        cache: npm
+        cache-dependency-path: package.json
         node-version: 22.x
 
-    - name: Install Semver
+    - name: Setup Node Dependencies
       shell: bash
       run: |-
-        npm install semver
+        npm install
 
     - name: Application Versions
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
