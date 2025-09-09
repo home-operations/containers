@@ -49,6 +49,11 @@ runs:
                   return _(manifests)
                       .map(m => {
                           const platform = _.get(m, 'Descriptor.platform', {});
+
+                          if (_.isEmpty(platform) || (!platform.os && !platform.architecture)) {
+                              return null;
+                          }
+
                           const key = _.compact([
                               platform.os,
                               platform.architecture,
@@ -61,7 +66,7 @@ runs:
 
                           return [key, total];
                       })
-                      .filter(([key]) => key !== "unknown")
+                      .compact()
                       .fromPairs()
                       .value();
               } catch (e) {
