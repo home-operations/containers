@@ -56,7 +56,6 @@ runs:
                               platform.variant,
                               platform["os.version"]
                           ])
-                          .filter(value => value !== "unknown")
                           .join("/");
 
                           const layers = _.get(m, 'OCIManifest.layers') || _.get(m, 'layers', []);
@@ -75,7 +74,12 @@ runs:
           const fromSizes = await getSizes(fromContainer);
           const toSizes   = await getSizes(toContainer);
 
-          const allPlatforms = _.union(_.keys(fromSizes), _.keys(toSizes)).sort();
+          const allPlatforms = _(fromSizes)
+              .keys()
+              .union(_.keys(toSizes))
+              .filter(platform => platform && !platform.includes("unknown"))
+              .sort()
+              .value();
 
           const total = sizes => _.sum(_.values(sizes));
           const delta = total(toSizes) - total(fromSizes);
