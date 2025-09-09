@@ -82,9 +82,8 @@ runs:
               .value();
 
           const total = sizes => _.sum(_.values(sizes));
-          const delta = total(toSizes) - total(fromSizes);
 
-          const createPlatformRow = (platform) => {
+          const platformRow = (platform) => {
               const previous = _.get(fromSizes, platform, 0);
               const current = _.get(toSizes, platform, 0);
               const change = current - previous;
@@ -110,17 +109,13 @@ runs:
 
           const rows = [
               ["OS/Platform", "Previous", "Current", "Change", "Trend"],
-              ..._.map(allPlatforms, createPlatformRow)
+              ..._.map(allPlatforms, platformRow)
           ];
-
-          const totalFromSize = total(fromSizes) || 1;
-          const percentageChange = _.round(delta / totalFromSize * 100, 2);
 
           const output = `## 📦 Container Size Analysis
 
-          Comparing \`${fromContainer}\` → \`${toContainer}\`
-
-          📊 **Total Change:** ${filesize(delta)} (${percentageChange}%)
+          > [!INFO]
+          > Comparing \`${fromContainer}\` ➔ \`${toContainer}\`
 
           ### 📈 Size Comparison Table
 
