@@ -30,7 +30,7 @@ jobs:
           upstream-version: ${{ inputs.version }}
 
       - name: Check Version Results
-        run: |
+        run: |-
           echo "Input Version: ${{ inputs.version }}"
           echo "Is Valid Semver: ${{ steps.app-versions.outputs.is-valid-semver }}"
           echo "Semantic Version: ${{ steps.app-versions.outputs.semantic }}"

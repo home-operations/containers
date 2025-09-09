@@ -35,7 +35,8 @@ jobs:
           repo: casey/just
 
       - name: Generate Label Config
-        run: just generate-label-config
+        run: |-
+          just generate-label-config
 
       - name: Labeler
         uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1

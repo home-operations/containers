@@ -17,11 +17,13 @@ runs:
   using: composite
   steps:
     - name: Application Exists
-      id: application
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+      id: application
+      env:
+        APPLICATION: ${{ inputs.app }}
       with:
-        script: |
-          const applicationName = '${{ inputs.app }}';
+        script: |-
+          const applicationName = process.env.APPLICATION;
 
           const { data: user } = await github.rest.users.getByUsername({
               username: context.repo.owner,

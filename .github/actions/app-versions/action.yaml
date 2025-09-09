@@ -32,13 +32,16 @@ runs:
 
     - name: Install Semver
       shell: bash
-      run: npm install semver
+      run: |-
+        npm install semver
 
     - name: Application Versions
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       id: versions
+      env:
+        UPSTREAM_VERSION: ${{ inputs.upstream-version }}
       with:
-        script: |
+        script: |-
           const semver = require('semver');
 
           // Strip the v prefix and pre-release info
@@ -51,7 +54,7 @@ runs:
               return `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
           }
 
-          const upstreamVersion = '${{ inputs.upstream-version }}';
+          const upstreamVersion = process.env.UPSTREAM_VERSION;
           const strictSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
 
           const parsedVersion = strictSemverRegex.exec(upstreamVersion);

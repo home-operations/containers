@@ -41,7 +41,7 @@ jobs:
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Delete App Directory
-        run: |
+        run: |-
           rm -rf ./apps/${{ inputs.app }}
 
       - name: Create Pull Request
@@ -60,7 +60,8 @@ jobs:
   merge:
     if: ${{ inputs.release }}
     name: Merge (${{ inputs.app }})
-    needs: ["plan"]
+    needs:
+      - "plan"
     runs-on: ubuntu-latest
     steps:
       - name: Generate Token
@@ -74,7 +75,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          script: |
+          script: |-
             await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -85,7 +86,8 @@ jobs:
   announce:
     if: ${{ inputs.release }}
     name: Announce (${{ inputs.app }})
-    needs: ["merge"]
+    needs:
+      - "merge"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

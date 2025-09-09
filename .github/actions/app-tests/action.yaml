@@ -19,17 +19,21 @@ runs:
   steps:
     - name: Setup Actions Script Path
       shell: bash
-      run: |
+      run: |-
         echo "${{ github.action_path }}" >> $GITHUB_PATH
 
     - name: Setup Testing Tools
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
-      run: |
-        setup.sh "${{ inputs.app }}"
+        APPLICATION: ${{ inputs.app }}
+      run: |-
+        setup.sh "${APPLICATION}"
 
     - name: Run Tests
       shell: bash
-      run: |
-        run.sh "${{ inputs.app }}" "${{ inputs.image }}"
+      env:
+        APPLICATION: ${{ inputs.app }}
+        IMAGE: ${{ inputs.image }}
+      run: |-
+        run.sh "${APPLICATION}" "${IMAGE}"
