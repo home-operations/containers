@@ -50,23 +50,20 @@ runs:
                       .map(m => {
                           const platform = _.get(m, 'Descriptor.platform', {});
 
-                          if (_.isEmpty(platform) || (!platform.os && !platform.architecture)) {
-                              return null;
-                          }
-
                           const key = _.compact([
                               platform.os,
                               platform.architecture,
                               platform.variant,
                               platform["os.version"]
-                          ]).join("/") || "unknown";
+                          ])
+                          .filter(value => value !== "unknown")
+                          .join("/");
 
                           const layers = _.get(m, 'OCIManifest.layers') || _.get(m, 'layers', []);
                           const total = _.sumBy(layers, 'size');
 
                           return [key, total];
                       })
-                      .compact()
                       .fromPairs()
                       .value();
               } catch (e) {
