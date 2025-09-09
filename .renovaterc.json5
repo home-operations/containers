@@ -69,12 +69,6 @@
       ignoreTests: false,
     },
     {
-      description: ["Allowed pretty-bytes Version"],
-      matchDatasources: ["npm"],
-      matchPackageNames: ["/pretty-bytes/"],
-      allowedVersions: "<6",
-    },
-    {
       description: ["Allowed Ubuntu Version for Base Images"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
