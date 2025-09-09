@@ -93,14 +93,12 @@ runs:
           const fromSizes = await getSizes(fromContainer);
           const toSizes   = await getSizes(toContainer);
 
-          const allPlatforms = _(fromSizes)
+          const platforms = _(fromSizes)
               .keys()
               .union(_.keys(toSizes))
               .filter(platform => platform && !platform.includes("unknown"))
               .sort()
               .value();
-
-          const total = sizes => _.sum(_.values(sizes));
 
           const platformRow = (platform) => {
               const previous = _.get(fromSizes, platform, 0);
@@ -128,7 +126,7 @@ runs:
 
           const rows = [
               ["OS/Platform", "Previous", "Current", "Change", "Trend"],
-              ..._.map(allPlatforms, platformRow)
+              ..._.map(platforms, platformRow)
           ];
 
           const output = `## 📦 Container Size Analysis
