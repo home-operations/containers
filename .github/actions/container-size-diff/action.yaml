@@ -61,6 +61,7 @@ runs:
 
                           return [key, total];
                       })
+                      .filter(([key]) => key !== "unknown")
                       .fromPairs()
                       .value();
               } catch (e) {
