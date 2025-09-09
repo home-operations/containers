@@ -25,7 +25,7 @@ jobs:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
     name: Build ${{ matrix.app }}
     needs:
-      - "prepare"
+      - prepare
     uses: ./.github/workflows/app-builder.yaml
     permissions:
       attestations: write
@@ -46,7 +46,7 @@ jobs:
     if: ${{ !cancelled() }}
     name: Build Success
     needs:
-      - "build"
+      - build
     runs-on: ubuntu-latest
     steps:
       - name: Any jobs failed?

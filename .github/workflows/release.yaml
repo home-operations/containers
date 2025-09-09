@@ -39,7 +39,7 @@ jobs:
     if: ${{ needs.prepare.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
     name: Get Changed Apps
     needs:
-      - "prepare"
+      - prepare
     runs-on: ubuntu-latest
     outputs:
       apps: ${{ steps.apps.outputs.apps }}
@@ -61,7 +61,7 @@ jobs:
     if: ${{ needs.changed.outputs.apps != '[]' }}
     name: Build ${{ matrix.app }}
     needs:
-      - "changed"
+      - changed
     uses: ./.github/workflows/app-builder.yaml
     permissions:
       attestations: write
@@ -83,7 +83,7 @@ jobs:
     if: ${{ !cancelled() }}
     name: Build Success
     needs:
-      - "build"
+      - build
     runs-on: ubuntu-latest
     steps:
       - name: Any jobs failed?

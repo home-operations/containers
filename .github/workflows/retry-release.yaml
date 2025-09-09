@@ -31,7 +31,7 @@ jobs:
     name: Retry Release
     runs-on: ubuntu-latest
     needs:
-      - "apps"
+      - apps
     strategy:
       matrix:
         app: ${{ fromJSON(needs.apps.outputs.apps) }}

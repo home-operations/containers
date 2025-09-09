@@ -61,7 +61,7 @@ jobs:
     if: ${{ inputs.release }}
     name: Merge (${{ inputs.app }})
     needs:
-      - "plan"
+      - plan
     runs-on: ubuntu-latest
     steps:
       - name: Generate Token
@@ -87,7 +87,7 @@ jobs:
     if: ${{ inputs.release }}
     name: Announce (${{ inputs.app }})
     needs:
-      - "merge"
+      - merge
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
