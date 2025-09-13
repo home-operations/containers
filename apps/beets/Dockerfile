@@ -55,7 +55,9 @@ RUN \
         tzdata \
     && \
     apk add --no-cache --virtual=.build-deps \
-        git \
+        build-base git \
+        cairo-dev \
+        gobject-introspection-dev \
     && \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/community/" \
         mp3gain \
@@ -73,6 +75,7 @@ RUN \
         beets-lidarr-fields \
         beets-noimport \
         pyacoustid \
+        pygobject \
         pylast \
         python3-discogs-client \
     && pip uninstall --yes uv \
