@@ -72,6 +72,7 @@ RUN \
         beets-extrafiles \
         beets-lidarr-fields \
         beets-noimport \
+        pygobject \
         pyacoustid \
         pylast \
         python3-discogs-client \
