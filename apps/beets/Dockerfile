@@ -56,6 +56,8 @@ RUN \
     && \
     apk add --no-cache --virtual=.build-deps \
         build-base git \
+        cairo-dev \
+        gobject-introspection-dev \
     && \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/community/" \
         mp3gain \
