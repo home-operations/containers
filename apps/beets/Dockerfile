@@ -80,7 +80,7 @@ RUN \
     && apk del --purge .build-deps \
     && rm -rf /tmp/*
 
-COPY --from=betanin /src/betanin_client/dist/ /usr/local/lib/python3.13/site-packages/betanin_client/d/
+COPY --from=betanin /src/betanin_client/dist/ /usr/local/lib/python3.13/site-packages/betanin_client/dist/
 COPY . /
 
 USER nobody:nogroup
