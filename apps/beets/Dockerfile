@@ -55,7 +55,7 @@ RUN \
         tzdata \
     && \
     apk add --no-cache --virtual=.build-deps \
-        git \
+        build-base git \
     && \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/community/" \
         mp3gain \
@@ -63,7 +63,7 @@ RUN \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
         mp3val \
     && \
-    pip install uv \
+    pip instal l uv \
     && \
     uv pip install \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
@@ -72,15 +72,15 @@ RUN \
         beets-extrafiles \
         beets-lidarr-fields \
         beets-noimport \
-        pygobject \
         pyacoustid \
+        pygobject \
         pylast \
         python3-discogs-client \
     && pip uninstall --yes uv \
     && apk del --purge .build-deps \
     && rm -rf /tmp/*
 
-COPY --from=betanin /src/betanin_client/dist/ /usr/local/lib/python3.13/site-packages/betanin_client/dist/
+COPY --from=betanin /src/betanin_client/dist/ /usr/local/lib/python3.13/site-packages/betanin_client/d/
 COPY . /
 
 USER nobody:nogroup
