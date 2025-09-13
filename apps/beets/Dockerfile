@@ -63,7 +63,7 @@ RUN \
     apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing/" \
         mp3val \
     && \
-    pip instal l uv \
+    pip install uv \
     && \
     uv pip install \
         https://github.com/beetbox/beets/releases/download/${VERSION}/beets-${VERSION#*v}-py3-none-any.whl \
