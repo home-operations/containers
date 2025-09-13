@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=beetbox/beets
-  default = "v2.3.1"
+  default = "v2.4.0"
 }
 
 variable "SOURCE" {
