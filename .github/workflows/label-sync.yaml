@@ -4,7 +4,7 @@ name: Label Sync
 
 on:
   schedule:
-    - cron: "30 1 * * *"
+    - cron: 30 1 * * *
   workflow_dispatch:
 
 permissions:

@@ -5,9 +5,9 @@ name: Release
 on:
   push:
     branches:
-      - "main"
+      - main
     paths:
-      - "apps/**"
+      - apps/**
   workflow_dispatch:
     inputs:
       app:
