@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Application Options
+name: App Options
 description: Takes an app and returns various fields from its docker-bake.hcl file
 
 inputs:
   app:
-    description: Application Name
+    description: App Name
     required: true
 
 outputs:
@@ -22,7 +22,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Application Options
+    - name: App Options
       id: options
       shell: bash
       working-directory: ./apps/${{ inputs.app }}

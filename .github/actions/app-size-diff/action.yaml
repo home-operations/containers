@@ -1,19 +1,19 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Container Size Diff
-description: Creates a Markdown summary of the size difference between two container versions
+name: App Size Diff
+description: Creates a Markdown summary of the size difference between two app versions
 
 inputs:
-  from-container:
-    description: Baseline container image for size comparison
+  from-app:
+    description: Baseline app image for size comparison
     required: true
-  to-container:
-    description: Container image to be compared to the baseline
+  to-app:
+    description: App image to be compared to the baseline
     required: true
 
 outputs:
   size-diff-markdown:
-    description: Markdown formatted output of container size comparison
+    description: Markdown formatted output of app size comparison
     value: ${{ steps.size-diff.outputs.markdown }}
 
 runs:
@@ -45,12 +45,12 @@ runs:
       run: |-
         npm install
 
-    - name: Container Size Diff
+    - name: App Size Diff
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       id: size-diff
       env:
-        FROM_CONTAINER: ${{ inputs.from-container }}
-        TO_CONTAINER: ${{ inputs.to-container }}
+        FROM_APP: ${{ inputs.from-app }}
+        TO_APP: ${{ inputs.to-app }}
       with:
         script: |-
           const { execaSync } = require("execa");
@@ -58,12 +58,12 @@ runs:
           const { markdownTable } = require("markdown-table");
           const _ = require("lodash");
 
-          const fromContainer = process.env.FROM_CONTAINER;
-          const toContainer = process.env.TO_CONTAINER;
+          const fromApp = process.env.FROM_APP;
+          const toApp = process.env.TO_APP;
 
-          async function getSizes(container) {
+          async function getSizes(app) {
               try {
-                  const { stdout } = execaSync("docker", ["manifest", "inspect", "-v", container]);
+                  const { stdout } = execaSync("docker", ["manifest", "inspect", "-v", app]);
                   const manifests = _.castArray(JSON.parse(stdout.trim()));
 
                   return _(manifests)
@@ -86,13 +86,13 @@ runs:
                       .fromPairs()
                       .value();
               } catch (e) {
-                  core.error(`Failed to inspect ${container}: ${e.message}`);
+                  core.error(`Failed to inspect ${app}: ${e.message}`);
                   return {};
               }
           }
 
-          const fromSizes = await getSizes(fromContainer);
-          const toSizes   = await getSizes(toContainer);
+          const fromSizes = await getSizes(fromApp);
+          const toSizes   = await getSizes(toApp);
 
           const platforms = _(fromSizes)
               .keys()
@@ -130,10 +130,10 @@ runs:
               ..._.map(platforms, platformRow)
           ];
 
-          const output = `## 📦 Container Size Analysis
+          const output = `## 📦 App Size Analysis
 
           > [!NOTE]
-          > Comparing \`${fromContainer}\` ➔ \`${toContainer}\`
+          > Comparing \`${fromApp}\` ➔ \`${toApp}\`
 
           ### 📈 Size Comparison Table
 

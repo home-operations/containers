@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Get Application Versions
+      - name: Get App Versions
         uses: ./.github/actions/app-versions
         id: app-versions
         with:

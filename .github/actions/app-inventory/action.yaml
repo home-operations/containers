@@ -1,17 +1,17 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Application Inventory
+name: App Inventory
 description: Return a JSON array of app names from the apps directory
 
 outputs:
   apps:
-    description: Application Inventory
+    description: App Inventory
     value: ${{ steps.inventory.outputs.apps }}
 
 runs:
   using: composite
   steps:
-    - name: Application Inventory
+    - name: App Inventory
       uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
       id: inventory
       with:

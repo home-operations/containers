@@ -1,13 +1,13 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Application Builder
+name: App Builder
 
 on:
   workflow_call:
     inputs:
       app:
         type: string
-        description: Application Name
+        description: App Name
         required: true
       release:
         type: boolean
@@ -27,25 +27,25 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Check For Existing Application
+      - name: Check For Existing App
         uses: ./.github/actions/app-exists
         id: app-exists
         with:
           app: ${{ inputs.app }}
 
-      - name: Get Application Options
+      - name: Get App Options
         uses: ./.github/actions/app-options
         id: app-options
         with:
           app: ${{ inputs.app }}
 
-      - name: Get Application Versions
+      - name: Get App Versions
         uses: ./.github/actions/app-versions
         id: app-versions
         with:
           upstream-version: ${{ steps.app-options.outputs.version }}
 
-      - name: Build Application Metadata
+      - name: Build App Metadata
         uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
         id: meta
         env:
@@ -92,7 +92,7 @@ jobs:
           script: |-
             core.setOutput('arch', '${{ matrix.platform }}'.split('/').pop());
 
-      - name: Get Application Options
+      - name: Get App Options
         uses: ./.github/actions/app-options
         id: app-options
         with:
@@ -118,7 +118,7 @@ jobs:
         run: |-
           rsync -a --ignore-existing --progress ./include/ ./apps/${{ inputs.app }}/
 
-      - name: Build Application
+      - name: Build App
         uses: docker/bake-action@3acf805d94d93a86cce4ca44798a76464a75b88c # v6.9.0
         id: bake
         with:
@@ -258,27 +258,27 @@ jobs:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
-      - name: Run Application Tests
+      - name: Run App Tests
         uses: ./.github/actions/app-tests
         with:
           app: ${{ inputs.app }}
           image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
           token: ${{ github.token }}
 
-      - name: Get Container Size Diff
-        uses: ./.github/actions/container-size-diff
-        id: container-size-diff
+      - name: Get App Size Diff
+        uses: ./.github/actions/app-size-diff
+        id: app-size-diff
         with:
-          from-container: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
-          to-container: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
+          from-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
+          to-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
 
-      - name: Post Container Size Diff
+      - name: Post App Size Diff
         uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
         with:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          header: container-size-diff-${{ inputs.app }}
+          header: app-size-diff-${{ inputs.app }}
           message: |
-            ${{ steps.container-size-diff.outputs.size-diff-markdown }}
+            ${{ steps.app-size-diff.outputs.size-diff-markdown }}
 
   announce:
     if: ${{ inputs.release && needs.plan.outputs.app-exists != 'true' }}
@@ -300,7 +300,7 @@ jobs:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
-      - name: Get Application Options
+      - name: Get App Options
         uses: ./.github/actions/app-options
         id: app-options
         with:
@@ -317,9 +317,9 @@ jobs:
         with:
           body: |
             > [!NOTE]
-            > A new application has been added.
+            > A new app has been added.
 
-            ## 📦 Application
+            ## 📦 App
 
             **Name**: [${{ inputs.app }}](https://github.com/${{ github.repository }}/pkgs/container/${{ inputs.app }})
             **Source**: <${{ steps.app-options.outputs.source }}>
@@ -344,7 +344,7 @@ jobs:
           persist-credentials: false
 
       - if: ${{ contains(needs.*.result, 'failure') }}
-        name: Get Application Options
+        name: Get App Options
         uses: ./.github/actions/app-options
         id: app-options
         with:
@@ -356,11 +356,11 @@ jobs:
         with:
           color: "0xFF0000"
           description: |
-            Application: `${{ inputs.app }}`
+            App: `${{ inputs.app }}`
             Version: `${{ steps.app-options.outputs.version }}`
             [Rebuild](${{ github.server_url }}/${{ github.repository }}/actions/workflows/release.yaml)
           nodetail: true
-          title: Container build failed
+          title: App build failed
           username: GitHub Actions
           url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           webhook: ${{ secrets.DISCORD_WEBHOOK }}

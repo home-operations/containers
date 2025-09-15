@@ -52,7 +52,7 @@
   },
   packageRules: [
     {
-      description: ["Release Rules for Application Updates"],
+      description: ["Release Rules for App Updates"],
       addLabels: ["app/{{parentDir}}"],
       additionalBranchPrefix: "{{parentDir}}-",
       commitMessageExtra: "( {{currentVersion}} → {{newVersion}} )",
@@ -62,7 +62,7 @@
       semanticCommitType: "release",
     },
     {
-      description: ["Auto-merge Application Updates"],
+      description: ["Auto-merge App Updates"],
       matchFileNames: ["**/docker-bake.hcl"],
       automerge: true,
       automergeType: "pr",

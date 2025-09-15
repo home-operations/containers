@@ -1,13 +1,13 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Deprecate Application
+name: Deprecate App
 
 on:
   workflow_dispatch:
     inputs:
       app:
         type: string
-        description: Application Name
+        description: App Name
         required: true
       reason:
         type: string
@@ -41,8 +41,10 @@ jobs:
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
 
       - name: Delete App Directory
+        env:
+          APP: ${{ inputs.app }}
         run: |-
-          rm -rf ./apps/${{ inputs.app }}
+          rm -rf ./apps/${APP}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
@@ -51,10 +53,10 @@ jobs:
           body: |
             **Reason**: ${{ inputs.reason }}
           branch: deprecate/${{ inputs.app }}
-          commit-message: "release(${{ inputs.app }})!: deprecate container image"
+          commit-message: "release(${{ inputs.app }})!: deprecate app image"
           sign-commits: true
           signoff: true
-          title: "release(${{ inputs.app }})!: deprecate container image"
+          title: "release(${{ inputs.app }})!: deprecate app image"
           token: ${{ steps.app-token.outputs.token }}
 
   merge:
@@ -113,10 +115,10 @@ jobs:
         with:
           body: |
             > [!WARNING]
-            > An application has been deprecated and will no longer receive updates.
+            > An app has been deprecated and will no longer receive updates.
             > After **6 months** from now, its image will be **removed** from our container registry.
 
-            ## 📦 Application
+            ## 📦 App
 
             **Name**: ${{ inputs.app }}
             **Reason**: ${{ inputs.reason }}

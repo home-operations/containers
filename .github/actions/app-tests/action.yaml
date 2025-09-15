@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: Application Tests
-description: Takes an app, container image and token then runs container tests
+name: App Tests
+description: Takes an app, app image and token then runs app tests
 
 inputs:
   app:
-    description: Application Name
+    description: App Name
     required: true
   image:
     description: Image
@@ -26,14 +26,14 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
-        APPLICATION: ${{ inputs.app }}
+        APP: ${{ inputs.app }}
       run: |-
-        setup.sh "${APPLICATION}"
+        setup.sh "${APP}"
 
     - name: Run Tests
       shell: bash
       env:
-        APPLICATION: ${{ inputs.app }}
+        APP: ${{ inputs.app }}
         IMAGE: ${{ inputs.image }}
       run: |-
-        run.sh "${APPLICATION}" "${IMAGE}"
+        run.sh "${APP}" "${IMAGE}"

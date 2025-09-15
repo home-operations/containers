@@ -12,7 +12,7 @@ on:
     inputs:
       app:
         type: string
-        description: Application Name
+        description: App Name
         required: true
       release:
         type: boolean

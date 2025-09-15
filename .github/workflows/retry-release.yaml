@@ -62,7 +62,7 @@ jobs:
         with:
           app: ${{ matrix.app }}
 
-      - name: Get Container Registry Version
+      - name: Get App Registry Version
         id: registry
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
@@ -97,7 +97,7 @@ jobs:
           {
               echo '## Retrying Release'
               echo
-              echo '| Container Name | Actual Version | Expected Version |'
-              echo '|----------------|------------------|----------------|'
+              echo '| App Name | Actual Version | Expected Version |'
+              echo '|----------|----------------|------------------|'
               echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.app-options.outputs.version }}` |'
           } >> $GITHUB_STEP_SUMMARY
