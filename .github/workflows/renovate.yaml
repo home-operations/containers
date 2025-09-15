@@ -33,10 +33,10 @@ jobs:
           repo: .github
           ref: main
           workflow: renovate.yaml
-          workflow_inputs: >-
+          workflow_inputs: |-
             { "autodiscoverFilter": "${{ github.event.repository.name }}" }
 
-      - name: Await Renovate completion
+      - name: Await Renovate Completion
         uses: Codex-/await-remote-run@a56c556e6434d2d7ec9438dc656143b39532324e # v1.13.0
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -44,9 +44,8 @@ jobs:
           repo: .github
           run_id: ${{ steps.return_dispatch.outputs.run_id }}
 
-      - name: Renovate output
-        shell: bash
+      - name: Renovate Output
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: >-
+        run: |-
           gh run view --repo ${{ github.repository_owner }}/.github --log ${{ steps.return_dispatch.outputs.run_id }}

@@ -29,7 +29,7 @@ runs:
               username: context.repo.owner,
           });
 
-          let app;
+          let pkg;
           if (user.type === 'Organization') {
               try {
                   const { data } = await github.rest.packages.getPackageForOrganization({
@@ -37,7 +37,7 @@ runs:
                       package_name: app,
                       org: context.repo.owner,
                   });
-                  app = data;
+                  pkg = data;
               } catch (error) {
                   if (error.status !== 404) {
                       throw error;
@@ -50,7 +50,7 @@ runs:
                       package_name: app,
                       username: context.repo.owner,
                   });
-                  app = data;
+                  pkg = data;
               } catch (error) {
                   if (error.status !== 404) {
                       throw error;
@@ -58,4 +58,4 @@ runs:
               }
           }
 
-          core.setOutput('exists', typeof app !== "undefined");
+          core.setOutput('exists', typeof pkg !== "undefined");
