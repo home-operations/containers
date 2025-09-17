@@ -7,9 +7,9 @@ file:
   /usr/local/bin/pyload:
     exists: true
 port:
-  tcp6:8000:
+  tcp:8000:
     listening: true
-  tcp6:9666:
+  tcp:9666:
     listening: true
 http:
   http://localhost:8000:
