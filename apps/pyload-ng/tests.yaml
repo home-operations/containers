@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+process:
+  python3:
+    running: true
+file:
+  /usr/local/bin/pyload:
+    exists: true
+port:
+  tcp6:8000:
+    listening: true
+  tcp6:9666:
+    listening: true
+http:
+  http://localhost:8000:
+    status: 200
