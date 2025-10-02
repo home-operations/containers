@@ -15,5 +15,13 @@ indent_size = 4
 [Dockerfile]
 indent_size = 4
 
+[*.go]
+indent_style = tabs
+indent_size = 4
+
 [{*.just,*.justfile}]
+indent_size = 4
+
+[{Makefile,*.mk}]
+indent_style = tab
 indent_size = 4

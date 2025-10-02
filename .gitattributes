@@ -1,5 +1,6 @@
 * text=auto eol=lf
 *.env linguist-detectable linguist-language=SHELL
+*.go linguist-detectable linguist-language=GO
 *.json linguist-detectable linguist-language=JSON
 *.json5 linguist-detectable linguist-language=JSON5
 *.just linguist-detectable linguist-language=JUST

@@ -1,21 +1,12 @@
-[env]
-GOSS_FILE = "tests.yaml"
-GOSS_OPTS = "--retry-timeout 60s --sleep 1s"
-GOSS_PATH = "{{config_root}}/.bin/goss/goss"
-
 [tools]
 "aqua:casey/just" = "1.43.0"
 "aqua:cli/cli" = "2.81.0"
 "aqua:evilmartians/lefthook" = "1.13.6"
-"aqua:GoogleContainerTools/container-structure-test" = "1.21.1"
 "aqua:jqlang/jq" = "1.8.1"
 "aqua:mikefarah/yq" = "4.47.2"
+"go" = "1.25"
 
 [hooks]
 postinstall = [
   "mkdir -p {{config_root}}/.cache",
-  "mkdir -p {{config_root}}/.bin/goss",
-  "gh release download --repo goss-org/goss --skip-existing --pattern *-linux-amd64 --output {{config_root}}/.bin/goss/goss",
-  "gh release download --repo goss-org/goss --skip-existing --pattern dgoss --output {{config_root}}/.bin/goss/dgoss",
-  "chmod +x {{config_root}}/.bin/goss/{goss,dgoss}",
 ]

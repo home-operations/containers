@@ -17,18 +17,10 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup Actions Script Path
-      shell: bash
-      run: |- # zizmor: ignore[github-env]
-        echo "${{ github.action_path }}" >> $GITHUB_PATH
-
-    - name: Setup Testing Tools
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ inputs.token }}
-        APP: ${{ inputs.app }}
-      run: |-
-        setup.sh "${APP}"
+    - name: Setup Go
+      uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+      with:
+        go-version-file: go.mod
 
     - name: Run Tests
       shell: bash
@@ -36,4 +28,4 @@ runs:
         APP: ${{ inputs.app }}
         IMAGE: ${{ inputs.image }}
       run: |-
-        run.sh "${APP}" "${IMAGE}"
+        TEST_IMAGE="${IMAGE}" go test -v ./apps/${APP}/...
