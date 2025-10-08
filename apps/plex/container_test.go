@@ -12,6 +12,6 @@ func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/plex:rolling")
 	testhelpers.TestHTTPEndpoint(t, ctx, image, testhelpers.HTTPTestConfig{
 		Port: "32400",
-		Path: "/web/index.html"
+		Path: "/web/index.html",
 	}, nil)
 }
