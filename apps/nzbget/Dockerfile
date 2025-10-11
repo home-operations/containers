@@ -31,6 +31,7 @@ RUN \
         jq \
         lscpu \
         nano \
+        openssl \
         tzdata \
     && \
     curl -fsSL -o /tmp/nzbget.run \
