@@ -1,7 +1,7 @@
 [tools]
 "aqua:casey/just" = "1.43.0"
 "aqua:cli/cli" = "2.82.0"
-"aqua:evilmartians/lefthook" = "1.13.6"
+"aqua:evilmartians/lefthook" = "2.0.0"
 "aqua:jqlang/jq" = "1.8.1"
 "aqua:mikefarah/yq" = "4.48.1"
 "go" = "1.25"
