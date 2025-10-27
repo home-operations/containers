@@ -15,4 +15,4 @@ for dir in "${dirs[@]}"; do
     done
 done
 
-exec /app/stash "@"
+exec /app/stash "$@"
