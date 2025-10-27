@@ -8,10 +8,10 @@ dirs=(
 )
 
 for dir in "${dirs[@]}"; do
-    find "$dir" -type f -name "requirements.txt" | while read -r reqfile; do
+    find "${dir}" -type f -name "requirements.txt" | while read -r reqfile; do
         target_dir="$(dirname "$reqfile")"
-        echo "Installing Python requirements from: $reqfile"
-        pip install --target "$target_dir" --no-cache-dir --break-system-packages -r "$reqfile"
+        echo "Installing Python requirements from: ${reqfile}"
+        uv pip install --requirement "${reqfile}" --target "${target_dir}"
     done
 done
 
