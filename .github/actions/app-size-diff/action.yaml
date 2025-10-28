@@ -38,7 +38,7 @@ runs:
       with:
         cache: npm
         cache-dependency-path: package.json
-        node-version: 22.x
+        node-version: 24.x
 
     - name: Setup Node Dependencies
       shell: bash
