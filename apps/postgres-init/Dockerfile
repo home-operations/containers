@@ -1,14 +1,13 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/alpine:3.22
 ARG VERSION
+FROM docker.io/library/postgres:${VERSION}
 USER root
 RUN \
     apk add --no-cache \
         bash \
         ca-certificates \
         catatonit \
-        postgresql17-client=="${VERSION}" \
     && rm -rf /tmp/*
 COPY . /
 USER nobody:nogroup
