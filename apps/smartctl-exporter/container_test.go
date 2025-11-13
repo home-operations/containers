@@ -9,7 +9,7 @@ import (
 
 func Test(t *testing.T) {
 	ctx := context.Background()
-	image := testhelpers.GetTestImage("ghcr.io/home-operations/sabnzbd:rolling")
+	image := testhelpers.GetTestImage("ghcr.io/home-operations/smartctl-exporter:rolling")
 	testhelpers.TestHTTPEndpoint(t, ctx, image, testhelpers.HTTPTestConfig{
 		Port: "9633",
 		Path: "/metrics",
