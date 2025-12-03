@@ -92,7 +92,7 @@
       matchDatasources: ["docker"],
       matchFileNames: ["**/Dockerfile"],
       matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.13-alpine3\\.22/",
+      allowedVersions: "/3\\.14-alpine3\\.22/",
     },
     {
       description: ["Allowed Java Version for NZBHydra2 Base Image"],
