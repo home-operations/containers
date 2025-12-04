@@ -36,7 +36,6 @@ RUN \
         ca-certificates \
         catatonit \
         coreutils \
-        cups-libs \
         curl \
         eudev-libs \
         ffmpeg \
@@ -76,12 +75,12 @@ RUN \
         build-base \
         libffi-dev \
     && \
-    pip install uv \
+    pip install uv==0.9.6 \
     && \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \
     && \
-    HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/${VERSION}/build.yaml" | grep "${ARCH}: " | cut -d ":" -f3) \
+    HOME_ASSISTANT_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/.github/workflows/builder.yml" | grep "BASE_IMAGE_VERSION: " | cut -d '"' -f2) \
     && \
     uv pip install --only-binary=:all: \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HOME_ASSISTANT_BASE}/requirements.txt" \
