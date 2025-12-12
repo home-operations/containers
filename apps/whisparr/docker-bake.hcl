@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=custom.servarr-nightly depName=whisparr versioning=loose
-  default = "2.0.0.1549"
+  default = "2.0.0.1656"
 }
 
 variable "SOURCE" {
