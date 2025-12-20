@@ -101,5 +101,12 @@
       matchPackageNames: ["/amazoncorretto/"],
       allowedVersions: "/17-alpine3\\.22/",
     },
+    {
+      description: ["Allowed Python Version for Octoprint"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/octoprint/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.13-alpine3\\.22/",
+    },
   ],
 }
