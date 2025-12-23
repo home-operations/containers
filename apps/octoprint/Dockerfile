@@ -19,7 +19,6 @@ ENV \
     CFLAGS="-Wno-int-conversion"
 
 USER root
-WORKDIR /app
 
 RUN \
     apk add --no-cache \
@@ -36,6 +35,7 @@ RUN \
 
 USER nobody:nogroup
 WORKDIR /config
+
 # Plugins need to use 'pip install --user'
 ENV PYTHONUSERBASE=/config/plugins \
     PIP_USER=true
