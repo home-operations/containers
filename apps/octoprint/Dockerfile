@@ -36,7 +36,8 @@ RUN \
 
 USER nobody:nogroup
 WORKDIR /config
-# Plugins use 'pip install --user'
-ENV PYTHONUSERBASE=/config/plugins
+# Plugins need to use 'pip install --user'
+ENV PYTHONUSERBASE=/config/plugins \
+    PIP_USER=true
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "octoprint", "serve", "--basedir", "/config"]
