@@ -5,8 +5,8 @@ variable "APP" {
 }
 
 variable "VERSION" {
-  // renovate: datasource=pypi depName=pyload-ng
-  default = "0.5.0b3.dev93"
+  // renovate: datasource=pypi depName=pyload-ng versioning=pep440
+  default = "0.5.0b3.dev94"
 }
 
 variable "SOURCE" {

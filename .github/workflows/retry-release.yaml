@@ -44,7 +44,7 @@ jobs:
           persist-credentials: false
 
       - name: Generate Token
-        uses: actions/create-github-app-token@7e473efe3cb98aa54f8d4bac15400b15fad77d94 # v2.2.0
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
         id: app-token
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
@@ -54,7 +54,7 @@ jobs:
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
 
       - name: Install regctl
-        uses: regclient/actions/regctl-installer@f68c06246bba172f86f7a54aec805411b2fac09a # main
+        uses: regclient/actions/regctl-installer@1b705e32d40851370799ea5814e83d0a5f6a70dc # main
 
       - name: Get Bake Options
         uses: ./.github/actions/app-options

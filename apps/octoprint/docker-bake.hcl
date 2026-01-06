@@ -1,16 +1,16 @@
 target "docker-metadata-action" {}
 
 variable "APP" {
-  default = "prowlarr"
+  default = "octoprint"
 }
 
 variable "VERSION" {
-  // renovate: datasource=custom.servarr-develop depName=prowlarr versioning=loose
-  default = "2.3.1.5238"
+  // renovate: datasource=pypi depName=OctoPrint
+  default = "1.11.5"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/Prowlarr/Prowlarr"
+  default = "https://github.com/OctoPrint/OctoPrint"
 }
 
 group "default" {

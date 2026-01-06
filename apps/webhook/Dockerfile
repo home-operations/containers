@@ -32,6 +32,7 @@ RUN \
         curl \
         jo \
         jq \
+        openssl \
         trurl \
         tzdata \
     && mkdir -p /app/bin \
