@@ -16,7 +16,7 @@ ENV \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
     UV_SYSTEM_PYTHON=true \
-    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.23/"
 
 USER root
 WORKDIR /app
