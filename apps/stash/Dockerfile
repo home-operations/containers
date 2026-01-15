@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine3.22
+FROM docker.io/library/python:3.13-alpine3.23
 ARG TARGETARCH
 ARG STASHARCH=${TARGETARCH/arm64/-arm64v8}
 ARG STASHARCH=${STASHARCH/amd64/}
