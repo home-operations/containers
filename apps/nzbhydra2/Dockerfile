@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/amazoncorretto:17-alpine3.23
+FROM docker.io/library/amazoncorretto:17-alpine3.22
 
 ARG TARGETARCH
 ARG VENDOR
