@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/alpine:3.22
+FROM docker.io/library/alpine:3.23
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION

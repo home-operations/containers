@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/alpine:3.22 AS builder
+FROM docker.io/library/alpine:3.23 AS builder
 ARG TARGETARCH
 ARG VERSION
 RUN apk add --no-cache curl \
