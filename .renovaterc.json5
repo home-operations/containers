@@ -97,6 +97,13 @@
       allowedVersions: "/3\\.13-alpine3\\.23/",
     },
     {
+      description: ["Allowed Python Version for Tautulli Base Images"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/tautulli/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.13-alpine3\\.22/",
+    },
+    {
       description: ["Allowed Java Version for NZBHydra2 Base Image"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/nzbhydra2/Dockerfile"],
