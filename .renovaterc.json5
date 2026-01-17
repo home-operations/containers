@@ -97,7 +97,7 @@
       allowedVersions: "/3\\.13-alpine3\\.23/",
     },
     {
-      description: ["Allowed Python Version for Tautulli Base Images"],
+      description: ["Allowed Python Version for Tautulli Base Image"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/tautulli/Dockerfile"],
       matchPackageNames: ["/python/"],
