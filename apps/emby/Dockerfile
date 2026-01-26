@@ -20,6 +20,9 @@ RUN \
         jq \
         nano \
         tzdata \
+        intel-media-va-driver-non-free \
+        libva2 \
+        libva-drm2 \
     && \
     curl -fsSL -o /tmp/emby.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
