@@ -20,9 +20,13 @@ RUN \
         jq \
         nano \
         tzdata \
-        intel-media-va-driver-non-free \
-        libva2 \
-        libva-drm2 \
+    && \
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        apt-get install -y --no-install-recommends --no-install-suggests \
+            intel-media-va-driver-non-free \
+            libva2 \
+            libva-drm2; \
+    fi \
     && \
     curl -fsSL -o /tmp/emby.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
