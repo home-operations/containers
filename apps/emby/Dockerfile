@@ -5,7 +5,8 @@ ARG TARGETARCH
 ARG VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
-    NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
+    NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
+    ATTACHED_DEVICES_PERMS="/dev/dri /dev/dvb /dev/vchiq /dev/video1? -type c"
 
 USER root
 
