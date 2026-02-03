@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 
-# NOTE: Alpine version is tied to the version in the Renovate annotation in docker-bake.hcl
 FROM docker.io/library/python:3.13-alpine3.23
 ARG TARGETARCH
 ARG MINIJINJA_ARCH=${TARGETARCH/arm64/aarch64}
@@ -22,13 +21,15 @@ RUN \
         curl \
         jq \
         nano \
+        tzdata \
+    && \
+    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/community" \
         transmission-daemon=="${VERSION}" \
         transmission-cli=="${VERSION}" \
         transmission-extra=="${VERSION}" \
         transmission-remote=="${VERSION}" \
-        tzdata \
     && \
-    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.8.0/minijinja-cli-${MINIJINJA_ARCH}-unknown-linux-musl.tar.xz \
+    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.15.1/minijinja-cli-${MINIJINJA_ARCH}-unknown-linux-musl.tar.xz \
         | tar xJf - -C /usr/local/bin/ --strip-components=1 \
     && \
     rm -rf /tmp/*
