@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=custom.plex depName=plex versioning=loose
-  default = "1.43.0.10467-2b1ba6e69"
+  default = "1.43.0.10492-121068a07"
 }
 
 variable "SOURCE" {
