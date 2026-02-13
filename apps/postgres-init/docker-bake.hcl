@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=docker depName=docker.io/library/postgres versioning=docker
-  default = "18.1-alpine3.23"
+  default = "18.2-alpine3.23"
 }
 
 variable "SOURCE" {
