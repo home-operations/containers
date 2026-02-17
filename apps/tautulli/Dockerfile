@@ -37,7 +37,9 @@ RUN \
         libffi-dev \
         musl-dev \
         openssl-dev \
-    && pip install uv \
+    && pip install \
+        uv \
+        'setuptools==81' \
     && uv pip install \
         --requirement "https://raw.githubusercontent.com/Tautulli/tautulli-baseimage/python3/requirements.txt" \
     && mkdir -p /app \
