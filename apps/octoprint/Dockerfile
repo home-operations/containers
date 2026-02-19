@@ -16,7 +16,7 @@ ENV \
     UV_SYSTEM_PYTHON=true \
     UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.23/" \
     # https://community.octoprint.org/t/trouble-with-installing-netifaces-on-alpine-linux/61694
-    # Maybe can be removed in v1.12
+    # Can be removed in v1.12 https://github.com/OctoPrint/OctoPrint/issues/5157
     CFLAGS="-Wno-int-conversion"
 
 USER root
@@ -29,7 +29,7 @@ RUN \
         build-base \
         linux-headers \
     && pip install uv \
-    && uv pip install octoprint==${VERSION} \
+    && uv pip install "setuptools<82.0.0" "octoprint==${VERSION}" \
     && pip uninstall --yes uv \
     && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*
