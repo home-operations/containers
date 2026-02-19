@@ -28,8 +28,10 @@ RUN \
     && apk add --no-cache --virtual .build-deps \
         build-base \
         linux-headers \
-    && pip install uv \
-    && uv pip install "setuptools<82.0.0" "octoprint==${VERSION}" \
+    && pip install \
+        uv \
+        'setuptools==81' \
+    && uv pip install "octoprint==${VERSION}" \
     && pip uninstall --yes uv \
     && apk del --purge .build-deps \
     && rm -rf /root/.cache /root/.cargo /tmp/*
