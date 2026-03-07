@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=repology depName=alpine_edge/transmission-daemon
-  default = "4.1.0-r0"
+  default = "4.1.1-r1"
 }
 
 variable "SOURCE" {
