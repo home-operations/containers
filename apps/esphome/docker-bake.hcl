@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=pypi depName=esphome
-  default = "2026.2.4"
+  default = "2026.3.0"
 }
 
 variable "SOURCE" {
