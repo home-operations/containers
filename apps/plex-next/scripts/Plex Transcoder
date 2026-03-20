@@ -1,6 +1,0 @@
-#!/bin/bash
-export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-
-exec \
-    /usr/lib/plexmediaserver/Plex\ Transcoder.orig \
-    "$@"

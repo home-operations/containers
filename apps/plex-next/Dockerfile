@@ -7,7 +7,6 @@ ARG VERSION
 
 ENV LD_LIBRARY_PATH="/lib" \
     LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-    MESA_SHADER_CACHE_DIR="/tmp" \
     NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR="/config/Library/Application Support" \
     PLEX_MEDIA_SERVER_HOME="/usr/lib/plexmediaserver" \
@@ -47,8 +46,6 @@ RUN \
         libva \
     && tar zxvf /tmp/libdrm-*.apk --strip-components=1 -C "${PLEX_MEDIA_SERVER_HOME}" \
     && tar zxvf /tmp/libva-*.apk --strip-components=1 -C "${PLEX_MEDIA_SERVER_HOME}" \
-    && mv "${PLEX_MEDIA_SERVER_HOME}/Plex Transcoder" "${PLEX_MEDIA_SERVER_HOME}/Plex Transcoder.orig" \
-    && ln -s /scripts/Plex\ Transcoder "${PLEX_MEDIA_SERVER_HOME}/Plex Transcoder" \
     && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
     && apk del --purge .build-deps \
     && rm -rf /tmp/*

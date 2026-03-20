@@ -108,6 +108,14 @@ if [[ "${PLEX_PURGE_CODECS}" == "true" ]]; then
     find "${PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR}/Plex Media Server/Codecs" -mindepth 1 -not -name '.device-id' -print -delete
 fi
 
+# Fix VA-API DRI symlink if it doesn't point to the right place
+vaDriPath="${PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR}/Plex Media Server/Cache/va-dri-linux-${PLEX_MEDIA_SERVER_INFO_MODEL}"
+[[ -L "${vaDriPath}" && "$(readlink -f "${vaDriPath}")" = "/usr/lib/dri" ]] || {
+    echo "Fixing VA-API DRI symlink at ${vaDriPath}..."
+    rm -rf "${vaDriPath}" 2>/dev/null
+    ln -sf /usr/lib/dri "${vaDriPath}"
+}
+
 exec \
     /usr/lib/plexmediaserver/Plex\ Media\ Server \
     "$@"
