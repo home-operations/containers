@@ -5,7 +5,9 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 
-ENV MESA_SHADER_CACHE_DIR="/tmp" \
+ENV LD_LIBRARY_PATH="/lib" \
+    LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+    MESA_SHADER_CACHE_DIR="/tmp" \
     NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR="/config/Library/Application Support" \
     PLEX_MEDIA_SERVER_HOME="/usr/lib/plexmediaserver" \
@@ -24,30 +26,29 @@ RUN \
         coreutils \
         curl \
         jq \
-        libdrm \
-        libva \
-        mesa-dri-gallium \
-        mesa-va-gallium \
         tzdata \
         xmlstarlet \
     && \
-    if [ "${TARGETARCH}" = "amd64" ]; then \
-        apk add --no-cache \
-            libva-intel-driver \
-            intel-media-driver; \
-    fi && \
+    apk add --no-cache \
+        mesa-dri-gallium \
+        mesa-va-gallium \
+        $( [ "${TARGETARCH}" = "amd64" ] && echo intel-media-driver libva-intel-driver ) \
+    && \
     apk add --no-cache --virtual=.build-deps \
         dpkg \
     && \
     curl -fsSL -o /tmp/plex.deb \
         "https://downloads.plex.tv/plex-media-server-new/${VERSION}/debian/plexmediaserver_${VERSION}_${TARGETARCH}.deb" \
-    && \
-    dpkg-deb -R /tmp/plex.deb /tmp \
+    && dpkg-deb -R /tmp/plex.deb /tmp \
     && cp -R /tmp/usr/* /usr \
+    && \
+    apk fetch --no-cache --output /tmp \
+        libdrm \
+        libva \
+    && tar zxvf /tmp/libdrm-*.apk --strip-components=1 -C "${PLEX_MEDIA_SERVER_HOME}" \
+    && tar zxvf /tmp/libva-*.apk --strip-components=1 -C "${PLEX_MEDIA_SERVER_HOME}" \
     && mv "${PLEX_MEDIA_SERVER_HOME}/Plex Transcoder" "${PLEX_MEDIA_SERVER_HOME}/Plex Transcoder.orig" \
     && ln -s /scripts/Plex\ Transcoder "${PLEX_MEDIA_SERVER_HOME}/Plex Transcoder" \
-    && mv "${PLEX_MEDIA_SERVER_HOME}/Plex Commercial Skipper" "${PLEX_MEDIA_SERVER_HOME}/Plex Commercial Skipper.orig" \
-    && ln -s /scripts/Plex\ Commercial\ Skipper "${PLEX_MEDIA_SERVER_HOME}/Plex Commercial Skipper" \
     && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
     && apk del --purge .build-deps \
     && rm -rf /tmp/*

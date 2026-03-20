@@ -1,4 +1,6 @@
 #!/bin/bash
-export LD_LIBRARY_PATH="/usr/lib:/lib"
 export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-exec "/usr/lib/plexmediaserver/Plex Transcoder.orig" "$@"
+
+exec \
+    /usr/lib/plexmediaserver/Plex\ Transcoder.orig \
+    "$@"
