@@ -104,6 +104,13 @@
       allowedVersions: "/3\\.14-slim/",
     },
     {
+      description: ["Allowed Python Version for ESPHome Base Image"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/esphome/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.13-slim/",
+    },
+    {
       description: ["Allowed Java Version for NZBHydra2 Base Image"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/nzbhydra2/Dockerfile"],
