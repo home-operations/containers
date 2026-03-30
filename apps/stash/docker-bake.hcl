@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=stashapp/stash
-  default = "v0.30.1"
+  default = "v0.31.0"
 }
 
 variable "SOURCE" {
