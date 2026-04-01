@@ -22,11 +22,9 @@ RUN \
         jq \
         nano \
         py3-future \
+        py3-geoip2 \
         py3-requests \
         tzdata \
-    && \
-    apk add --no-cache --repository="https://dl-cdn.alpinelinux.org/alpine/edge/testing" \
-        py3-geoip \
     && \
     mkdir -p /usr/share/GeoIP \
     && \
