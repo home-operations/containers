@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=nzbgetcom/nzbget versioning=loose
-  default = "26.0"
+  default = "26.1"
 }
 
 variable "SOURCE" {
