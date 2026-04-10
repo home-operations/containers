@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
@@ -79,13 +78,12 @@ func TestHTTPEndpoint(t *testing.T, ctx context.Context, image string, httpConfi
 	}
 
 	portStr := httpConfig.Port + "/tcp"
-	portTCP := nat.Port(portStr)
 
 	opts := []testcontainers.ContainerCustomizer{
 		testcontainers.WithExposedPorts(portStr),
 		testcontainers.WithWaitStrategy(
-			wait.ForListeningPort(portTCP),
-			wait.ForHTTP(httpConfig.Path).WithPort(portTCP).WithStatusCodeMatcher(func(status int) bool {
+			wait.ForListeningPort(portStr),
+			wait.ForHTTP(httpConfig.Path).WithPort(portStr).WithStatusCodeMatcher(func(status int) bool {
 				return status == httpConfig.StatusCode
 			}),
 		),
