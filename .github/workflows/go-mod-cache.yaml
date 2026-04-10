@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Go Module Cache
+name: Go Mod Cache
 
 on:
   push:
