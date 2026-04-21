@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/node:22-alpine AS builder
+FROM docker.io/library/node:24-alpine AS builder
 ARG VERSION
 
 RUN apk add --no-cache \
@@ -23,7 +23,7 @@ RUN NODE_ENV=production npm run frontend:build
 # Prune devDependencies before copying to runtime image
 RUN npm prune --omit=dev
 
-FROM docker.io/library/node:22-alpine
+FROM docker.io/library/node:24-alpine
 ARG VERSION
 
 RUN apk add --no-cache \
