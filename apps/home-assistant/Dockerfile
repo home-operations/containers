@@ -75,7 +75,7 @@ RUN \
         build-base \
         libffi-dev \
     && \
-    HA_UV_VERSION=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/Dockerfile" | grep 'install uv==' | sed 's|.*install uv==||') \
+    HA_UV_VERSION=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/requirements.txt" | grep 'uv==' | sed 's|.*uv==||') \
     && \
     pip install uv==${HA_UV_VERSION} \
     && \
