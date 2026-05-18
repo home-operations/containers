@@ -9,6 +9,7 @@ experimental = true
 "aqua:mikefarah/yq" = "4.53.2"
 "aqua:zizmorcore/zizmor" = "1.25.2"
 "go" = "1.26.3"
+"node" = "24.15.0"
 
 [tasks.local-build]
 description = "Build and test an app locally"
