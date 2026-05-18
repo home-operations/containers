@@ -1,6 +1,5 @@
 [settings]
 experimental = true
-unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
 
 [tools]
 "aqua:cli/cli" = "2.92.0"
@@ -15,10 +14,12 @@ unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
 [tasks.local-build]
 description = "Build and test an app locally"
 dir = "{{config_root}}/.cache"
+shell = "bash -c"
 usage = '''
 arg "<app>"
 '''
 run = '''
+set -euo pipefail
 rsync -aqIP {{config_root}}/include/ {{config_root}}/apps/"$usage_app"/ .
 docker buildx bake --no-cache --metadata-file docker-bake.json --set=*.output=type=docker --load
 TEST_IMAGE="$(jq -r '."image-local"."image.name" | sub("^docker.io/library/"; "")' docker-bake.json)" go test -v {{config_root}}/apps/"$usage_app"/...
@@ -34,7 +35,9 @@ run = 'gh workflow run release.yaml -f app="$usage_app" -f release="${usage_rele
 
 [tasks.generate-label-config]
 hide = true
+shell = "bash -c"
 run = '''
+set -euo pipefail
 find "{{config_root}}/apps" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | while IFS= read -r app; do
     yq -i ". += [{\"name\": \"app/$app\", \"color\": \"027fa0\"}]" {{config_root}}/.github/labels.yaml
     yq -i ". += {\"app/$app\": [{\"changed-files\": [{\"any-glob-to-any-file\": [\"apps/$app/**\"]}]}]}" {{config_root}}/.github/labeler.yaml
