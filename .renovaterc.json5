@@ -74,7 +74,7 @@
       description: ["Allowed Ubuntu Version for Base Images"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
-      allowedVersions: "/24\\.04/",
+      allowedVersions: "/26\\.04/",
     },
     {
       description: ["Allowed Alpine Version for Base Images"],

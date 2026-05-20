@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.04
+FROM docker.io/library/ubuntu:26.04
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
