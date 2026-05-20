@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-APP_DIR="/app/bin"
+APP_DIR="/app"
 
 export AMDGPU_IDS="${APP_DIR}/extra/share/libdrm/amdgpu.ids"
 export FONTCONFIG_PATH="${APP_DIR}/etc/fonts"
@@ -13,10 +13,10 @@ if [ -d "/lib/x86_64-linux-gnu" ]; then
 fi
 
 exec \
-    /app/bin/system/EmbyServer \
+    "${APP_DIR}/system/EmbyServer" \
         -programdata /config \
-        -ffdetect /app/bin/bin/ffdetect \
-        -ffmpeg /app/bin/bin/ffmpeg \
-        -ffprobe /app/bin/bin/ffprobe \
+        -ffdetect "${APP_DIR}/bin/ffdetect" \
+        -ffmpeg "${APP_DIR}/bin/ffmpeg" \
+        -ffprobe "${APP_DIR}/bin/ffprobe" \
         -restartexitcode 3 \
         "$@"

@@ -25,9 +25,9 @@ RUN \
     curl -fsSL -o /tmp/emby.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
     && \
-    mkdir -p /app/bin /tmp/emby \
+    mkdir -p /app /tmp/emby \
     && dpkg-deb -xv /tmp/emby.deb /tmp/emby/ \
-    && mv -t /app/bin/ /tmp/emby/opt/emby-server/* \
+    && mv -t /app/ /tmp/emby/opt/emby-server/* \
     && chown -R root:root /app && chmod -R 755 /app \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
