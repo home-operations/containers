@@ -11,6 +11,7 @@ export SSL_CERT_FILE="${APP_DIR}/etc/ssl/certs/ca-certificates.crt"
 if [ -d "/lib/x86_64-linux-gnu" ]; then
     export LIBVA_DRIVERS_PATH="/usr/lib/x86_64-linux-gnu/dri:${APP_DIR}/extra/lib/dri"
 fi
+export HOME="/config"
 
 exec \
     /app/bin/system/EmbyServer \
