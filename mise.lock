@@ -66,6 +66,7 @@ provenance = "github-attestations"
 [tools."aqua:evilmartians/lefthook"."platforms.macos-arm64"]
 checksum = "sha256:911d530d68ba1495beb32009bf895e296208a556a030d254e8d5641823ba7a25"
 url = "https://github.com/evilmartians/lefthook/releases/download/v2.1.8/lefthook_2.1.8_MacOS_arm64.gz"
+provenance = "github-attestations"
 
 [tools."aqua:evilmartians/lefthook"."platforms.macos-x64"]
 checksum = "sha256:5d95768cf7383e21e5320dc1b351671fca009bc44800ec2366f824f5540d354f"

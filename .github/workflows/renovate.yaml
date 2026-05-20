@@ -11,6 +11,8 @@ on:
       - .renovate/**.json5
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   renovate:
     name: Renovate
@@ -23,31 +25,36 @@ jobs:
           client-id: ${{ secrets.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
+          repositories: ".github"
+          permission-actions: write
 
       - name: Run Renovate
         id: dispatch
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO_NAME: ${{ github.event.repository.name }}
         run: |-
           RUN_URL=$(gh workflow run renovate.yaml \
             --repo "${{ github.repository_owner }}/.github" \
             --ref main \
-            --field "autodiscoverFilter=${{ github.event.repository.name }}")
+            --field "autodiscoverFilter=${REPO_NAME}")
           echo "run_id=${RUN_URL##*/}" >> "$GITHUB_OUTPUT"
 
       - name: Await Renovate Completion
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          RUN_ID: ${{ steps.dispatch.outputs.run_id }}
         run: |-
           gh run watch \
             --repo "${{ github.repository_owner }}/.github" \
-            "${{ steps.dispatch.outputs.run_id }}" \
+            "${RUN_ID}" \
             --exit-status
 
       - name: Renovate Output
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          RUN_ID: ${{ steps.dispatch.outputs.run_id }}
         run: |-
           gh run view \
             --repo "${{ github.repository_owner }}/.github" \
-            --log "${{ steps.dispatch.outputs.run_id }}"
+            --log "${RUN_ID}"

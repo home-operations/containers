@@ -39,6 +39,8 @@ jobs:
         with:
           client-id: ${{ secrets.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Validate App Directory
         env:
@@ -81,16 +83,20 @@ jobs:
         with:
           client-id: ${{ secrets.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Merge Pull Request
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          PULL_NUMBER: ${{ needs.plan.outputs.pull-number }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |-
             await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: ${{ needs.plan.outputs.pull-number }},
+              pull_number: Number(process.env.PULL_NUMBER),
               merge_method: 'squash',
             });
 
@@ -112,6 +118,7 @@ jobs:
         with:
           client-id: ${{ secrets.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
 
       - name: Get Release Tag
         uses: ./.github/actions/release-tag
@@ -120,16 +127,20 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Create Release
-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
-        with:
-          body: |
-            > [!WARNING]
-            > An app has been deprecated and will no longer receive updates.
-            > After **6 months** from now, its image will be **removed** from our container registry.
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          APP: ${{ inputs.app }}
+          REASON: ${{ inputs.reason }}
+        run: |-
+          cat > release-notes.md <<EOF
+          > [!WARNING]
+          > An app has been deprecated and will no longer receive updates.
+          > After **6 months** from now, its image will be **removed** from our container registry.
 
-            ## 📦 App
+          ## 📦 App
 
-            **Name**: ${{ inputs.app }}
-            **Reason**: ${{ inputs.reason }}
-          tag: ${{ steps.release.outputs.tag }}
-          token: ${{ steps.app-token.outputs.token }}
+          **Name**: ${APP}
+          **Reason**: ${REASON}
+          EOF
+          gh release create "$TAG" --notes-file release-notes.md

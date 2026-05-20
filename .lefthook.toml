@@ -1,24 +1,4 @@
-[pre-commit]
-parallel = true
-
-[pre-commit.commands.format-go]
-run = "gofmt -s -w {staged_files}"
-glob = ["*.go"]
-stage_fixed = true
-
-[pre-commit.commands.format-yaml]
-run = "yamlfmt {staged_files}"
-glob = ["*.yml", "*.yaml"]
-stage_fixed = true
-
-[pre-commit.commands.shellcheck]
-glob = "*.sh"
-run = "shellcheck {staged_files}"
-
-[pre-commit.commands.zizmor]
-glob = [".github/workflows/*.yaml", ".github/actions/**/action.yaml"]
-run = "zizmor --offline {staged_files}"
-
-[pre-commit.commands.mise-lock]
-glob = [".mise.toml"]
-run = "mise lock && git add mise.lock"
+[[remotes]]
+git_url = "https://github.com/home-operations/.github"
+ref = "main"
+configs = ["lefthook.common.toml"]

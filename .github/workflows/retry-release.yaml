@@ -49,6 +49,9 @@ jobs:
         with:
           client-id: ${{ secrets.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-actions: write
+          permission-packages: read
+          permission-pull-requests: read
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
@@ -66,14 +69,16 @@ jobs:
         id: registry
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          APP: ${{ matrix.app }}
         run: |-
-          if ! version=$(regctl image inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:rolling \
+          if ! version=$(regctl image inspect "ghcr.io/${REPO_OWNER}/${APP}:rolling" \
               | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
           then
-              echo "Failed to get registry version for ${{ matrix.app }}"
+              echo "Failed to get registry version for ${APP}"
               exit 1
           fi
-          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
         name: Find Pull Request

@@ -42,7 +42,4 @@ done
 '''
 
 [hooks]
-postinstall = [
-  "mkdir -p {{config_root}}/.cache",
-  "lefthook install"
-]
+postinstall = ["mkdir -p {{config_root}}/.cache", "lefthook install"]

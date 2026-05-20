@@ -20,10 +20,15 @@ on:
         required: false
         default: false
 
+permissions:
+  contents: read
+
 jobs:
   prepare:
     name: Prepare
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
@@ -41,6 +46,8 @@ jobs:
     needs:
       - prepare
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       apps: ${{ steps.apps.outputs.apps }}
     steps:
@@ -70,7 +77,10 @@ jobs:
       id-token: write
       packages: write
       security-events: write
-    secrets: inherit
+    secrets:
+      BOT_CLIENT_ID: ${{ secrets.BOT_CLIENT_ID }}
+      BOT_APP_PRIVATE_KEY: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
     strategy:
       matrix:
         app: ${{ fromJSON(needs.changed.outputs.apps) }}
@@ -86,6 +96,7 @@ jobs:
     needs:
       - build
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Any jobs failed?
         if: ${{ contains(needs.*.result, 'failure') }}
