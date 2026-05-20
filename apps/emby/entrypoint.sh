@@ -13,7 +13,7 @@ fi
 export HOME="/config"
 
 exec \
-    cd /app/emby env LD_LIBRARY_PATH="${APP_DIR}/lib:${APP_DIR}/extra/lib" /app/emby/system/EmbyServer
+    cd /app/emby env LD_LIBRARY_PATH="${APP_DIR}/lib:${APP_DIR}/extra/lib" /app/emby/system/EmbyServer \
         -programdata /config \
         -ffdetect /app/bin/bin/ffdetect \
         -ffmpeg /app/bin/bin/ffmpeg \
