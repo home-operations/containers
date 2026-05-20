@@ -15,6 +15,7 @@ RUN \
     && \
     apt-get install -y --no-install-recommends --no-install-suggests \
         bash \
+        libexpat1 \
         ca-certificates \
         catatonit \
         curl \
