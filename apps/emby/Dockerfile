@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.04
+FROM docker.io/library/ubuntu:26.04
 ARG TARGETARCH
 ARG VERSION
 
@@ -19,15 +19,16 @@ RUN \
         catatonit \
         curl \
         jq \
+        libexpat1 \
         nano \
         tzdata \
     && \
     curl -fsSL -o /tmp/emby.deb \
         "https://github.com/MediaBrowser/Emby.Releases/releases/download/${VERSION}/emby-server-deb_${VERSION}_${TARGETARCH}.deb" \
     && \
-    mkdir -p /app/bin /tmp/emby \
+    mkdir -p /app/emby /tmp/emby \
     && dpkg-deb -xv /tmp/emby.deb /tmp/emby/ \
-    && mv -t /app/bin/ /tmp/emby/opt/emby-server/* \
+    && mv -t /app/emby/ /tmp/emby/opt/emby-server/* \
     && chown -R root:root /app && chmod -R 755 /app \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
