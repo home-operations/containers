@@ -11,6 +11,8 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/log"
 	"github.com/testcontainers/testcontainers-go/wait"
+
+	dockerclient "github.com/moby/moby/client"
 )
 
 // GetTestImage returns the image to test from TEST_IMAGE env var or falls back to the default
@@ -115,10 +117,27 @@ func TestHTTPEndpoint(t *testing.T, image string, httpConfig HTTPTestConfig, con
 	_ = runContainer(t, t.Context(), image, opts...)
 }
 
-// TestFileExists tests that a file exists in the container
-func TestFileExists(t *testing.T, image string, filePath string, config *ContainerConfig) {
+// TestFileExists tests that a file exists in the image by inspecting its filesystem directly,
+// without starting the container. Works for images with no shell or executables.
+func TestFileExists(t *testing.T, image string, filePath string, _ *ContainerConfig) {
 	t.Helper()
-	TestCommandSucceeds(t, image, config, "test", "-f", filePath)
+
+	ctx := t.Context()
+
+	ctr, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: testcontainers.ContainerRequest{Image: image, Cmd: []string{"/"}},
+		Started:          false,
+		Logger:           log.TestLogger(t),
+	})
+	testcontainers.CleanupContainer(t, ctr)
+	require.NoError(t, err)
+
+	cli, err := dockerclient.New(dockerclient.FromEnv)
+	require.NoError(t, err)
+	defer cli.Close()
+
+	_, err = cli.ContainerStatPath(ctx, ctr.GetContainerID(), dockerclient.ContainerStatPathOptions{Path: filePath})
+	require.NoError(t, err, "file %q should exist in image %q", filePath, image)
 }
 
 // TestCommandSucceeds tests that a command runs successfully in the container (exit code 0)
