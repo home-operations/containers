@@ -182,7 +182,7 @@ checksum = "sha256:ec6d0f6b056c89498a9b26c4d5c77a31fd0b7fe45ba8a45fa87d26f66c3eb
 url = "https://nodejs.org/dist/v26.3.0/node-v26.3.0-win-x64.zip"
 
 [[tools.oxfmt]]
-version = "0.53.0"
+version = "0.54.0"
 backend = "npm:oxfmt"
 
 [[tools.shellcheck]]
