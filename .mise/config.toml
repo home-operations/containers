@@ -5,7 +5,7 @@ unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
 [tools]
 gh = "2.95.0"
 go = "1.26.4"
-jq = "1.8.1"
+jq = "1.8.2"
 lefthook = "2.1.9"
 node = "26.3.1"
 oxfmt = "0.55.0"
