@@ -7,7 +7,13 @@ on:
     branches:
       - main
     paths:
+      # Test-only changes (apps/<app>/container_test.go) must not trigger a
+      # release rebuild+push — that mints a fresh image digest for byte-identical
+      # content (digest churn). The negation is gitignore-style/last-match-wins,
+      # so a push touching a Dockerfile/docker-bake.hcl still matches apps/** and
+      # releases normally; PRs (pull-request.yaml) keep building+running the test.
       - apps/**
+      - "!apps/**/*_test.go"
   workflow_dispatch:
     inputs:
       app:
