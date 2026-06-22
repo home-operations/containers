@@ -26,13 +26,6 @@ jobs:
           include_only_directories: true
           max_depth: 1
 
-  # Compiles the Go test harness (testhelpers + apps/*/container_test.go) against
-  # go.mod. The per-app integration tests only run when an app is built, so a
-  # go.mod-only change (e.g. a testcontainers-go bump) would otherwise never be
-  # compiled in CI — a breaking dependency change could merge green. The app dirs
-  # are test-only, so `go test -run=^$` compiles every test binary (running none,
-  # no Docker) and `go vet` type-checks them; both catch a broken dependency bump.
-  # Always runs; fast.
   go-check:
     name: Go Compile & Vet
     runs-on: ubuntu-24.04
