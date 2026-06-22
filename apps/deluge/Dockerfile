@@ -21,7 +21,6 @@ RUN \
         deluge=="${VERSION}" \
         jq \
         nano \
-        py3-future \
         py3-geoip2 \
         py3-requests \
         tzdata \
