@@ -8,5 +8,5 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/tqm:rolling")
-	testhelpers.TestCommandSucceeds(t, image, nil, "/app/bin/tqm", "version")
+	testhelpers.RequireCommandSucceeds(t, image, nil, "/app/bin/tqm", "version")
 }

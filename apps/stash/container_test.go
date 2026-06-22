@@ -8,5 +8,5 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/stash:rolling")
-	testhelpers.TestHTTPEndpoint(t, image, testhelpers.HTTPTestConfig{Port: "9999"}, nil)
+	testhelpers.RequireHTTPEndpoint(t, image, testhelpers.HTTPTestConfig{Port: "9999"}, nil)
 }

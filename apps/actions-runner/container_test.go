@@ -8,5 +8,5 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/actions-runner:rolling")
-	testhelpers.TestFileExists(t, image, "/usr/local/bin/yq", nil)
+	testhelpers.RequireFileExists(t, image, "/usr/local/bin/yq")
 }

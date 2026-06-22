@@ -8,5 +8,5 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/k8s-sidecar:rolling")
-	testhelpers.TestCommandSucceeds(t, image, nil, "python", "-u", "-m", "sidecar", "--help")
+	testhelpers.RequireCommandSucceeds(t, image, nil, "python", "-u", "-m", "sidecar", "--help")
 }

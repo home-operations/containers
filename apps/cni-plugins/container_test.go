@@ -8,5 +8,5 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/cni-plugins:rolling")
-	testhelpers.TestCommandSucceeds(t, image, nil, "/plugins/macvlan")
+	testhelpers.RequireCommandSucceeds(t, image, nil, "/plugins/macvlan")
 }

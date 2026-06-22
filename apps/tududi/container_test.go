@@ -8,10 +8,9 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/tududi:rolling")
-	testhelpers.TestHTTPEndpoint(t, image, testhelpers.HTTPTestConfig{
-		Port:       "3002",
-		Path:       "/api/health",
-		StatusCode: 200,
+	testhelpers.RequireHTTPEndpoint(t, image, testhelpers.HTTPTestConfig{
+		Port: "3002",
+		Path: "/api/health",
 	}, &testhelpers.ContainerConfig{
 		Env: map[string]string{
 			"TUDUDI_USER_EMAIL":     "test@example.com",

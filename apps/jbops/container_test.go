@@ -8,5 +8,5 @@ import (
 
 func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/home-operations/jbops:rolling")
-	testhelpers.TestFileExists(t, image, "/app/fun/plexapi_haiku.py", nil)
+	testhelpers.RequireFileExists(t, image, "/app/fun/plexapi_haiku.py")
 }
