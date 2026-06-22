@@ -93,7 +93,7 @@
       description: ["Allowed Alpine Version for Postgres Base Images"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/postgres/"],
-      allowedVersions: "/alpine3\\.23/",
+      allowedVersions: "/alpine3\\.24/",
     },
     {
       description: ["Allowed Python Version for Alpine Base Images"],
