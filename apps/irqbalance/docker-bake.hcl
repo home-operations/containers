@@ -5,7 +5,7 @@ variable "APP" {
 }
 
 variable "VERSION" {
-  // renovate: datasource=repology depName=alpine_3_24/irqbalance
+  // renovate: datasource=repology depName=alpine_3_24/irqbalance versioning=apk
   default = "1.9.5-r0"
 }
 
