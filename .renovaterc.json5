@@ -121,7 +121,7 @@
       matchDatasources: ["docker"],
       matchFileNames: ["apps/nzbhydra2/Dockerfile"],
       matchPackageNames: ["/amazoncorretto/"],
-      allowedVersions: "/17-alpine3\\.22/",
+      allowedVersions: "/17-alpine3\\.24/",
     },
   ],
 }
