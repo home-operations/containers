@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.14-alpine3.23 AS builder
+FROM docker.io/library/python:3.14-alpine3.24 AS builder
 ARG VERSION
 RUN \
     apk add --no-cache \

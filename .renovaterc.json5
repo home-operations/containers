@@ -100,7 +100,7 @@
       matchDatasources: ["docker"],
       matchFileNames: ["**/Dockerfile"],
       matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.14-alpine3\\.23/",
+      allowedVersions: "/3\\.14-alpine3\\.24/",
     },
     {
       description: ["Allowed Python Version for Debian Base Images"],

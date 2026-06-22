@@ -2,7 +2,7 @@
 
 ARG TARGETARCH
 ARG ARCH=${TARGETARCH/arm64/aarch64}
-FROM ghcr.io/home-assistant/${ARCH}-base-python:3.14-alpine3.23
+FROM ghcr.io/home-assistant/${ARCH}-base-python:3.14-alpine3.24
 ARG TARGETARCH
 ARG ARCH=${TARGETARCH/arm64/aarch64}
 ARG VERSION
