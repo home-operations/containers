@@ -29,7 +29,7 @@ RUN \
         transmission-extra=="${VERSION}" \
         transmission-remote=="${VERSION}" \
     && \
-    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.15.1/minijinja-cli-${MINIJINJA_ARCH}-unknown-linux-musl.tar.xz \
+    curl -fsSL https://github.com/mitsuhiko/minijinja/releases/download/2.21.0/minijinja-cli-${MINIJINJA_ARCH}-unknown-linux-musl.tar.xz \
         | tar xJf - -C /usr/local/bin/ --strip-components=1 \
     && \
     rm -rf /tmp/*
