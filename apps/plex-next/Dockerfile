@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/alpine:3.23 AS openssl-builder
+FROM docker.io/library/alpine:3.24 AS openssl-builder
 ARG OPENSSL_VERSION=3.6.1
 ARG OPENSSL_PREFIX=/opt/openssl
 
@@ -21,7 +21,7 @@ RUN \
     && make -j$(nproc) \
     && make install_sw install_ssldirs
 
-FROM docker.io/library/alpine:3.23
+FROM docker.io/library/alpine:3.24
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION

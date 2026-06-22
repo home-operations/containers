@@ -14,7 +14,7 @@ ENV \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
     UV_SYSTEM_PYTHON=true \
-    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.23/" \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.24/" \
     # https://community.octoprint.org/t/trouble-with-installing-netifaces-on-alpine-linux/61694
     # Can be removed in v1.12 https://github.com/OctoPrint/OctoPrint/issues/5157
     CFLAGS="-Wno-int-conversion"
