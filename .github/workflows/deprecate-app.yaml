@@ -24,12 +24,12 @@ permissions:
 jobs:
   plan:
     name: Plan (${{ inputs.app }})
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       pull-number: ${{ steps.pr.outputs.pull-request-number }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -45,7 +45,7 @@ jobs:
       - name: Validate App Directory
         env:
           APP: ${{ inputs.app }}
-        run: |-
+        run: |
           if [[ ! -d "./apps/${APP}" ]]; then
             echo "::error::App directory './apps/${APP}' does not exist"
             exit 1
@@ -54,7 +54,7 @@ jobs:
       - name: Delete App Directory
         env:
           APP: ${{ inputs.app }}
-        run: |-
+        run: |
           rm -rf ./apps/${APP}
 
       - name: Create Pull Request
@@ -75,7 +75,7 @@ jobs:
     name: Merge (${{ inputs.app }})
     needs:
       - plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -92,7 +92,7 @@ jobs:
           PULL_NUMBER: ${{ needs.plan.outputs.pull-number }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          script: |-
+          script: |
             await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -105,10 +105,10 @@ jobs:
     name: Announce (${{ inputs.app }})
     needs:
       - merge
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -132,7 +132,7 @@ jobs:
           TAG: ${{ steps.release.outputs.tag }}
           APP: ${{ inputs.app }}
           REASON: ${{ inputs.reason }}
-        run: |-
+        run: |
           cat > release-notes.md <<EOF
           > [!WARNING]
           > An app has been deprecated and will no longer receive updates.

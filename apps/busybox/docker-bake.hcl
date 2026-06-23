@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=docker depName=docker.io/library/busybox
-  default = "1.37.0"
+  default = "1.38.0"
 }
 
 variable "SOURCE" {

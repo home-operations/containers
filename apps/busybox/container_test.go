@@ -3,10 +3,10 @@ package main
 import (
 	"testing"
 
-	"github.com/home-operations/containers/testhelpers"
+	helpers "github.com/home-operations/containers/tests"
 )
 
 func Test(t *testing.T) {
-	image := testhelpers.GetTestImage("ghcr.io/home-operations/busybox:rolling")
-	testhelpers.TestCommandSucceeds(t, image, nil, "/bin/busybox", "--list")
+	image := helpers.GetTestImage("ghcr.io/home-operations/busybox:rolling")
+	helpers.RequireCommandSucceeds(t, image, nil, "/bin/busybox", "--list")
 }

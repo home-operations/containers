@@ -28,12 +28,12 @@ We adhere to the [KISS principle](https://en.wikipedia.org/wiki/KISS_principle),
 
 Containers built here do not use immutable tags in the traditional sense, as seen with [linuxserver.io](https://fleet.linuxserver.io/) or [Bitnami](https://bitnami.com/stacks/containers). Instead, we insist on pinning to the `sha256` digest of the image. While this approach is less visually appealing, it ensures functionality and immutability.
 
-| Container | Immutable |
-|-----------------------|----|
-| `ghcr.io/home-operations/home-assistant:rolling` | ❌ |
-| `ghcr.io/home-operations/home-assistant:2025.5.1` | ❌ |
-| `ghcr.io/home-operations/home-assistant:rolling@sha256:8053...` | ✅ |
-| `ghcr.io/home-operations/home-assistant:2025.5.1@sha256:8053...` | ✅ |
+| Container                                                        | Immutable |
+| ---------------------------------------------------------------- | --------- |
+| `ghcr.io/home-operations/home-assistant:rolling`                 | ❌        |
+| `ghcr.io/home-operations/home-assistant:2025.5.1`                | ❌        |
+| `ghcr.io/home-operations/home-assistant:rolling@sha256:8053...`  | ✅        |
+| `ghcr.io/home-operations/home-assistant:2025.5.1@sha256:8053...` | ✅        |
 
 _If pinning an image to the `sha256` digest, tools like [Renovate](https://github.com/renovatebot/renovate) can update containers based on digest or version changes._
 
@@ -45,14 +45,14 @@ By default the majority of our containers run as a non-root user (`65534:65534`)
 
 ```yaml
 services:
-  home-assistant:
-    image: ghcr.io/home-operations/home-assistant:2025.5.1
-    container_name: home-assistant
-    user: 1000:1000 # The data volume permissions must match this user:group
-    read_only: true # May require mounting in additional dirs as tmpfs
-    tmpfs:
-      - /tmp:rw
-    # ...
+    home-assistant:
+        image: ghcr.io/home-operations/home-assistant:2025.5.1
+        container_name: home-assistant
+        user: 1000:1000 # The data volume permissions must match this user:group
+        read_only: true # May require mounting in additional dirs as tmpfs
+        tmpfs:
+            - /tmp:rw
+        # ...
 ```
 
 #### Kubernetes
@@ -61,35 +61,35 @@ services:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: home-assistant
+    name: home-assistant
 # ...
 spec:
-  # ...
-  template:
     # ...
-    spec:
-      containers:
-        - name: home-assistant
-          image: ghcr.io/home-operations/home-assistant:2025.5.1
-          securityContext: # May require mounting in additional dirs as emptyDir
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-      # ...
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 65534 # (Requires CSI support)
-        fsGroupChangePolicy: OnRootMismatch # (Requires CSI support)
-      volumes:
-        - name: tmp
-          emptyDir: {}
-      # ...
+    template:
+        # ...
+        spec:
+            containers:
+                - name: home-assistant
+                  image: ghcr.io/home-operations/home-assistant:2025.5.1
+                  securityContext: # May require mounting in additional dirs as emptyDir
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                          drop:
+                              - ALL
+                      readOnlyRootFilesystem: true
+                  volumeMounts:
+                      - name: tmp
+                        mountPath: /tmp
+            # ...
+            securityContext:
+                runAsUser: 1000
+                runAsGroup: 1000
+                fsGroup: 1000 # (Requires CSI support)
+                fsGroupChangePolicy: OnRootMismatch # (Requires CSI support)
+            volumes:
+                - name: tmp
+                  emptyDir: {}
+            # ...
 # ...
 ```
 
@@ -99,8 +99,8 @@ Some applications only allow certain configurations via command-line arguments r
 
 ```yaml
 args:
-  - --port
-  - "8080"
+    - --port
+    - "8080"
 ```
 
 ### Configuration Volume
@@ -141,10 +141,10 @@ We encourage the use of official upstream container images whenever possible. Ho
 
 - The upstream application is **actively maintained**.
 - **And** one of the following applies:
-  - no official image exists.
-  - the official image does not support **multi-architecture builds**.
-  - the official image uses tools like **s6-overlay**, **gosu**, or other unconventional initialization mechanisms.
-  - does not tag releases.
+    - no official image exists.
+    - the official image does not support **multi-architecture builds**.
+    - the official image uses tools like **s6-overlay**, **gosu**, or other unconventional initialization mechanisms.
+    - does not tag releases.
 
 ## Deprecations
 

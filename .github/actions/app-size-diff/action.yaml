@@ -21,7 +21,7 @@ runs:
   steps:
     - name: Create package.json
       shell: bash
-      run: |-
+      run: |
         cat > package.json << 'EOF'
         {
           "dependencies": {
@@ -34,14 +34,14 @@ runs:
         EOF
 
     - name: Setup Mise
-      uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
       with:
         experimental: true
         install_args: --locked
 
     - name: Setup Node Dependencies
       shell: bash
-      run: |-
+      run: |
         npm install
 
     - name: App Size Diff
@@ -51,7 +51,7 @@ runs:
         FROM_APP: ${{ inputs.from-app }}
         TO_APP: ${{ inputs.to-app }}
       with:
-        script: |-
+        script: |
           const { execaSync } = require("execa");
           const { filesize } = require("filesize");
           const { markdownTable } = require("markdown-table");

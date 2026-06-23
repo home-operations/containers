@@ -3,10 +3,10 @@ package main
 import (
 	"testing"
 
-	"github.com/home-operations/containers/testhelpers"
+	helpers "github.com/home-operations/containers/tests"
 )
 
 func Test(t *testing.T) {
-	image := testhelpers.GetTestImage("ghcr.io/home-operations/emby:rolling")
-	testhelpers.TestHTTPEndpoint(t, image, testhelpers.HTTPTestConfig{Port: "8096"}, nil)
+	image := helpers.GetTestImage("ghcr.io/home-operations/emby:rolling")
+	helpers.RequireHTTPEndpoint(t, image, helpers.HTTPTestConfig{Port: "8096"}, nil)
 }

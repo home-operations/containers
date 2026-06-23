@@ -3,8 +3,15 @@
 name: Labeler
 
 on:
-  # zizmor: ignore[dangerous-triggers]
   pull_request_target:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/**
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,13 +19,14 @@ permissions:
 jobs:
   labeler:
     name: Labeler
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
+      issues: write
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -28,19 +36,33 @@ jobs:
         with:
           client-id: ${{ secrets.BOT_CLIENT_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-issues: write
           permission-pull-requests: write
 
       - name: Setup Mise
-        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
         with:
           experimental: true
           install_args: --locked
 
       - name: Generate Label Config
-        run: |-
-          mise run generate-label-config
+        run: mise run generate-label-config
+
+      # Ensure each app/<name> label exists in the repo. safe-settings owns
+      # the static labels via the org admin repo; here we only reconcile the
+      # dynamic set derived from the apps/ tree. --force makes it idempotent.
+      - name: Ensure dynamic app/* labels exist
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -eu
+          find apps -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | while IFS= read -r app; do
+            gh label create "app/$app" --color "027fa0" --force
+          done
 
       - name: Labeler
+        if: ${{ github.event_name == 'pull_request_target' }}
         uses: actions/labeler@f27b608878404679385c85cfa523b85ccb86e213 # v6.1.0
         with:
           repo-token: ${{ steps.app-token.outputs.token }}

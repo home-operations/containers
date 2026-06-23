@@ -3,10 +3,10 @@ package main
 import (
 	"testing"
 
-	"github.com/home-operations/containers/testhelpers"
+	helpers "github.com/home-operations/containers/tests"
 )
 
 func Test(t *testing.T) {
-	image := testhelpers.GetTestImage("ghcr.io/home-operations/jbops:rolling")
-	testhelpers.TestFileExists(t, image, "/app/fun/plexapi_haiku.py", nil)
+	image := helpers.GetTestImage("ghcr.io/home-operations/jbops:rolling")
+	helpers.RequireFileExists(t, image, "/app/fun/plexapi_haiku.py")
 }

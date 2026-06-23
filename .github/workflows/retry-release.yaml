@@ -13,12 +13,12 @@ permissions:
 jobs:
   apps:
     name: Get App Inventory
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       apps: ${{ steps.inventory.outputs.apps }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -29,7 +29,7 @@ jobs:
   retry:
     if: ${{ needs.apps.outputs.apps != '[]' }}
     name: Retry Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - apps
     strategy:
@@ -39,7 +39,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -53,11 +53,8 @@ jobs:
           permission-packages: read
           permission-pull-requests: read
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-
       - name: Install regctl
-        uses: regclient/actions/regctl-installer@c70ad64367908075211b10dcd2ab9fad4bfa1816 # main
+        uses: regclient/actions/regctl-installer@4b4db1dcc7dad75ad67a788a380f75a20cc8a040 # main
 
       - name: Get Bake Options
         uses: ./.github/actions/app-options
@@ -71,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO_OWNER: ${{ github.repository_owner }}
           APP: ${{ matrix.app }}
-        run: |-
+        run: |
           if ! version=$(regctl image inspect "ghcr.io/${REPO_OWNER}/${APP}:rolling" \
               | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
           then
@@ -82,7 +79,7 @@ jobs:
 
       - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
         name: Find Pull Request
-        uses: juliangruber/find-pull-request-action@33d46d4ff90884bb23aaead16044125daaf733d8 # v1.11.0
+        uses: juliangruber/find-pull-request-action@92b38d91ef26fd0f47374257f50e78432359a45f # v1.11.1
         id: find-pull-request
         with:
           github-token: ${{ steps.app-token.outputs.token }}
@@ -93,7 +90,7 @@ jobs:
         name: Retry Release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |- # zizmor: ignore[template-injection]
+        run: |
           gh workflow run release.yaml \
               --repo ${{ github.repository }} \
               -f app=${{ matrix.app }} \

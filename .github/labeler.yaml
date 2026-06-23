@@ -11,7 +11,7 @@ area/github:
 area/mise:
   - changed-files:
       - any-glob-to-any-file:
-          - .mise.toml
+          - .mise/**/*
 area/renovate:
   - changed-files:
       - any-glob-to-any-file:

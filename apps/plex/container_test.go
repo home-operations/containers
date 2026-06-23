@@ -3,12 +3,12 @@ package main
 import (
 	"testing"
 
-	"github.com/home-operations/containers/testhelpers"
+	helpers "github.com/home-operations/containers/tests"
 )
 
 func Test(t *testing.T) {
-	image := testhelpers.GetTestImage("ghcr.io/home-operations/plex:rolling")
-	testhelpers.TestHTTPEndpoint(t, image, testhelpers.HTTPTestConfig{
+	image := helpers.GetTestImage("ghcr.io/home-operations/plex:rolling")
+	helpers.RequireHTTPEndpoint(t, image, helpers.HTTPTestConfig{
 		Port: "32400",
 		Path: "/web/index.html",
 	}, nil)

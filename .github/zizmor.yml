@@ -1,0 +1,14 @@
+---
+rules:
+  dangerous-triggers:
+    ignore:
+      # Labeler runs on pull_request_target to label fork PRs. It checks out
+      # with persist-credentials: false and acts only via a scoped app-token,
+      # so the dangerous trigger is intentional and contained.
+      - labeler.yaml
+  template-injection:
+    ignore:
+      # retry-release interpolates ${{ matrix.app }} / github.repository into a
+      # gh CLI invocation; both are repo-controlled (app directory names), not
+      # attacker-controllable input.
+      - retry-release.yaml

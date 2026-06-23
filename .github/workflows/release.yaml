@@ -8,6 +8,7 @@ on:
       - main
     paths:
       - apps/**
+      - "!apps/**/*_test.go"
   workflow_dispatch:
     inputs:
       app:
@@ -26,7 +27,7 @@ permissions:
 jobs:
   prepare:
     name: Prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:
@@ -45,7 +46,7 @@ jobs:
     name: Get Changed Apps
     needs:
       - prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:
@@ -57,7 +58,7 @@ jobs:
         env:
           APPS: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.prepare.outputs.changed-files), ' ') }}
         with:
-          script: |-
+          script: |
             const { APPS } = process.env;
             const appsToBuild = APPS.split(' ').filter(Boolean);
             core.setOutput('apps', JSON.stringify(appsToBuild));
@@ -95,15 +96,15 @@ jobs:
     name: Build Success
     needs:
       - build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: {}
     steps:
       - name: Any jobs failed?
         if: ${{ contains(needs.*.result, 'failure') }}
-        run: |-
+        run: |
           exit 1
 
       - name: All jobs passed or skipped?
         if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: |-
+        run: |
           echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"

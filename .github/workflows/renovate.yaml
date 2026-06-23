@@ -16,7 +16,7 @@ permissions: {}
 jobs:
   renovate:
     name: Renovate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -33,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO_NAME: ${{ github.event.repository.name }}
-        run: |-
+        run: |
           RUN_URL=$(gh workflow run renovate.yaml \
             --repo "${{ github.repository_owner }}/.github" \
             --ref main \
@@ -44,7 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
-        run: |-
+        run: |
           gh run watch \
             --repo "${{ github.repository_owner }}/.github" \
             "${RUN_ID}" \
@@ -54,7 +54,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
-        run: |-
+        run: |
           gh run view \
             --repo "${{ github.repository_owner }}/.github" \
             --log "${RUN_ID}"

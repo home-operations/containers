@@ -1,0 +1,7 @@
+# NOTE: This file automatically copied to each applications
+# directory during build. Be careful not to ignore any files
+# that are needed in the build process.
+/*
+!defaults/
+!scripts/
+!entrypoint.sh

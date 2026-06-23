@@ -22,7 +22,7 @@ runs:
       env:
         APP: ${{ inputs.app }}
       with:
-        script: |-
+        script: |
           const app = process.env.APP;
 
           const { data: user } = await github.rest.users.getByUsername({

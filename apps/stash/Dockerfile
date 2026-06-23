@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.14-alpine3.23
+FROM docker.io/library/python:3.14-alpine3.24
 ARG TARGETARCH
 ARG STASHARCH=${TARGETARCH/arm64/-arm64v8}
 ARG STASHARCH=${STASHARCH/amd64/}
@@ -16,7 +16,7 @@ ENV \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
     UV_SYSTEM_PYTHON=true \
-    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.23/"
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.24/"
 
 USER root
 WORKDIR /app
