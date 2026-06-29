@@ -68,14 +68,8 @@ jobs:
       - prepare
     uses: ./.github/workflows/app-builder.yaml
     permissions:
-      attestations: write
       contents: read
-      id-token: write
-      packages: write
-    secrets:
-      BOT_CLIENT_ID: ${{ secrets.BOT_CLIENT_ID }}
-      BOT_APP_PRIVATE_KEY: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      packages: read
     strategy:
       matrix:
         app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}

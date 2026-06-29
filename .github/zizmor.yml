@@ -6,6 +6,10 @@ rules:
       # with persist-credentials: false and acts only via a scoped app-token,
       # so the dangerous trigger is intentional and contained.
       - labeler.yaml
+      # Size Diff Comment uses workflow_run but never checks out or runs PR code:
+      # it only reads the size-diff artifact and posts a comment, resolving the PR
+      # from the trusted head SHA. Standard secure fork-PR comment pattern.
+      - size-diff-comment.yaml
   template-injection:
     ignore:
       # retry-release interpolates ${{ matrix.app }} / github.repository into a
