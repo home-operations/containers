@@ -4,7 +4,8 @@ name: Retry Release
 
 on:
   workflow_run:
-    workflows: ["Release"]
+    workflows:
+      - Release
     types:
       - completed
 
@@ -13,8 +14,6 @@ permissions:
 
 jobs:
   retry:
-    # Re-run a push-triggered Release that failed, exactly once. The run_attempt
-    # guard stops a retry loop (the re-run emits another workflow_run at attempt 2).
     if: >-
       github.event.workflow_run.conclusion == 'failure'
       && github.event.workflow_run.event == 'push'
