@@ -68,8 +68,10 @@ jobs:
       - prepare
     uses: ./.github/workflows/app-builder.yaml
     permissions:
+      attestations: write
       contents: read
-      packages: read
+      id-token: write
+      packages: write
     strategy:
       matrix:
         app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
