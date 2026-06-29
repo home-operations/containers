@@ -181,7 +181,6 @@ jobs:
         with:
           app: ${{ inputs.app }}
           image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
-          token: ${{ github.token }}
 
   merge:
     if: ${{ inputs.release }}
