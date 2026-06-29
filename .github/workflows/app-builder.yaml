@@ -181,51 +181,6 @@ jobs:
         with:
           app: ${{ inputs.app }}
           image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
-          token: ${{ github.token }}
-
-      - name: Export OCI Image
-        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
-        uses: docker/bake-action@6614cfa25eff9a0b2b2697efb0b6159e7680d584 # v7.2.0
-        with:
-          files: |
-            ./docker-bake.hcl
-            cwd://${{ runner.temp }}/docker-metadata-action-bake.json
-          set: |
-            *.args.VENDOR=${{ github.repository_owner }}
-            *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, steps.target.outputs.arch) }}
-            *.output=type=oci,tar=false,dest=${{ runner.temp }}/image.oci,compression=zstd,force-compression=true
-            *.platform=${{ matrix.platform }}
-            *.tags=
-          source: ./apps/${{ inputs.app }}
-          targets: image
-
-      - name: App Size Diff
-        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
-        uses: ./.github/actions/app-size-diff
-        id: app-size-diff
-        with:
-          from-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
-          to-oci-layout: ${{ runner.temp }}/image.oci
-          platform: ${{ matrix.platform }}
-
-      - name: Save Size Diff
-        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
-        env:
-          MARKDOWN: ${{ steps.app-size-diff.outputs.size-diff-markdown }}
-          APP: ${{ inputs.app }}
-        run: |
-          mkdir -p "${RUNNER_TEMP}/size-diff"
-          printf '%s' "$MARKDOWN" > "${RUNNER_TEMP}/size-diff/body.md"
-          printf '%s' "$APP" > "${RUNNER_TEMP}/size-diff/app"
-
-      - name: Upload Size Diff
-        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: size-diff-${{ inputs.app }}
-          path: ${{ runner.temp }}/size-diff/*
-          if-no-files-found: error
-          retention-days: 1
 
   merge:
     if: ${{ inputs.release }}
