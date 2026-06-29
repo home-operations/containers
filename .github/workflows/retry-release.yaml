@@ -3,115 +3,30 @@
 name: Retry Release
 
 on:
-  schedule:
-    - cron: 30 1 * * *
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
 
 permissions:
   contents: read
 
 jobs:
-  apps:
-    name: Get App Inventory
-    runs-on: ubuntu-24.04
-    outputs:
-      apps: ${{ steps.inventory.outputs.apps }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
-
-      - name: Get App Inventory
-        uses: ./.github/actions/app-inventory
-        id: inventory
-
   retry:
-    if: ${{ needs.apps.outputs.apps != '[]' }}
+    # Re-run a push-triggered Release that failed, exactly once. The run_attempt
+    # guard stops a retry loop (the re-run emits another workflow_run at attempt 2).
+    if: >-
+      github.event.workflow_run.conclusion == 'failure'
+      && github.event.workflow_run.event == 'push'
+      && github.event.workflow_run.run_attempt == 1
     name: Retry Release
     runs-on: ubuntu-24.04
-    needs:
-      - apps
-    strategy:
-      matrix:
-        app: ${{ fromJSON(needs.apps.outputs.apps) }}
-      max-parallel: 4
-      fail-fast: false
+    permissions:
+      actions: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
-
-      - name: Generate Token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        id: app-token
-        with:
-          client-id: ${{ secrets.BOT_CLIENT_ID }}
-          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-          permission-actions: write
-          permission-packages: read
-          permission-pull-requests: read
-
-      - name: Setup Mise
-        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
-        with:
-          experimental: true
-          install_args: --locked
-
-      - name: Get Bake Options
-        uses: ./.github/actions/app-options
-        id: app-options
-        with:
-          app: ${{ matrix.app }}
-
-      - name: Get App Registry Version
-        id: registry
+      - name: Re-run Failed Jobs
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          REPO_OWNER: ${{ github.repository_owner }}
-          APP: ${{ matrix.app }}
-        run: |
-          if ! version=$(regctl image inspect "ghcr.io/${REPO_OWNER}/${APP}:rolling" \
-              | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
-          then
-              echo "Failed to get registry version for ${APP}"
-              exit 1
-          fi
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-
-      - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
-        name: Find Pull Request
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        id: find-pull-request
-        env:
-          APP: ${{ matrix.app }}
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
-          script: |
-            const prs = await github.paginate(github.rest.pulls.list, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: "open",
-              per_page: 100,
-            });
-            const pr = prs.find(p => p.labels.some(l => l.name === `app/${process.env.APP}`));
-            core.setOutput("number", pr ? pr.number : "");
-
-      - if: ${{ steps.find-pull-request.outputs.number != '' }}
-        name: Retry Release
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          gh workflow run release.yaml \
-              --repo ${{ github.repository }} \
-              -f app=${{ matrix.app }} \
-              -f release=true
-
-          {
-              echo '## Retrying Release'
-              echo
-              echo '| App Name | Actual Version | Expected Version |'
-              echo '|----------|----------------|------------------|'
-              echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.app-options.outputs.version }}` |'
-          } >> $GITHUB_STEP_SUMMARY
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: gh run rerun "$RUN_ID" --repo "$REPO" --failed

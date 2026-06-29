@@ -6,9 +6,7 @@ rules:
       # with persist-credentials: false and acts only via a scoped app-token,
       # so the dangerous trigger is intentional and contained.
       - labeler.yaml
-  template-injection:
-    ignore:
-      # retry-release interpolates ${{ matrix.app }} / github.repository into a
-      # gh CLI invocation; both are repo-controlled (app directory names), not
-      # attacker-controllable input.
+      # Retry Release uses workflow_run but checks out nothing and runs no code
+      # from the triggering run: it only re-runs the failed jobs of a
+      # push-triggered (trusted) Release run via the API. Standard secure pattern.
       - retry-release.yaml
