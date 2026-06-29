@@ -82,12 +82,21 @@ jobs:
 
       - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
         name: Find Pull Request
-        uses: juliangruber/find-pull-request-action@92b38d91ef26fd0f47374257f50e78432359a45f # v1.11.1
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         id: find-pull-request
+        env:
+          APP: ${{ matrix.app }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          labels: app/${{ matrix.app }}
-          state: open
+          script: |
+            const prs = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100,
+            });
+            const pr = prs.find(p => p.labels.some(l => l.name === `app/${process.env.APP}`));
+            core.setOutput("number", pr ? pr.number : "");
 
       - if: ${{ steps.find-pull-request.outputs.number != '' }}
         name: Retry Release
