@@ -1,5 +1,4 @@
 # syntax=docker/dockerfile:1
-# TEMP(ci/fork-pr-testing): no-op to trigger the build matrix — revert before merge
 
 FROM docker.io/library/alpine:3.24
 ARG TARGETARCH
