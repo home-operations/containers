@@ -1,14 +1,14 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
 name: App Size Diff
-description: Markdown summary of the compressed-size difference between a published image and a locally-built OCI archive
+description: Markdown summary of the compressed-size difference between a published image and a locally-built OCI layout
 
 inputs:
   from-app:
     description: Baseline registry image (e.g. :rolling) for comparison
     required: true
-  to-oci:
-    description: Path to the locally-built OCI archive to compare against
+  to-oci-layout:
+    description: Path to the locally-built OCI image layout (directory) to compare against
     required: true
   platform:
     description: Platform to compare (e.g. linux/amd64)
@@ -22,54 +22,35 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Create package.json
-      shell: bash
-      run: |
-        cat > package.json << 'EOF'
-        {
-          "dependencies": {
-            "execa": "^9.6.0",
-            "filesize": "^11.0.2"
-          }
-        }
-        EOF
-
     - name: Setup Mise
       uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
       with:
         experimental: true
         install_args: --locked
 
-    - name: Setup Node Dependencies
-      shell: bash
-      run: npm install
-
     - name: App Size Diff
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       id: size-diff
       env:
         FROM_APP: ${{ inputs.from-app }}
-        TO_OCI: ${{ inputs.to-oci }}
+        TO_OCI_LAYOUT: ${{ inputs.to-oci-layout }}
         PLATFORM: ${{ inputs.platform }}
       with:
         script: |
-          const { execaSync } = require("execa");
-          const { filesize } = require("filesize");
+          const { execFileSync } = require("child_process");
 
           const fromApp = process.env.FROM_APP;
-          const toOci = process.env.TO_OCI;
+          const toLayout = process.env.TO_OCI_LAYOUT;
           const platform = process.env.PLATFORM;
-          const [wantOs, wantArch] = platform.split("/");
 
-          function registrySize(ref) {
+          function layerSize(ref) {
             try {
-              const { stdout } = execaSync("docker", ["manifest", "inspect", "-v", ref]);
-              const manifests = [].concat(JSON.parse(stdout.trim()));
-              const match = manifests.find(m => {
-                const p = (m.Descriptor && m.Descriptor.platform) || {};
-                return p.os === wantOs && p.architecture === wantArch;
-              }) || manifests[0];
-              const layers = (match && ((match.OCIManifest && match.OCIManifest.layers) || match.layers)) || [];
+              const json = execFileSync(
+                "regctl",
+                ["manifest", "get", ref, "--platform", platform, "--format", "{{json .}}"],
+                { encoding: "utf8" },
+              );
+              const layers = JSON.parse(json).layers || [];
               return layers.reduce((sum, l) => sum + (l.size || 0), 0);
             } catch (e) {
               core.warning(`Failed to inspect ${ref}: ${e.message}`);
@@ -77,29 +58,17 @@ runs:
             }
           }
 
-          function ociSize(tar) {
-            const read = p => execaSync("tar", ["-xOf", tar, p]).stdout;
-            const pick = list => {
-              const real = list.filter(m => {
-                const p = m.platform || {};
-                return p.os !== "unknown" && p.architecture !== "unknown";
-              });
-              const match = real.find(m => {
-                const p = m.platform || {};
-                return p.os === wantOs && p.architecture === wantArch;
-              });
-              return match || real[0] || list[0];
-            };
-            let manifest = JSON.parse(read("index.json"));
-            while (manifest.manifests) {
-              manifest = JSON.parse(read(`blobs/${pick(manifest.manifests).digest.replace(":", "/")}`));
-            }
-            const layers = manifest.layers || [];
-            return layers.reduce((sum, l) => sum + (l.size || 0), 0);
+          function humanBytes(n) {
+            const sign = n < 0 ? "-" : "";
+            let v = Math.abs(n);
+            const units = ["B", "kB", "MB", "GB", "TB"];
+            let i = 0;
+            while (v >= 1000 && i < units.length - 1) { v /= 1000; i++; }
+            return `${sign}${i === 0 ? v : v.toFixed(2)} ${units[i]}`;
           }
 
-          const previous = registrySize(fromApp);
-          const current = ociSize(toOci);
+          const previous = layerSize(fromApp);
+          const current = layerSize(`ocidir://${toLayout}`);
           const change = current - previous;
           const percentage = previous
             ? `${change >= 0 ? "+" : ""}${(change / previous * 100).toFixed(2)}%`
@@ -114,7 +83,7 @@ runs:
             "",
             "| Platform | Previous | Current | Change | Trend |",
             "| :-- | :-: | :-: | :-: | :-: |",
-            `| ${platform} | ${filesize(previous)} | ${filesize(current)} | ${change >= 0 ? "+" : ""}${filesize(Math.abs(change))} (${percentage}) | ${icon} |`,
+            `| ${platform} | ${humanBytes(previous)} | ${humanBytes(current)} | ${change > 0 ? "+" : ""}${humanBytes(change)} (${percentage}) | ${icon} |`,
           ].join("\n");
 
           core.setOutput("markdown", output);

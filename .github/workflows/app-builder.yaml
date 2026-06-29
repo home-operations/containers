@@ -193,7 +193,7 @@ jobs:
           set: |
             *.args.VENDOR=${{ github.repository_owner }}
             *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, steps.target.outputs.arch) }}
-            *.output=type=oci,dest=${{ runner.temp }}/image.oci.tar,compression=zstd,force-compression=true
+            *.output=type=oci,tar=false,dest=${{ runner.temp }}/image.oci,compression=zstd,force-compression=true
             *.platform=${{ matrix.platform }}
             *.tags=
           source: ./apps/${{ inputs.app }}
@@ -205,7 +205,7 @@ jobs:
         id: app-size-diff
         with:
           from-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
-          to-oci: ${{ runner.temp }}/image.oci.tar
+          to-oci-layout: ${{ runner.temp }}/image.oci
           platform: ${{ matrix.platform }}
 
       - name: Save Size Diff
