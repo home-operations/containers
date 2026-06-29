@@ -39,7 +39,9 @@ ENV LD_LIBRARY_PATH="/lib:/usr/lib" \
 USER root
 WORKDIR /app
 
-# hadolint ignore=SC2156
+# intel-media-driver is amd64-only; the unquoted $() must word-split to nothing
+# on other arches (quoting would pass an empty arg to apk add).
+# hadolint ignore=SC2046
 RUN \
     apk add --no-cache \
         bash \
@@ -66,8 +68,8 @@ RUN \
         "https://downloads.plex.tv/plex-media-server-new/${VERSION}/debian/plexmediaserver_${VERSION}_${TARGETARCH}.deb" \
     && dpkg-deb -R /tmp/plex.deb /tmp \
     && cp -R /tmp/usr/* /usr \
-    && find "${PLEX_MEDIA_SERVER_HOME}/lib" -type f -exec sh -c '[ -f "/usr/lib/$(basename "{}")" ] && rm -v "{}"' \; \
-    && find "${PLEX_MEDIA_SERVER_HOME}/lib" -type f -exec sh -c '[ -f "/lib/$(basename "{}")" ] && rm -v "{}"' \; \
+    && find "${PLEX_MEDIA_SERVER_HOME}/lib" -type f -exec sh -c '[ -f "/usr/lib/$(basename "$1")" ] && rm -v "$1"' _ {} \; \
+    && find "${PLEX_MEDIA_SERVER_HOME}/lib" -type f -exec sh -c '[ -f "/lib/$(basename "$1")" ] && rm -v "$1"' _ {} \; \
     && ln -sf "/lib/ld-musl-$(uname -m).so.1" "${PLEX_MEDIA_SERVER_HOME}/lib/ld-musl-$(uname -m).so.1" \
     && ln -sf "/lib/ld-musl-$(uname -m).so.1" "${PLEX_MEDIA_SERVER_HOME}/lib/libc.so" \
     && chmod -R 755 "${PLEX_MEDIA_SERVER_HOME}" \
