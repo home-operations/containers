@@ -1,141 +1,89 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-action.json
 name: App Size Diff
-description: Creates a Markdown summary of the size difference between two app versions
+description: Markdown summary of the compressed-size difference between a published image and a locally-built OCI layout
 
 inputs:
   from-app:
-    description: Baseline app image for size comparison
+    description: Baseline registry image (e.g. :rolling) for comparison
     required: true
-  to-app:
-    description: App image to be compared to the baseline
+  to-oci-layout:
+    description: Path to the locally-built OCI image layout (directory) to compare against
+    required: true
+  platform:
+    description: Platform to compare (e.g. linux/amd64)
     required: true
 
 outputs:
   size-diff-markdown:
-    description: Markdown formatted output of app size comparison
+    description: Markdown formatted output of the app size comparison
     value: ${{ steps.size-diff.outputs.markdown }}
 
 runs:
   using: composite
   steps:
-    - name: Create package.json
-      shell: bash
-      run: |
-        cat > package.json << 'EOF'
-        {
-          "dependencies": {
-            "execa": "^9.6.0",
-            "filesize": "^11.0.2",
-            "lodash": "^4.0.0",
-            "markdown-table": "^3.0.4"
-          }
-        }
-        EOF
-
     - name: Setup Mise
       uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
       with:
         experimental: true
         install_args: --locked
 
-    - name: Setup Node Dependencies
-      shell: bash
-      run: |
-        npm install
-
     - name: App Size Diff
       uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       id: size-diff
       env:
         FROM_APP: ${{ inputs.from-app }}
-        TO_APP: ${{ inputs.to-app }}
+        TO_OCI_LAYOUT: ${{ inputs.to-oci-layout }}
+        PLATFORM: ${{ inputs.platform }}
       with:
         script: |
-          const { execaSync } = require("execa");
-          const { filesize } = require("filesize");
-          const { markdownTable } = require("markdown-table");
-          const _ = require("lodash");
+          const { execFileSync } = require("child_process");
 
           const fromApp = process.env.FROM_APP;
-          const toApp = process.env.TO_APP;
+          const toLayout = process.env.TO_OCI_LAYOUT;
+          const platform = process.env.PLATFORM;
 
-          async function getSizes(app) {
-              try {
-                  const { stdout } = execaSync("docker", ["manifest", "inspect", "-v", app]);
-                  const manifests = _.castArray(JSON.parse(stdout.trim()));
-
-                  return _(manifests)
-                      .map(m => {
-                          const platform = _.get(m, 'Descriptor.platform', {});
-
-                          const key = _.compact([
-                              platform.os,
-                              platform.architecture,
-                              platform.variant,
-                              platform["os.version"]
-                          ])
-                          .join("/");
-
-                          const layers = _.get(m, 'OCIManifest.layers') || _.get(m, 'layers', []);
-                          const total = _.sumBy(layers, 'size');
-
-                          return [key, total];
-                      })
-                      .fromPairs()
-                      .value();
-              } catch (e) {
-                  core.error(`Failed to inspect ${app}: ${e.message}`);
-                  return {};
-              }
+          function layerSize(ref) {
+            try {
+              const json = execFileSync(
+                "regctl",
+                ["manifest", "get", ref, "--platform", platform, "--format", "{{json .}}"],
+                { encoding: "utf8" },
+              );
+              const layers = JSON.parse(json).layers || [];
+              return layers.reduce((sum, l) => sum + (l.size || 0), 0);
+            } catch (e) {
+              core.warning(`Failed to inspect ${ref}: ${e.message}`);
+              return 0;
+            }
           }
 
-          const fromSizes = await getSizes(fromApp);
-          const toSizes   = await getSizes(toApp);
+          function humanBytes(n) {
+            const sign = n < 0 ? "-" : "";
+            let v = Math.abs(n);
+            const units = ["B", "kB", "MB", "GB", "TB"];
+            let i = 0;
+            while (v >= 1000 && i < units.length - 1) { v /= 1000; i++; }
+            return `${sign}${i === 0 ? v : v.toFixed(2)} ${units[i]}`;
+          }
 
-          const platforms = _(fromSizes)
-              .keys()
-              .union(_.keys(toSizes))
-              .filter(platform => platform && !platform.includes("unknown"))
-              .sort()
-              .value();
+          const previous = layerSize(fromApp);
+          const current = layerSize(`ocidir://${toLayout}`);
+          const change = current - previous;
+          const percentage = previous
+            ? `${change >= 0 ? "+" : ""}${(change / previous * 100).toFixed(2)}%`
+            : (current ? "+∞" : "+0.00%");
+          const icon = change < 0 ? "🔽" : change > 0 ? "🔼" : "🔄";
 
-          const platformRow = (platform) => {
-              const previous = _.get(fromSizes, platform, 0);
-              const current = _.get(toSizes, platform, 0);
-              const change = current - previous;
-
-              const percentage = previous
-                  ? `${change >= 0 ? "+" : ""}${_.round(change / previous * 100, 2)}%`
-                  : current ? "+∞" : "+0.00%";
-
-              const icon = _.cond([
-                  [change => change < 0, _.constant("🔽")],
-                  [change => change > 0, _.constant("🔼")],
-                  [_.stubTrue, _.constant("🔄")]
-              ])(change);
-
-              return [
-                  platform,
-                  filesize(previous),
-                  filesize(current),
-                  `${change >= 0 ? "+" : ""}${filesize(Math.abs(change))} (${percentage})`,
-                  icon
-              ];
-          };
-
-          const rows = [
-              ["OS/Platform", "Previous", "Current", "Change", "Trend"],
-              ..._.map(platforms, platformRow)
-          ];
-
-          const output = `## 📦 App Size Analysis
-
-          > [!NOTE]
-          > Comparing \`${fromApp}\` ➔ \`${toApp}\`
-
-          ### 📈 Size Comparison Table
-
-          ${markdownTable(rows, { align: ["l", "c", "c", "c", "c"] })}`;
+          const output = [
+            "## 📦 App Size Analysis",
+            "",
+            "> [!NOTE]",
+            `> Comparing \`${fromApp}\` ➔ this PR build (\`${platform}\`, compressed layers)`,
+            "",
+            "| Platform | Previous | Current | Change | Trend |",
+            "| :-- | :-: | :-: | :-: | :-: |",
+            `| ${platform} | ${humanBytes(previous)} | ${humanBytes(current)} | ${change > 0 ? "+" : ""}${humanBytes(change)} (${percentage}) | ${icon} |`,
+          ].join("\n");
 
           core.setOutput("markdown", output);

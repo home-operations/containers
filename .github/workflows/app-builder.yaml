@@ -151,13 +151,14 @@ jobs:
             *.labels.org.opencontainers.image.version=${{ steps.app-options.outputs.version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
             *.labels.org.opencontainers.image.vendor=${{ github.repository_owner }}
-            *.output=type=image,name=ghcr.io/${{ github.repository_owner }}/${{ inputs.app }},push-by-digest=true,name-canonical=true,push=true,compression=zstd,force-compression=true
+            *.output=${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true,compression=zstd,force-compression=true', github.repository_owner, inputs.app) || 'type=docker' }}
             *.platform=${{ matrix.platform }}
-            *.tags=
+            *.tags=${{ ! inputs.release && format('ghcr.io/{0}/{1}:sandbox', github.repository_owner, inputs.app) || '' }}
           source: ./apps/${{ inputs.app }}
           targets: image
 
       - name: Export Digest
+        if: ${{ inputs.release }}
         env:
           METADATA: ${{ steps.bake.outputs.metadata }}
         run: |
@@ -166,6 +167,7 @@ jobs:
           touch "${RUNNER_TEMP}/digests/${DIGEST#sha256:}"
 
       - name: Upload Digest
+        if: ${{ inputs.release }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ inputs.app }}-digests-${{ steps.target.outputs.arch }}
@@ -173,7 +175,60 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+      - name: Run App Tests
+        if: ${{ ! inputs.release }}
+        uses: ./.github/actions/app-tests
+        with:
+          app: ${{ inputs.app }}
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
+          token: ${{ github.token }}
+
+      - name: Export OCI Image
+        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
+        uses: docker/bake-action@6614cfa25eff9a0b2b2697efb0b6159e7680d584 # v7.2.0
+        with:
+          files: |
+            ./docker-bake.hcl
+            cwd://${{ runner.temp }}/docker-metadata-action-bake.json
+          set: |
+            *.args.VENDOR=${{ github.repository_owner }}
+            *.cache-from=${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, steps.target.outputs.arch) }}
+            *.output=type=oci,tar=false,dest=${{ runner.temp }}/image.oci,compression=zstd,force-compression=true
+            *.platform=${{ matrix.platform }}
+            *.tags=
+          source: ./apps/${{ inputs.app }}
+          targets: image
+
+      - name: App Size Diff
+        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
+        uses: ./.github/actions/app-size-diff
+        id: app-size-diff
+        with:
+          from-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
+          to-oci-layout: ${{ runner.temp }}/image.oci
+          platform: ${{ matrix.platform }}
+
+      - name: Save Size Diff
+        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
+        env:
+          MARKDOWN: ${{ steps.app-size-diff.outputs.size-diff-markdown }}
+          APP: ${{ inputs.app }}
+        run: |
+          mkdir -p "${RUNNER_TEMP}/size-diff"
+          printf '%s' "$MARKDOWN" > "${RUNNER_TEMP}/size-diff/body.md"
+          printf '%s' "$APP" > "${RUNNER_TEMP}/size-diff/app"
+
+      - name: Upload Size Diff
+        if: ${{ ! inputs.release && matrix.platform == 'linux/amd64' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: size-diff-${{ inputs.app }}
+          path: ${{ runner.temp }}/size-diff/*
+          if-no-files-found: error
+          retention-days: 1
+
   merge:
+    if: ${{ inputs.release }}
     name: Merge
     runs-on: ubuntu-24.04
     needs:
@@ -233,6 +288,7 @@ jobs:
           echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
 
   attest:
+    if: ${{ inputs.release }}
     name: Attest
     needs:
       - merge
@@ -261,7 +317,7 @@ jobs:
           image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
 
       - name: Attestation
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           push-to-registry: true
           subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
@@ -273,49 +329,6 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           gh attestation verify --repo "$REPO" "oci://ghcr.io/${REPO_OWNER}/${APP}@${DIGEST}"
-
-  test:
-    if: ${{ ! inputs.release }}
-    name: Test
-    needs:
-      - merge
-      - attest
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          persist-credentials: false
-
-      - name: Generate Token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        id: app-token
-        with:
-          client-id: ${{ secrets.BOT_CLIENT_ID }}
-          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-          permission-pull-requests: write
-
-      - name: Run App Tests
-        uses: ./.github/actions/app-tests
-        with:
-          app: ${{ inputs.app }}
-          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.merge.outputs.digest }}
-          token: ${{ github.token }}
-
-      - name: Get App Size Diff
-        uses: ./.github/actions/app-size-diff
-        id: app-size-diff
-        with:
-          from-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:rolling
-          to-app: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}:sandbox
-
-      - name: Post App Size Diff
-        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
-        with:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          header: app-size-diff-${{ inputs.app }}
-          message: |
-            ${{ steps.app-size-diff.outputs.size-diff-markdown }}
 
   announce:
     if: ${{ inputs.release && needs.plan.outputs.app-exists != 'true' }}

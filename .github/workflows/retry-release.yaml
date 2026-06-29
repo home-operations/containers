@@ -53,8 +53,11 @@ jobs:
           permission-packages: read
           permission-pull-requests: read
 
-      - name: Install regctl
-        uses: regclient/actions/regctl-installer@4b4db1dcc7dad75ad67a788a380f75a20cc8a040 # main
+      - name: Setup Mise
+        uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+        with:
+          experimental: true
+          install_args: --locked
 
       - name: Get Bake Options
         uses: ./.github/actions/app-options
