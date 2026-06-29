@@ -77,7 +77,7 @@ RUN \
     && \
     HA_UV_VERSION=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/requirements.txt" | grep 'uv==' | sed 's|.*uv==||') \
     && \
-    pip install uv==${HA_UV_VERSION} \
+    pip install "uv==${HA_UV_VERSION}" \
     && \
     curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
         | tar xzf - -C /tmp --strip-components=1 \

@@ -14,13 +14,12 @@ WORKDIR /build
 RUN wget -qO- "https://github.com/chrisvel/tududi/archive/refs/tags/${VERSION}.tar.gz" \
     | tar xzf - --strip-components=1
 
-# Install all dependencies (devDeps needed for webpack/tsc frontend build)
 RUN npm install
 
-# Build frontend → dist/
+# hadolint ignore=DL3059
 RUN NODE_ENV=production npm run frontend:build
 
-# Prune devDependencies before copying to runtime image
+# hadolint ignore=DL3059
 RUN npm prune --omit=dev
 
 FROM docker.io/library/node:24-alpine
