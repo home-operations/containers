@@ -39,8 +39,6 @@ ENV LD_LIBRARY_PATH="/lib:/usr/lib" \
 USER root
 WORKDIR /app
 
-# intel-media-driver is amd64-only; the unquoted $() must word-split to nothing
-# on other arches (quoting would pass an empty arg to apk add).
 # hadolint ignore=SC2046
 RUN \
     apk add --no-cache \
