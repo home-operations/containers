@@ -6,6 +6,7 @@ ARG VERSION
 
 ENV CNI_BIN_DIR=/host/opt/cni/bin
 
+# hadolint ignore=DL3002
 USER root
 
 RUN \
@@ -21,4 +22,5 @@ RUN \
     && apk del --purge .build-deps \
     && rm -rf  /tmp/*
 
+# hadolint ignore=DL3025
 CMD rsync -av --exclude=LICENSE --exclude=README.md /plugins/* $CNI_BIN_DIR

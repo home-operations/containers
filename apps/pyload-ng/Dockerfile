@@ -34,7 +34,7 @@ RUN \
         sqlite \
         tesseract-ocr \
     && pip install --no-cache-dir uv \
-    && uv pip install --pre pyload-ng[all]=="${VERSION}" \
+    && uv pip install --pre "pyload-ng[all]==${VERSION}" \
     && mkdir -p /config && chown nobody:nogroup -R /config \
     && mkdir -p /downloads && chown nobody:nogroup -R /downloads \
     && apk del --purge build-dependencies \

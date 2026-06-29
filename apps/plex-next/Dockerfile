@@ -18,7 +18,7 @@ RUN \
         enable-comp \
         threads \
         -Wl,-rpath,${OPENSSL_PREFIX}/lib \
-    && make -j$(nproc) \
+    && make -j"$(nproc)" \
     && make install_sw install_ssldirs
 
 FROM docker.io/library/alpine:3.24
@@ -39,6 +39,7 @@ ENV LD_LIBRARY_PATH="/lib:/usr/lib" \
 USER root
 WORKDIR /app
 
+# hadolint ignore=SC2156
 RUN \
     apk add --no-cache \
         bash \

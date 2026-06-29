@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/hadolint.json
+ignored:
+  # Rolling/repackaging images intentionally do not pin OS package versions.
+  - DL3018 # apk add: pin versions
+  - DL3013 # pip install: pin versions
+  - DL3008 # apt-get install: pin versions
+  # `curl -fsSL ... | tar` is the house pattern; curl -f already fails on HTTP
+  # errors. Enforcing pipefail would require a SHELL directive in every image.
+  - DL4006 # set SHELL with pipefail before RUN with a pipe
+  # `ARG FOO=${BAR/a/b}` (e.g. TARGETARCH mapping) is a Dockerfile ARG default,
+  # not a shell command; ShellCheck's POSIX-sh substitution rule is a false positive.
+  - SC3060 # ${var/a/b} is undefined in POSIX sh
