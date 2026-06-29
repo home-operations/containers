@@ -56,12 +56,20 @@ jobs:
               return;
             }
 
-            for (const entry of fs.readdirSync(dir)) {
-              const sub = path.join(dir, entry);
-              if (!fs.statSync(sub).isDirectory()) continue;
+            // A single matching artifact extracts flat into DIR; multiple land
+            // in per-artifact subdirs. Handle both: DIR itself + its subdirs.
+            const candidates = [dir, ...fs.readdirSync(dir)
+              .map(e => path.join(dir, e))
+              .filter(p => fs.statSync(p).isDirectory())];
 
-              const app = fs.readFileSync(path.join(sub, "app"), "utf8").trim();
-              const body = fs.readFileSync(path.join(sub, "body.md"), "utf8");
+            let posted = 0;
+            for (const sub of candidates) {
+              const appPath = path.join(sub, "app");
+              const bodyPath = path.join(sub, "body.md");
+              if (!fs.existsSync(appPath) || !fs.existsSync(bodyPath)) continue;
+
+              const app = fs.readFileSync(appPath, "utf8").trim();
+              const body = fs.readFileSync(bodyPath, "utf8");
               if (!app || !body) continue;
               if (!body.startsWith("## 📦 App Size Analysis")) {
                 core.warning(`Skipping ${app}: unexpected size-diff body.`);
@@ -93,4 +101,7 @@ jobs:
                   body: fullBody,
                 });
               }
+              posted++;
             }
+
+            if (!posted) core.warning("No size-diff payloads found under the artifact dir.");
