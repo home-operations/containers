@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=theotherp/nzbhydra2
-  default = "v8.8.5"
+  default = "v8.9.0"
 }
 
 variable "SOURCE" {
