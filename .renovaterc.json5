@@ -52,14 +52,6 @@
   },
   packageRules: [
     {
-      description: [
-        "Group the Go version: the go.mod directive (gomod) and the mise toolchain pin bump together in one PR",
-      ],
-      matchManagers: ["gomod", "mise"],
-      matchDepNames: ["go"],
-      groupName: "golang",
-    },
-    {
       description: ["Release Rules for App Updates"],
       addLabels: ["app/{{parentDir}}"],
       additionalBranchPrefix: "{{parentDir}}-",

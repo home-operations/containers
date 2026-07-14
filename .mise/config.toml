@@ -4,16 +4,16 @@ unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
 
 [tools]
 gh = "2.96.0"
-go = "1.26.4"
+go = "1.26.5"
 hadolint = "2.14.0"
 jq = "1.8.2"
-lefthook = "2.1.9"
-node = "26.4.0"
-oxfmt = "0.58.0"
+lefthook = "2.1.10"
+node = "26.5.0"
+oxfmt = "0.59.0"
 regctl = "0.11.5"
 shellcheck = "0.11.0"
 yq = "4.53.3"
-zizmor = "1.26.1"
+zizmor = "1.27.0"
 
 [tasks.local-build]
 description = "Build and test an app locally"
