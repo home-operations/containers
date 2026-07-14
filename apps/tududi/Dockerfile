@@ -49,6 +49,18 @@ ENV \
     NODE_ENV=production \
     PORT=3002 \
     TUDUDI_UPLOAD_PATH=/config/uploads
+    TUDUDI_ALLOWED_ORIGINS="http://localhost:8080,http://localhost:3002,http://127.0.0.1:8080,http://127.0.0.1:3002" \
+    TUDUDI_SESSION_SECRET="" \
+    TUDUDI_USER_EMAIL="" \
+    TUDUDI_USER_PASSWORD="" \
+    TUDUDI_TRUST_PROXY=false \
+    DISABLE_TELEGRAM=false \
+    DISABLE_SCHEDULER=false \
+    SWAGGER_ENABLED=false \
+    FF_ENABLE_BACKUPS=false \
+    FF_ENABLE_CALDAV=false \
+    FF_ENABLE_CALENDAR=false \
+    FF_ENABLE_HABITS=false
 
 USER nobody:nogroup
 WORKDIR /app/backend
