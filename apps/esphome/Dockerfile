@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-slim
+FROM docker.io/library/python:3.14-slim
 ARG VERSION
+# renovate: datasource=pypi depName=esphome-device-builder
+ARG DEVICE_BUILDER_VERSION=1.6.3
 
 ENV \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
@@ -41,6 +43,8 @@ RUN \
     && uv pip install \
         setuptools \
         "esphome[displays]==${VERSION}" \
+        "esphome-device-builder==${DEVICE_BUILDER_VERSION}" \
+    && mkdir -p /cache /config && chown nobody:nogroup /cache /config \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && apt-get autoremove -y \
     && apt-get clean \
@@ -51,6 +55,7 @@ COPY . /
 USER nobody:nogroup
 
 WORKDIR /config
+VOLUME ["/cache", "/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-CMD ["dashboard", "/config"]
+CMD ["/config"]
