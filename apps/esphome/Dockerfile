@@ -37,6 +37,7 @@ RUN \
         iputils-ping \
         libcairo2 \
         libmagic1 \
+        libusb \
         openssh-client \
         patch \
     && pip install uv \
