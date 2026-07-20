@@ -22,7 +22,6 @@ RUN \
         jq \
         libintl \
         nano \
-        sqlite-libs \
         tzdata \
     && mkdir -p /app/bin \
     && curl -fsSL "https://radarr.servarr.com/v1/update/${RADARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${TARGETARCH/amd64/x64}" \
