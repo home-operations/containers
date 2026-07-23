@@ -69,6 +69,16 @@
       ignoreTests: false,
     },
     {
+      // esphome-device-builder is a first-party companion to the esphome app
+      // (lives in apps/esphome/Dockerfile, not the bake file), so the bake-only
+      // rule above skips it. Auto-merge it like the app itself; CI still gates.
+      description: ["Auto-merge esphome-device-builder Updates"],
+      matchDepNames: ["esphome-device-builder"],
+      automerge: true,
+      automergeType: "pr",
+      ignoreTests: false,
+    },
+    {
       description: ["Allowed Ubuntu Version for Base Images"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
