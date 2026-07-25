@@ -71,7 +71,6 @@
       description: ["Auto-merge esphome-device-builder Updates"],
       matchDepNames: ["esphome-device-builder"],
       automerge: true,
-      automergeType: "pr",
       ignoreTests: false,
     },
     {
