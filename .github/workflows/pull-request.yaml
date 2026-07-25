@@ -108,6 +108,7 @@ jobs:
       - build
       - go-check
       - hadolint
+      - prepare
     runs-on: ubuntu-24.04
     permissions: {}
     steps:
