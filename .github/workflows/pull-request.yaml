@@ -126,8 +126,8 @@ jobs:
       - name: Lint workflows
         uses: home-operations/.github/actions/workflow-lint@dfa0b198336d33dcbe73557a68315d3071ec7709 # workflow-lint-1.0.0
         with:
-          actionlint-version: ${ steps.tools.outputs.actionlint }
-          zizmor-version: ${ steps.tools.outputs.zizmor }
+          actionlint-version: ${{ steps.tools.outputs.actionlint }}
+          zizmor-version: ${{ steps.tools.outputs.zizmor }}
 
   status:
     if: ${{ !cancelled() }}
