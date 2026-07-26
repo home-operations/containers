@@ -40,17 +40,27 @@ RUN \
 
 WORKDIR /build/linux
 
-# Kata's own config plus KVM host support; the asserts fail the build rather
-# than shipping a kernel that silently cannot nest
+# Kata's own config plus KVM host support, and the traffic-control pieces the
+# Talos QEMU provisioner's tc-redirect-tap CNI plugin needs: Kata enables
+# CONFIG_NET_SCHED but not the ingress qdisc, so `tc qdisc add ingress` fails
+# with ENOENT. The asserts fail the build rather than shipping a kernel that
+# silently cannot nest or cannot wire up a VM's network.
 RUN \
     cp /config-kata .config \
     && ./scripts/config --enable CONFIG_VIRTUALIZATION \
                         --enable CONFIG_KVM \
                         --enable CONFIG_KVM_INTEL \
                         --enable CONFIG_KVM_AMD \
+                        --enable CONFIG_NET_CLS_ACT \
+                        --enable CONFIG_NET_SCH_INGRESS \
+                        --enable CONFIG_NET_CLS_U32 \
+                        --enable CONFIG_NET_ACT_MIRRED \
     && make olddefconfig \
     && grep -q '^CONFIG_KVM=y' .config \
     && grep -q '^CONFIG_KVM_INTEL=y' .config \
+    && grep -q '^CONFIG_NET_SCH_INGRESS=y' .config \
+    && grep -q '^CONFIG_NET_CLS_U32=y' .config \
+    && grep -q '^CONFIG_NET_ACT_MIRRED=y' .config \
     && make -j"$(nproc)" vmlinux \
     && cp vmlinux /vmlinux-nested
 
