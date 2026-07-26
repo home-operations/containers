@@ -101,6 +101,34 @@ jobs:
       app: ${{ matrix.app }}
       release: false
 
+  workflow-lint:
+    name: Workflow Lint
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Mise
+        uses: jdx/mise-action@dad1bfd3df957f44999b559dd69dc1671cb4e9ea # v4.2.1
+        with:
+          install: false
+
+      - name: Resolve linter versions
+        id: tools
+        run: |
+          echo "actionlint=$(mise config get tools.actionlint)" >> "$GITHUB_OUTPUT"
+          echo "zizmor=$(mise config get tools.zizmor)" >> "$GITHUB_OUTPUT"
+
+      - name: Lint workflows
+        uses: home-operations/.github/actions/workflow-lint@dfa0b198336d33dcbe73557a68315d3071ec7709 # workflow-lint-1.0.0
+        with:
+          actionlint-version: ${ steps.tools.outputs.actionlint }
+          zizmor-version: ${ steps.tools.outputs.zizmor }
+
   status:
     if: ${{ !cancelled() }}
     name: Build Success
@@ -109,6 +137,7 @@ jobs:
       - go-check
       - hadolint
       - prepare
+      - workflow-lint
     runs-on: ubuntu-24.04
     permissions: {}
     steps:
