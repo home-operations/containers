@@ -86,7 +86,7 @@ jobs:
     name: Build ${{ matrix.app }}
     needs:
       - prepare
-    uses: ./.github/workflows/app-builder.yaml
+    uses: $/.github/workflows/app-builder.yaml
     permissions:
       attestations: write
       contents: read

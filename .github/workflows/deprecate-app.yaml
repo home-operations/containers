@@ -107,11 +107,6 @@ jobs:
       - merge
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
@@ -121,7 +116,7 @@ jobs:
           permission-contents: write
 
       - name: Get Release Tag
-        uses: ./.github/actions/release-tag
+        uses: $/.github/actions/release-tag
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -129,6 +124,7 @@ jobs:
       - name: Create Release
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
           TAG: ${{ steps.release.outputs.tag }}
           APP: ${{ inputs.app }}
           REASON: ${{ inputs.reason }}

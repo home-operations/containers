@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
 
       - name: Get App Versions
-        uses: ./.github/actions/app-versions
+        uses: $/.github/actions/app-versions
         id: app-versions
         with:
           upstream-version: ${{ inputs.version }}

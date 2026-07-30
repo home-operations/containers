@@ -70,7 +70,7 @@ jobs:
     name: Build ${{ matrix.app }}
     needs:
       - changed
-    uses: ./.github/workflows/app-builder.yaml
+    uses: $/.github/workflows/app-builder.yaml
     permissions:
       artifact-metadata: write
       attestations: write
