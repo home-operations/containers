@@ -62,8 +62,8 @@ boundary in this repo.
   outside the established `require.NoError` pattern, table-driven subtests
   (`t.Run`) if a single app's test grows multiple cases.
 - `gofmt -s` still runs via the shared `home-operations/.github` lefthook
-  config on every staged `.go` file; that's the only formatting/lint gate
-  in this repo.
+  config on every staged `.go` file. CI also runs `go vet ./...` for pull
+  requests.
 
 ## Running
 
