@@ -124,7 +124,7 @@ jobs:
           echo "zizmor=$(mise config get tools.zizmor)" >> "$GITHUB_OUTPUT"
 
       - name: Lint workflows
-        uses: home-operations/.github/actions/workflow-lint@5514ee499e8919d394b5376637025535dac84ff8 # workflow-lint-v1.0.2
+        uses: home-operations/.github/actions/workflow-lint@69cad1e407df8070dd9cfc3314551e473544014e # workflow-lint-v1.0.3
         with:
           actionlint-version: ${{ steps.tools.outputs.actionlint }}
           zizmor-version: ${{ steps.tools.outputs.zizmor }}
