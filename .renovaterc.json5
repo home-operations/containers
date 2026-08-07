@@ -74,6 +74,12 @@
       ignoreTests: false,
     },
     {
+      description: ["Auto-merge tf-runner Updates"],
+      matchDepNames: ["ghcr.io/flux-iac/tf-runner"],
+      automerge: true,
+      ignoreTests: false,
+    },
+    {
       description: ["Allowed Ubuntu Version for Base Images"],
       matchDatasources: ["docker"],
       matchPackageNames: ["/ubuntu/"],
