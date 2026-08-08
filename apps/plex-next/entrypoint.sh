@@ -116,6 +116,15 @@ if [[ "$(readlink -f "${vaDriPath}")" != "/usr/lib/dri" ]]; then
     ln -sf /usr/lib/dri "${vaDriPath}"
 fi
 
+# Plex downloads GPU drivers that dlopen sibling libraries resolved through an
+# $ORIGIN-relative RUNPATH, which musl does not honour, so add them explicitly.
+for driverDir in "${PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR}/Plex Media Server/Drivers"/*/; do
+    [[ -d "${driverDir}" ]] || continue
+    echo "Adding driver to library path: $(basename "${driverDir}")"
+    LD_LIBRARY_PATH="${driverDir%/}:${LD_LIBRARY_PATH}"
+done
+export LD_LIBRARY_PATH
+
 exec \
     /usr/lib/plexmediaserver/Plex\ Media\ Server \
     "$@"
