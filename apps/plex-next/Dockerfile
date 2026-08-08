@@ -52,12 +52,14 @@ RUN \
         tzdata \
         xmlstarlet \
     && \
-    apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+    apk add --no-cache \
+        --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+        --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
         libdrm \
         libva \
         mesa-dri-gallium \
         mesa-va-gallium \
-        $( [ "${TARGETARCH}" = "amd64" ] && echo intel-media-driver ) \
+        $( [ "${TARGETARCH}" = "amd64" ] && echo intel-media-driver intel-graphics-compiler ) \
     && \
     apk add --no-cache --virtual=.build-deps \
         dpkg \
