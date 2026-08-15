@@ -3,7 +3,7 @@
 FROM docker.io/library/python:3.14-slim
 ARG VERSION
 # renovate: datasource=pypi depName=esphome-device-builder
-ARG DEVICE_BUILDER_VERSION=1.9.6
+ARG DEVICE_BUILDER_VERSION=1.10.0
 
 ENV \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
