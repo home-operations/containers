@@ -1,0 +1,62 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Announce Deprecation
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    if: >-
+      github.event.pull_request.merged &&
+      startsWith(github.event.pull_request.head.ref, 'deprecate/') &&
+      contains(github.event.pull_request.labels.*.name, 'deprecation')
+    name: Announce (${{ github.event.pull_request.head.ref }})
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ secrets.BOT_CLIENT_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Extract Deprecation Details
+        id: details
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "app=${HEAD_REF#deprecate/}" >> "$GITHUB_OUTPUT"
+          echo "reason=$(sed -n 's/^\*\*Reason\*\*: //p' <<< "${PR_BODY}" | tr -d '\r' | head -n1)" >> "$GITHUB_OUTPUT"
+
+      - name: Get Release Tag
+        uses: $/.github/actions/release-tag
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ steps.release.outputs.tag }}
+          APP: ${{ steps.details.outputs.app }}
+          REASON: ${{ steps.details.outputs.reason }}
+        run: |
+          cat > release-notes.md <<EOF
+          > [!WARNING]
+          > An app has been deprecated and will no longer receive updates.
+          > After **6 months** from now, its image will be **removed** from our container registry.
+
+          ## 📦 App
+
+          **Name**: ${APP}
+          **Reason**: ${REASON}
+          EOF
+          gh release create "$TAG" --notes-file release-notes.md
