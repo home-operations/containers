@@ -4,7 +4,7 @@ Guidance for AI coding agents (and humans) writing Go in this repository.
 Unlike the fleet's other Go repos, there's no application code here: Go
 exists solely to test the container images this repo builds, via
 `testcontainers-go`. The fleet's general Go-conventions template (idiomatic
-Go 1.26, `log/slog`, `caarlos0/env`, `pflag`, mise build/lint/test tasks,
+Go, `log/slog`, `caarlos0/env`, `pflag`, mise build/lint/test tasks,
 ...) doesn't apply here: there's no `main.go`, no config to load, no CLI, no
 server. This repo is the one exception in the fleet that doesn't reuse that
 template; everything below is specific to this repo's own shape.
