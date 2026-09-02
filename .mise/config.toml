@@ -13,7 +13,7 @@ oxfmt = "0.65.0"
 regctl = "0.11.5"
 shellcheck = "0.11.0"
 yq = "4.53.6"
-zizmor = "1.29.0"
+zizmor = "1.30.0"
 
 [tasks.local-build]
 description = "Build and test an app locally"
