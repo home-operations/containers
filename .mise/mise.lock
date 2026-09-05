@@ -147,23 +147,23 @@ version = "0.66.0"
 backend = "npm:oxfmt"
 
 [[tools.regctl]]
-version = "0.11.5"
+version = "0.11.6"
 backend = "aqua:regclient/regclient/regctl"
 
 [tools.regctl."platforms.linux-arm64"]
-checksum = "sha256:c4cf231e74cda685f1599f3d866b02b03c572e54b79ec8b062f32070b0ba4587"
-url = "https://github.com/regclient/regclient/releases/download/v0.11.5/regctl-linux-arm64"
-url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/430177224"
+checksum = "sha256:a9b71a3ee79b2d1dbbd7d51fd5e8fa214722c192864235d3d8764463c751a1ff"
+url = "https://github.com/regclient/regclient/releases/download/v0.11.6/regctl-linux-arm64"
+url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/541343835"
 
 [tools.regctl."platforms.linux-x64"]
-checksum = "sha256:c93aa7638749f5aaac1a8e01787321889c78f0101809bb2880343478d0ba0467"
-url = "https://github.com/regclient/regclient/releases/download/v0.11.5/regctl-linux-amd64"
-url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/430177221"
+checksum = "sha256:8e0e62a497fcdb8048d18aa927a139613176ba0531f412bc541044e28f9856bd"
+url = "https://github.com/regclient/regclient/releases/download/v0.11.6/regctl-linux-amd64"
+url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/541343840"
 
 [tools.regctl."platforms.macos-arm64"]
-checksum = "sha256:f4d536d64d0c3cc1db7400902175a1c314675991d22e87e15c319501a2676d3f"
-url = "https://github.com/regclient/regclient/releases/download/v0.11.5/regctl-darwin-arm64"
-url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/430177223"
+checksum = "sha256:5b52b71861abc300ab513e87a4c3794cff6508035ac7f6b6bdfa1fa5688c0040"
+url = "https://github.com/regclient/regclient/releases/download/v0.11.6/regctl-darwin-arm64"
+url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/541343870"
 
 [[tools.shellcheck]]
 version = "0.11.0"
