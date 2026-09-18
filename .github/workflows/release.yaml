@@ -27,14 +27,14 @@ permissions:
 jobs:
   prepare:
     name: Prepare
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     outputs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
       - name: Get Changed Files
-        uses: bjw-s-labs/action-changed-files@a9a36fb08ce06db9b02fbd8026cc2c0945eb9841 # v0.6.0
+        uses: bjw-s-labs/action-changed-files@147be9638332cf68fd60714a610509d7a9360d60 # v0.7.0
         id: changed-files
         with:
           path: apps
@@ -46,7 +46,7 @@ jobs:
     name: Get Changed Apps
     needs:
       - prepare
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     outputs:
@@ -96,7 +96,7 @@ jobs:
     name: Build Success
     needs:
       - build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions: {}
     steps:
       # cancelled counts as failed: !cancelled() above still runs this job when
