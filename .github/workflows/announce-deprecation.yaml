@@ -16,7 +16,7 @@ jobs:
       startsWith(github.event.pull_request.head.ref, 'deprecate/') &&
       contains(github.event.pull_request.labels.*.name, 'deprecation')
     name: Announce (${{ github.event.pull_request.head.ref }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
