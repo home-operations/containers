@@ -247,10 +247,11 @@ jobs:
       - merge
     runs-on: ubuntu-26.04
     permissions:
-      contents: read
+      contents: write # dependency snapshot upload
       packages: write
       id-token: write
       attestations: write
+      artifact-metadata: write # storage record created by actions/attest
     env:
       APP: ${{ inputs.app }}
       REPO_OWNER: ${{ github.repository_owner }}
