@@ -87,8 +87,6 @@ jobs:
     needs:
       - prepare
     uses: $/.github/workflows/app-builder.yaml
-    # Jobs in app-builder.yaml cannot exceed these, so they also cover its
-    # release-only Attest job. Each job there still requests only its own.
     permissions:
       artifact-metadata: write
       attestations: write
