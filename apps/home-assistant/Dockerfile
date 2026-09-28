@@ -3,9 +3,6 @@
 ARG TARGETARCH
 ARG ARCH=${TARGETARCH/arm64/aarch64}
 FROM ghcr.io/home-assistant/${ARCH}-base-python:3.14-alpine3.24
-ARG TARGETARCH
-ARG ARCH=${TARGETARCH/arm64/aarch64}
-ARG VERSION
 
 ENV \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
@@ -16,12 +13,7 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true \
     UV_EXTRA_INDEX_URL="https://wheels.home-assistant.io/musllinux-index/"
-
-ENV HOME="/config" \
-    PYTHONUSERBASE="/usr/local" \
-    VENV_FOLDER="/config/.venv"
 
 USER root
 WORKDIR /app
@@ -68,36 +60,34 @@ RUN \
         tiff \
         tzdata \
         unzip \
-        xz \
-    && \
-    apk add --no-cache --virtual=.build-deps \
-        autoconf \
-        build-base \
-        libffi-dev \
-    && \
-    HA_UV_VERSION=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/requirements.txt" | grep 'uv==' | sed 's|.*uv==||') \
-    && \
-    pip install "uv==${HA_UV_VERSION}" \
-    && \
-    curl -fsSL "https://github.com/home-assistant/core/archive/${VERSION}.tar.gz" \
-        | tar xzf - -C /tmp --strip-components=1 \
-    && \
-    HA_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/.github/workflows/builder.yml" | grep "BASE_IMAGE_VERSION: " | cut -d '"' -f2) \
-    && \
-    uv pip install --only-binary=:all: \
+        xz
+
+COPY --from=ghcr.io/alexxit/go2rtc:1.9.14@sha256:675c318b23c06fd862a61d262240c9a63436b4050d177ffc68a32710d9e05bae /usr/local/bin/go2rtc /bin/go2rtc
+
+ARG VERSION
+RUN \
+    go2rtc --version \
+    && curl -fsSL --create-dirs -o /tmp/core/requirements.txt \
+        "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/requirements.txt" \
+    && curl -fsSL --create-dirs -o /tmp/core/requirements_all.txt \
+        "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/requirements_all.txt" \
+    && curl -fsSL --create-dirs -o /tmp/core/homeassistant/package_constraints.txt \
+        "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/homeassistant/package_constraints.txt" \
+    && pip install "uv==$(awk -F'==' '/^uv==/{print $2}' /tmp/core/requirements.txt)" \
+    && HA_BASE=$(curl -fsSL "https://raw.githubusercontent.com/home-assistant/core/refs/tags/${VERSION}/.github/workflows/builder.yml" | grep "BASE_IMAGE_VERSION: " | cut -d '"' -f2) \
+    && uv pip install --system --only-binary=:all: \
         --requirement "https://raw.githubusercontent.com/home-assistant/docker/${HA_BASE}/requirements.txt" \
-    && \
-    uv pip install --only-binary=:all: --requirement /tmp/requirements_all.txt \
-    && \
-    uv pip install --only-binary=:all: homeassistant=="${VERSION}" \
-    && curl -fsSL -o /bin/go2rtc \
-        "https://github.com/AlexxIT/go2rtc/releases/latest/download/go2rtc_linux_${TARGETARCH}" \
-    && chmod +x /bin/go2rtc \
+    && uv pip install --system --only-binary=:all: --requirement /tmp/core/requirements_all.txt \
+    && uv pip install --system --only-binary=:all: homeassistant=="${VERSION}" \
+    && python3 -m compileall -q /usr/local/lib/python3*/site-packages/homeassistant \
     && mkdir -p /config && chown nobody:nogroup -R /config \
-    && apk del --purge .build-deps \
-    && rm -rf /root/.cache /root/.cargo /tmp/*
+    && rm -rf /root/.cache /root/.local /tmp/*
 
 COPY . /
+
+ENV HOME="/config" \
+    PYTHONUSERBASE="/usr/local" \
+    VENV_FOLDER="/config/.venv"
 
 USER nobody:nogroup
 WORKDIR /config
