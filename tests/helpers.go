@@ -86,7 +86,7 @@ type HTTPTestConfig struct {
 	Port       string
 	Path       string
 	StatusCode int
-	Timeout    time.Duration // optional startup timeout for the HTTP wait strategy (0 = library default)
+	Timeout    time.Duration // optional startup timeout for the port and HTTP wait strategies (0 = library default)
 }
 
 // RequireHTTPEndpoint tests that an HTTP endpoint is accessible and returns the expected status code
@@ -102,19 +102,20 @@ func RequireHTTPEndpoint(t *testing.T, image string, httpConfig HTTPTestConfig, 
 
 	portStr := httpConfig.Port + "/tcp"
 
+	portWait := wait.ForListeningPort(portStr)
 	httpWait := wait.ForHTTP(httpConfig.Path).WithPort(portStr).WithStatusCodeMatcher(func(status int) bool {
 		return status == httpConfig.StatusCode
 	})
+	deadline := 60 * time.Second
 	if httpConfig.Timeout > 0 {
+		portWait = portWait.WithStartupTimeout(httpConfig.Timeout)
 		httpWait = httpWait.WithStartupTimeout(httpConfig.Timeout)
+		deadline = max(httpConfig.Timeout, deadline)
 	}
 
 	opts := []testcontainers.ContainerCustomizer{
 		testcontainers.WithExposedPorts(portStr),
-		testcontainers.WithWaitStrategy(
-			wait.ForListeningPort(portStr),
-			httpWait,
-		),
+		testcontainers.WithWaitStrategyAndDeadline(deadline, portWait, httpWait),
 	}
 
 	opts = append(opts, applyContainerConfig(containerConfig)...)
@@ -137,7 +138,7 @@ func RequireFileExists(t *testing.T, image string, filePath string) {
 	testcontainers.CleanupContainer(t, ctr)
 	require.NoError(t, err)
 
-	cli, err := dockerclient.New(dockerclient.FromEnv)
+	cli, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
 	defer cli.Close()
 
