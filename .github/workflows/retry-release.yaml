@@ -19,7 +19,7 @@ jobs:
       && github.event.workflow_run.event == 'push'
       && github.event.workflow_run.run_attempt == 1
     name: Retry Release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       actions: write
     steps:

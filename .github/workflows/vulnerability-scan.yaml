@@ -13,7 +13,7 @@ permissions:
 jobs:
   apps:
     name: Get App Inventory
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       apps: ${{ steps.inventory.outputs.apps }}
     steps:
@@ -28,7 +28,7 @@ jobs:
 
   grype:
     name: Setup Grype
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Create Cache Key
         id: cache
@@ -66,7 +66,7 @@ jobs:
     needs:
       - apps
       - grype
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         app: ${{ fromJSON(needs.apps.outputs.apps) }}
