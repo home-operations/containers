@@ -2,7 +2,7 @@
 
 FROM docker.io/library/alpine:3.24
 ARG VERSION
-# hadolint ignore=DL3002
+# droast ignore=DF002
 USER root
 RUN \
     apk add --no-cache \

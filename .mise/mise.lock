@@ -44,6 +44,25 @@ url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_macOS_ar
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857200"
 provenance = "github-attestations"
 
+[[tools."github:immanuwell/dockerfile-roast"]]
+version = "1.7.0"
+backend = "github:immanuwell/dockerfile-roast"
+
+[tools."github:immanuwell/dockerfile-roast"."platforms.linux-arm64"]
+checksum = "sha256:0800e80d11f668615fc87750f58809b56bedca83ec6d8a539daa56f42da64bc3"
+url = "https://github.com/immanuwell/dockerfile-roast/releases/download/1.7.0/droast-linux-arm64"
+url_api = "https://api.github.com/repos/immanuwell/dockerfile-roast/releases/assets/539932750"
+
+[tools."github:immanuwell/dockerfile-roast"."platforms.linux-x64"]
+checksum = "sha256:cadb963a040ba2e68641af764f794e5d4fb3371bb9b92255fa5027060b08ea6e"
+url = "https://github.com/immanuwell/dockerfile-roast/releases/download/1.7.0/droast-linux-x86_64"
+url_api = "https://api.github.com/repos/immanuwell/dockerfile-roast/releases/assets/539932746"
+
+[tools."github:immanuwell/dockerfile-roast"."platforms.macos-arm64"]
+checksum = "sha256:5e4fcb77fd1a7eadd56e1df460c51e9a842ae68abaa4c13b23f871ee968c8195"
+url = "https://github.com/immanuwell/dockerfile-roast/releases/download/1.7.0/droast-macos-arm64"
+url_api = "https://api.github.com/repos/immanuwell/dockerfile-roast/releases/assets/539932752"
+
 [[tools.go]]
 version = "1.27.1"
 backend = "core:go"
@@ -59,28 +78,6 @@ url = "https://dl.google.com/go/go1.27.1.linux-amd64.tar.gz"
 [tools.go."platforms.macos-arm64"]
 checksum = "sha256:ee215d57e0ec269c60cc9ceca68e6bda321ba9ee5afe24f4b0988703c2d87d12"
 url = "https://dl.google.com/go/go1.27.1.darwin-arm64.tar.gz"
-
-[[tools.hadolint]]
-version = "2.15.1"
-backend = "aqua:hadolint/hadolint"
-
-[tools.hadolint."platforms.linux-arm64"]
-checksum = "sha256:f6198ef8090f404dbb771abfee086eb8c48ac177f30da7fd3510aca35b344b5d"
-url = "https://github.com/hadolint/hadolint/releases/download/v2.15.1/hadolint-linux-arm64"
-url_api = "https://api.github.com/repos/hadolint/hadolint/releases/assets/496546507"
-provenance = "github-attestations"
-
-[tools.hadolint."platforms.linux-x64"]
-checksum = "sha256:c7187db94eeeeca956519a6af171adc31453941a1e777961f6e680f697c8c507"
-url = "https://github.com/hadolint/hadolint/releases/download/v2.15.1/hadolint-linux-x86_64"
-url_api = "https://api.github.com/repos/hadolint/hadolint/releases/assets/496546506"
-provenance = "github-attestations"
-
-[tools.hadolint."platforms.macos-arm64"]
-checksum = "sha256:5c09f3213f8e40406abe048233d985eebef336d4a6a20021be47fadb6cf480a2"
-url = "https://github.com/hadolint/hadolint/releases/download/v2.15.1/hadolint-macos-arm64"
-url_api = "https://api.github.com/repos/hadolint/hadolint/releases/assets/496546505"
-provenance = "github-attestations"
 
 [[tools.jq]]
 version = "1.8.2"

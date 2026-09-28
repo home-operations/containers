@@ -1,0 +1,4 @@
+skip = ["DF021"]
+
+[shellcheck]
+mode = "required"

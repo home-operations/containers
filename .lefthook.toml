@@ -3,6 +3,6 @@ git_url = "https://github.com/home-operations/.github"
 ref = "main"
 configs = ["lefthook.common.toml"]
 
-[pre-commit.commands.hadolint]
+[pre-commit.commands.droast]
 glob = ["**/Dockerfile"]
-run = "hadolint {staged_files}"
+run = "droast {staged_files}"
