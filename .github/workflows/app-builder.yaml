@@ -21,8 +21,11 @@ on:
       DISCORD_WEBHOOK:
         required: false
 
+# Releases of an app share a group so they run one at a time. A run that queues
+# in a group cancels the run already pending there, so PR and merge queue
+# builds get a group per run and can never cancel a pending release.
 concurrency:
-  group: app-builder-${{ inputs.app }}
+  group: ${{ inputs.release && format('app-builder-{0}', inputs.app) || format('app-builder-{0}-{1}', inputs.app, github.run_id) }}
   cancel-in-progress: false
 
 permissions:
