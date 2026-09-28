@@ -39,7 +39,6 @@ ENV LD_LIBRARY_PATH="/lib:/usr/lib" \
 USER root
 WORKDIR /app
 
-# hadolint ignore=SC2046
 RUN \
     apk add --no-cache \
         bash \

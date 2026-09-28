@@ -16,10 +16,8 @@ RUN wget -qO- "https://github.com/chrisvel/tududi/archive/refs/tags/${VERSION}.t
 
 RUN npm install
 
-# hadolint ignore=DL3059
 RUN NODE_ENV=production npm run frontend:build
 
-# hadolint ignore=DL3059
 RUN npm prune --omit=dev
 
 FROM docker.io/library/node:24-alpine

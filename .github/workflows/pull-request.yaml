@@ -61,8 +61,8 @@ jobs:
       - name: Vet
         run: go vet ./...
 
-  hadolint:
-    name: Hadolint
+  droast:
+    name: Droast
     runs-on: ubuntu-26.04
     permissions:
       contents: read
@@ -78,8 +78,8 @@ jobs:
           experimental: true
           install_args: --locked
 
-      - name: Hadolint
-        run: git ls-files -z '*Dockerfile' | xargs -0 -r hadolint
+      - name: Droast
+        run: droast .
 
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
@@ -135,8 +135,8 @@ jobs:
     name: Build Success
     needs:
       - build
+      - droast
       - go-check
-      - hadolint
       - prepare
       - workflow-lint
     runs-on: ubuntu-26.04
