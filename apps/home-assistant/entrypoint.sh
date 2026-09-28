@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
-unset UV_SYSTEM_PYTHON
-
-mkdir -p "${VENV_FOLDER}"
-uv venv --system-site-packages --link-mode=copy --allow-existing "${VENV_FOLDER}"
+# Requirements of custom integrations are installed into the venv at runtime, and uv
+# installs their full dependency closure there, including copies of packages the image
+# already ships. Rebuild the venv whenever the image changes so those copies never go stale.
+image="$(python3 -c 'from importlib.metadata import version; print(version("homeassistant"))')-$(uname -m)"
+if [[ "$(cat "${VENV_FOLDER}/.image" 2>/dev/null)" != "${image}" ]]; then
+    rm -rf "${VENV_FOLDER}"
+    uv venv --system-site-packages "${VENV_FOLDER}"
+    echo "${image}" > "${VENV_FOLDER}/.image"
+fi
 source "${VENV_FOLDER}/bin/activate"
 
-ln -sf /proc/self/fd/1 /config/home-assistant.log
-
 exec \
-    python3 -m homeassistant \
+    python3 -P -m homeassistant \
         --config /config \
         "$@"
