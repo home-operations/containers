@@ -3,9 +3,12 @@
 # Requirements of custom integrations are installed into the venv at runtime, and uv
 # installs their full dependency closure there, including copies of packages the image
 # already ships. Rebuild the venv whenever the image changes so those copies never go stale.
+# Only the contents are removed, since the venv folder is often a mount point that cannot
+# be unlinked.
 image="$(python3 -c 'from importlib.metadata import version; print(version("homeassistant"))')-$(uname -m)"
 if [[ "$(cat "${VENV_FOLDER}/.image" 2>/dev/null)" != "${image}" ]]; then
-    rm -rf "${VENV_FOLDER}"
+    mkdir -p "${VENV_FOLDER}"
+    find "${VENV_FOLDER}" -mindepth 1 -delete
     uv venv --system-site-packages "${VENV_FOLDER}"
     echo "${image}" > "${VENV_FOLDER}/.image"
 fi
