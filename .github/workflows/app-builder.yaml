@@ -22,7 +22,7 @@ on:
         required: false
 
 concurrency:
-  group: app-builder-${{ inputs.app }}
+  group: ${{ inputs.release && format('app-builder-{0}', inputs.app) || format('app-builder-{0}-{1}', inputs.app, github.run_id) }}
   cancel-in-progress: false
 
 permissions:
@@ -92,7 +92,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: ${{ fromJson(needs.plan.outputs.platforms) }}
-    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-26.04-arm' || 'ubuntu-26.04' }}
     permissions:
       contents: read
       packages: write
@@ -244,10 +244,11 @@ jobs:
       - merge
     runs-on: ubuntu-26.04
     permissions:
-      contents: read
-      packages: write
-      id-token: write
+      artifact-metadata: write
       attestations: write
+      contents: write
+      id-token: write
+      packages: write
     env:
       APP: ${{ inputs.app }}
       REPO_OWNER: ${{ github.repository_owner }}

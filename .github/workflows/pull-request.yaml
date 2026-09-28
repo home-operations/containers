@@ -88,8 +88,9 @@ jobs:
       - prepare
     uses: $/.github/workflows/app-builder.yaml
     permissions:
+      artifact-metadata: write
       attestations: write
-      contents: read
+      contents: write
       id-token: write
       packages: write
     strategy:
