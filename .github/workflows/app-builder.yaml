@@ -95,7 +95,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: ${{ fromJson(needs.plan.outputs.platforms) }}
-    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-26.04-arm' || 'ubuntu-26.04' }}
     permissions:
       contents: read
       packages: write
