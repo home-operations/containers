@@ -10,7 +10,7 @@ RUN tar xzf /tmp/source.tar.gz --strip-components=1 \
     && npm ci --prefix frontend \
     && npm run build --prefix frontend
 
-FROM docker.io/library/rust:1.98-slim-trixie AS alass
+FROM docker.io/library/rust:1.99-slim-trixie AS alass
 # renovate: datasource=crate depName=alass-cli
 ARG ALASS_CLI_VERSION=2.0.0
 
