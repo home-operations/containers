@@ -1,8 +1,6 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["github>home-operations/renovate-config"],
-  // Each app bump is its own PR; don't queue them behind the org preset's prHourlyLimit.
-  prHourlyLimit: 0,
   customManagers: [
     {
       customType: "regex",
@@ -68,6 +66,14 @@
       matchFileNames: ["**/docker-bake.hcl"],
       automerge: true,
       ignoreTests: false,
+    },
+    {
+      description: [
+        "Exempt App Updates from prHourlyLimit and create them last, since they still add to the hourly PR count",
+      ],
+      matchFileNames: ["apps/**"],
+      prHourlyLimit: 0,
+      prPriority: -1,
     },
     {
       description: ["Auto-merge esphome-device-builder Updates"],
