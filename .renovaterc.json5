@@ -1,6 +1,8 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["github>home-operations/renovate-config"],
+  // Each app bump is its own PR; don't queue them behind the org preset's prHourlyLimit.
+  prHourlyLimit: 0,
   customManagers: [
     {
       customType: "regex",
