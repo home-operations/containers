@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=LavX/bazarr
-  default = "v2.7.0"
+  default = "v2.7.1"
 }
 
 variable "SOURCE" {
