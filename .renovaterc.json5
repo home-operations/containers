@@ -108,18 +108,11 @@
       allowedVersions: "/alpine3\\.24/",
     },
     {
-      description: ["Allowed Python Version for Alpine Base Images"],
+      description: ["Allowed Python Version for Base Images"],
       matchDatasources: ["docker"],
       matchFileNames: ["**/Dockerfile"],
       matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.14-alpine3\\.24/",
-    },
-    {
-      description: ["Allowed Python Version for Debian Base Images"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["**/Dockerfile"],
-      matchPackageNames: ["/python/"],
-      allowedVersions: "/3\\.14-slim/",
+      allowedVersions: "/^3\\.14/",
     },
     {
       description: ["Allowed Node Version for Base Images"],
