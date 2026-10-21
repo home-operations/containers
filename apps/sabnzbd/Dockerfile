@@ -22,7 +22,7 @@ USER root
 WORKDIR /app
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         7zip \
         bash \
         ca-certificates \

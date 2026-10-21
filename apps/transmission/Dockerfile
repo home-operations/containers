@@ -12,7 +12,7 @@ ENV HOME="/config" \
     TRANSMISSION_WEB_HOME="/usr/share/transmission/public_html"
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         7zip \
         bash \
         ca-certificates \

@@ -4,7 +4,7 @@ ARG VERSION
 FROM ghcr.io/kiwigrid/k8s-sidecar:${VERSION}
 USER root
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         curl \

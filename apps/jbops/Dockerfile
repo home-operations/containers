@@ -18,7 +18,7 @@ ENV PLEXAPI_CONFIG_PATH="/config/config.ini" \
 USER root
 WORKDIR /app
 
-RUN apk add --no-cache \
+RUN apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         catatonit \

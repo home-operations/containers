@@ -24,7 +24,8 @@ RUN \
     apk add --no-cache --virtual=build-dependencies \
         build-base \
         curl-dev \
-    && apk add --no-cache \
+    && apk add --no-cache --upgrade \
+        ca-certificates \
         catatonit \
         ffmpeg \
         libatomic \

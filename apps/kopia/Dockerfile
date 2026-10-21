@@ -19,7 +19,7 @@ ENV \
 USER root
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         ca-certificates \
         catatonit \
         curl \

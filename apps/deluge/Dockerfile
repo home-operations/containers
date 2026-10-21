@@ -11,7 +11,7 @@ ENV DELUGE_BIN="deluged" \
 USER root
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         7zip \
         bash \
         ca-certificates \

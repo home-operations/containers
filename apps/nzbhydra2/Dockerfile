@@ -9,7 +9,7 @@ ARG VERSION
 ENV JAVA_TOOL_OPTIONS="-Xmx256M"
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         catatonit \

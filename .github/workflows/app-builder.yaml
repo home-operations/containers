@@ -9,6 +9,11 @@ on:
         type: string
         description: App Name
         required: true
+      no-cache:
+        type: boolean
+        description: No Cache
+        required: false
+        default: false
       release:
         type: boolean
         description: Release
@@ -151,6 +156,7 @@ jobs:
             *.labels.org.opencontainers.image.version=${{ steps.app-options.outputs.version }}
             *.labels.org.opencontainers.image.revision=${{ github.sha }}
             *.labels.org.opencontainers.image.vendor=${{ github.repository_owner }}
+            *.no-cache=${{ inputs.no-cache }}
             *.output=${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true,compression=zstd,force-compression=true', github.repository_owner, inputs.app) || 'type=docker' }}
             *.platform=${{ matrix.platform }}
             *.tags=${{ ! inputs.release && format('ghcr.io/{0}/{1}:sandbox', github.repository_owner, inputs.app) || '' }}

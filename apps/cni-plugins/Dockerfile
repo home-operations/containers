@@ -10,7 +10,7 @@ ENV CNI_BIN_DIR=/host/opt/cni/bin
 USER root
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         rsync \
     && \
     apk add --no-cache --virtual=.build-deps \
