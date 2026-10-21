@@ -122,6 +122,13 @@
       allowedVersions: "/3\\.14-slim/",
     },
     {
+      description: ["Allowed Node Version for Base Images"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: ["/node/"],
+      allowedVersions: "/^26/",
+    },
+    {
       description: ["Allowed Java Version for NZBHydra2 Base Image"],
       matchDatasources: ["docker"],
       matchFileNames: ["apps/nzbhydra2/Dockerfile"],

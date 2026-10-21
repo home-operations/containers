@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/node:24-trixie-slim AS builder
+FROM docker.io/library/node:26-trixie-slim AS builder
 ARG VERSION
 
 WORKDIR /build
