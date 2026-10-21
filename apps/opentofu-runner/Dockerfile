@@ -3,7 +3,7 @@
 FROM docker.io/library/alpine:3.24 AS builder
 ARG TARGETARCH
 ARG VERSION
-RUN apk add --no-cache curl \
+RUN apk add --no-cache --upgrade curl \
     && curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${VERSION}/tofu_${VERSION}_linux_${TARGETARCH}.tar.gz" \
         | tar xzf - -C /tmp
 

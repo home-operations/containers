@@ -5,7 +5,7 @@ ARG VERSION
 # droast ignore=DF002
 USER root
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         bash \
         irqbalance=="${VERSION}" \
     && rm -rf /tmp/*

@@ -5,7 +5,7 @@ ARG OPENSSL_VERSION=3.6.1
 ARG OPENSSL_PREFIX=/opt/openssl
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         build-base \
         linux-headers \
         perl \
@@ -40,7 +40,7 @@ USER root
 WORKDIR /app
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         catatonit \

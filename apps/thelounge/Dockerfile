@@ -3,7 +3,7 @@
 FROM docker.io/library/node:26-alpine AS builder
 ARG VERSION
 
-RUN apk add --no-cache git
+RUN apk add --no-cache --upgrade git
 
 WORKDIR /app
 RUN npm install --omit=dev "thelounge@${VERSION#*v}"
@@ -11,7 +11,7 @@ RUN npm install --omit=dev "thelounge@${VERSION#*v}"
 FROM docker.io/library/node:26-alpine
 ARG VERSION
 
-RUN apk add --no-cache \
+RUN apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         catatonit \

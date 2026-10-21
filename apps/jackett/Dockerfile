@@ -9,7 +9,7 @@ ARG VERSION
 ENV XDG_CONFIG_HOME=/config
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         catatonit \

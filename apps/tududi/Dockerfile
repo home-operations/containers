@@ -3,7 +3,7 @@
 FROM docker.io/library/node:26-alpine AS builder
 ARG VERSION
 
-RUN apk add --no-cache \
+RUN apk add --no-cache --upgrade \
         bash \
         g++ \
         make \
@@ -23,7 +23,7 @@ RUN npm prune --omit=dev
 FROM docker.io/library/node:26-alpine
 ARG VERSION
 
-RUN apk add --no-cache \
+RUN apk add --no-cache --upgrade \
         bash \
         ca-certificates \
         catatonit \
