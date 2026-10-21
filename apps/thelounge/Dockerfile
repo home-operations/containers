@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/node:26-alpine AS builder
+FROM docker.io/library/node:26-alpine3.24 AS builder
 ARG VERSION
 
 RUN apk add --no-cache --upgrade git
@@ -8,7 +8,7 @@ RUN apk add --no-cache --upgrade git
 WORKDIR /app
 RUN npm install --omit=dev "thelounge@${VERSION#*v}"
 
-FROM docker.io/library/node:26-alpine
+FROM docker.io/library/node:26-alpine3.24
 ARG VERSION
 
 RUN apk add --no-cache --upgrade \
