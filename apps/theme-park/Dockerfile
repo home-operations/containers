@@ -14,7 +14,7 @@ RUN \
     && python /tmp/themes.py \
     && grep -rl 'https://theme-park.dev' /tmp | xargs sed -i 's|https\://theme-park.dev||g'
 
-FROM ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine
+FROM ghcr.io/nginx/nginx-unprivileged:1.31-alpine
 ENV NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE=1
 COPY --from=builder --chown=nginx:nginx /tmp/index.html /usr/share/nginx/html/
 COPY --from=builder --chown=nginx:nginx /tmp/css /usr/share/nginx/html/css/
