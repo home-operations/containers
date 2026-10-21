@@ -22,7 +22,8 @@ ENV \
 USER root
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
+        ca-certificates \
         catatonit \
         ffmpeg \
     && apk add --no-cache --virtual .build-deps \

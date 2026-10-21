@@ -19,7 +19,7 @@ USER root
 WORKDIR /app
 
 RUN \
-    apk add --no-cache \
+    apk add --no-cache --upgrade \
         bash \
         binutils \
         bluez \

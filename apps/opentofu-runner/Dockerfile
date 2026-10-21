@@ -9,6 +9,6 @@ RUN apk add --no-cache curl \
 
 FROM ghcr.io/flux-iac/tf-runner:v0.16.5
 USER root
-RUN apk add --no-cache libc6-compat gcompat
+RUN apk add --no-cache --upgrade ca-certificates libc6-compat gcompat
 COPY --from=builder --chown=65532:65532 --chmod=755 /tmp/tofu /usr/local/bin/terraform
 USER 65532:65532
