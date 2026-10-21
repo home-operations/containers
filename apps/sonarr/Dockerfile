@@ -20,9 +20,9 @@ RUN \
         curl \
         icu-libs \
         jq \
+        krb5-libs \
         libintl \
         nano \
-        sqlite-libs \
         tzdata \
     && mkdir -p /app/bin \
     && curl -fsSL "https://services.sonarr.tv/v1/update/${SONARR__UPDATE__BRANCH}/download?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${TARGETARCH/amd64/x64}" \

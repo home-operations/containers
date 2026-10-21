@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=custom.qbittorrent depName=qbittorrent
-  default = "5.2.4"
+  default = "5.3.0"
 }
 
 variable "SOURCE" {
