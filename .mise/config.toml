@@ -3,7 +3,7 @@ experimental = true
 
 [tools]
 actionlint = "1.7.12"
-gh = "2.102.1"
+gh = "2.103.0"
 "github:immanuwell/dockerfile-roast" = "1.7.0"
 go = "1.27.3"
 jq = "1.8.2"
