@@ -34,15 +34,17 @@ jobs:
         with:
           repo-token: ${{ steps.app-token.outputs.token }}
           stale-issue-message: |
-            This issue has been marked as stale due to 60 days of inactivity. Please remove the stale label or leave a comment to keep it open.
-            If no action is taken, it will be automatically closed in 7 days.
+            This issue has been marked as stale due to 180 days of inactivity. Please remove the stale label or leave a comment to keep it open.
+            If no action is taken, it will be automatically closed in 14 days.
           stale-pr-message: |
-            This pull request has been marked as stale due to 60 days of inactivity. Please remove the stale label or leave a comment to keep it open.
-            If no action is taken, it will be automatically closed in 7 days.
+            This pull request has been marked as stale due to 180 days of inactivity. Please remove the stale label or leave a comment to keep it open.
+            If no action is taken, it will be automatically closed in 14 days.
           close-issue-message: |
-            This issue has been automatically closed after 7 days of inactivity following the stale status.
+            This issue has been automatically closed after 14 days of inactivity following the stale status.
           close-pr-message: |
-            This pull request has been automatically closed after 7 days of inactivity following the stale status.
+            This pull request has been automatically closed after 14 days of inactivity following the stale status.
+          days-before-stale: 180
+          days-before-close: 14
           stale-issue-label: stale
           stale-pr-label: stale
           delete-branch: true
