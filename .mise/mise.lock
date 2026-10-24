@@ -155,26 +155,26 @@ backend = "npm:oxfmt"
 specifiers = ["0.74.0"]
 
 [[tools.regctl]]
-version = "0.11.6"
+version = "0.11.7"
 backend = "aqua:regclient/regclient/regctl"
-specifiers = ["0.11.6"]
+specifiers = ["0.11.7"]
 
 [tools.regctl."platforms.linux-arm64"]
-checksum = "sha256:a9b71a3ee79b2d1dbbd7d51fd5e8fa214722c192864235d3d8764463c751a1ff"
-url = "https://github.com/regclient/regclient/releases/download/v0.11.6/regctl-linux-arm64"
-url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/541343835"
+checksum = "sha256:9f349bab5c407ac04f3dabf99c7c7a6b0f9e9723c23f2775380e804d02c6dbb9"
+url = "https://github.com/regclient/regclient/releases/download/v0.11.7/regctl-linux-arm64"
+url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/660897956"
 provenance = "cosign"
 
 [tools.regctl."platforms.linux-x64"]
-checksum = "sha256:8e0e62a497fcdb8048d18aa927a139613176ba0531f412bc541044e28f9856bd"
-url = "https://github.com/regclient/regclient/releases/download/v0.11.6/regctl-linux-amd64"
-url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/541343840"
+checksum = "sha256:3737fbbdd791e04e7a831640b681f3397a376498e80e2ad9b1b2d27296f239bc"
+url = "https://github.com/regclient/regclient/releases/download/v0.11.7/regctl-linux-amd64"
+url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/660897960"
 provenance = "cosign"
 
 [tools.regctl."platforms.macos-arm64"]
-checksum = "sha256:5b52b71861abc300ab513e87a4c3794cff6508035ac7f6b6bdfa1fa5688c0040"
-url = "https://github.com/regclient/regclient/releases/download/v0.11.6/regctl-darwin-arm64"
-url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/541343870"
+checksum = "sha256:8ac077a1eeb834d3053714e86ccbd838d0da46567df8cd7c2695d1a19135bf60"
+url = "https://github.com/regclient/regclient/releases/download/v0.11.7/regctl-darwin-arm64"
+url_api = "https://api.github.com/repos/regclient/regclient/releases/assets/660897975"
 provenance = "cosign"
 
 [[tools.shellcheck]]
