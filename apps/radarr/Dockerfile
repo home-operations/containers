@@ -20,6 +20,7 @@ RUN \
         curl \
         icu-libs \
         jq \
+        krb5-libs \
         libintl \
         nano \
         tzdata \
