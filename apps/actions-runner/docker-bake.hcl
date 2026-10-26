@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=docker depName=ghcr.io/actions/actions-runner
-  default = "2.338.1"
+  default = "2.338.2"
 }
 
 variable "SOURCE" {
