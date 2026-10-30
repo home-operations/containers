@@ -1,6 +1,6 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
-  extends: ["github>home-operations/renovate-config"],
+  extends: ["github>home-operations/.github:renovate-config"],
   schedule: ["at any time"],
   customManagers: [
     {
