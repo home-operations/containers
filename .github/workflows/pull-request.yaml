@@ -111,8 +111,8 @@ jobs:
       app: ${{ matrix.app }}
       release: false
 
-  workflow-lint:
-    name: Workflow Lint
+  zizmor:
+    name: Zizmor
     runs-on: ubuntu-26.04
     permissions:
       contents: read
@@ -122,22 +122,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Mise
-        uses: jdx/mise-action@6612f0ef07ed2a736cd1e00a94a065522dd41195 # v5.2.5
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
         with:
-          install: false
-
-      - name: Resolve linter versions
-        id: tools
-        run: |
-          echo "actionlint=$(mise config get tools.actionlint)" >> "$GITHUB_OUTPUT"
-          echo "zizmor=$(mise config get tools.zizmor)" >> "$GITHUB_OUTPUT"
-
-      - name: Lint workflows
-        uses: home-operations/.github/actions/workflow-lint@1d6eebfd2066f2aa84939e573e56f60d8d2ed85f # workflow-lint-v1.0.4
-        with:
-          actionlint-version: ${{ steps.tools.outputs.actionlint }}
-          zizmor-version: ${{ steps.tools.outputs.zizmor }}
+          advanced-security: false
+          annotations: true
 
   status:
     if: ${{ !cancelled() }}
@@ -147,7 +136,7 @@ jobs:
       - droast
       - go-check
       - prepare
-      - workflow-lint
+      - zizmor
     runs-on: ubuntu-26.04
     permissions: {}
     steps:
