@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=pypi depName=homeassistant
-  default = "2026.10.4"
+  default = "2026.11.0"
 }
 
 variable "SOURCE" {
