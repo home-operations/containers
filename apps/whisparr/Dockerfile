@@ -5,7 +5,9 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 
+# krb5 on musl isn't thread-safe and Npgsql's default GSS probe segfaults on it (exit 139).
 ENV COMPlus_EnableDiagnostics=0 \
+    PGGSSENCMODE=disable \
     WHISPARR__UPDATE__BRANCH=nightly
 
 USER root
@@ -20,6 +22,7 @@ RUN \
         curl \
         icu-libs \
         jq \
+        krb5-libs \
         libintl \
         nano \
         sqlite-libs \
