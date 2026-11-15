@@ -2,27 +2,20 @@
 
 FROM docker.io/library/alpine:3.24 AS build
 ARG TARGETARCH
+ARG ARCH=${TARGETARCH/arm64/aarch64}
+ARG ARCH=${ARCH/amd64/x86_64}
 ARG VERSION
 SHELL ["/bin/ash", "-euo", "pipefail", "-c"]
 
 WORKDIR /tmp
 
-# droast ignore=DF057
 RUN \
     apk add --no-cache \
-        curl \
-        jq \
+        github-cli \
         unzip; \
-    case "${TARGETARCH}" in \
-        amd64) arch=x86_64 ;; \
-        arm64) arch=aarch64 ;; \
-    esac; \
-    assets='.assets[] | select(.name | endswith("_\($arch)-linux-gnu.zip"))'; \
-    curl -fsSL -o release.json "https://api.github.com/repos/pgsty/vchord/releases/tags/${VERSION}"; \
-    jq --raw-output --arg arch "${arch}" "${assets}"' | .browser_download_url' release.json \
-        | xargs curl -fsSL --remote-name-all; \
-    jq --raw-output --arg arch "${arch}" "${assets}"' | "\(.digest | ltrimstr("sha256:"))  \(.name)"' release.json \
-        | sha256sum -c -; \
+    gh release download "${VERSION}" --repo pgsty/vchord \
+        --pattern "postgresql-*-vchord_${VERSION}_${ARCH}-linux-gnu.zip*"; \
+    sha256sum -c ./*.sha256; \
     for zip in postgresql-*.zip; do \
         pg="${zip#postgresql-}"; \
         pg="${pg%%-*}"; \
