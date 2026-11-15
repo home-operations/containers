@@ -1,10 +1,12 @@
 package helpers
 
 import (
+	"archive/tar"
 	"context"
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -137,9 +139,9 @@ func RequireExecSucceeds(t *testing.T, c testcontainers.Container, cmd ...string
 	require.Equal(t, 0, code, "command %v should succeed, output: %s", cmd, output)
 }
 
-// RequireFileExists tests that a file exists in the image by inspecting its filesystem directly,
-// without starting the container. Works for images with no shell or executables.
-func RequireFileExists(t *testing.T, image string, filePath string) {
+// createStopped creates a container from image without starting it, so its filesystem can be inspected
+// even when the image has no shell or executables.
+func createStopped(t *testing.T, image string) (*testcontainers.DockerClient, string) {
 	t.Helper()
 
 	ctx := t.Context()
@@ -154,10 +156,48 @@ func RequireFileExists(t *testing.T, image string, filePath string) {
 
 	cli, err := testcontainers.NewDockerClientWithOpts(ctx)
 	require.NoError(t, err)
-	defer cli.Close()
+	t.Cleanup(func() { _ = cli.Close() })
 
-	_, err = cli.ContainerStatPath(ctx, ctr.GetContainerID(), dockerclient.ContainerStatPathOptions{Path: filePath})
+	return cli, ctr.GetContainerID()
+}
+
+// RequireFileExists tests that a file exists in the image by inspecting its filesystem directly,
+// without starting the container. Works for images with no shell or executables.
+func RequireFileExists(t *testing.T, image string, filePath string) {
+	t.Helper()
+
+	cli, id := createStopped(t, image)
+
+	_, err := cli.ContainerStatPath(t.Context(), id, dockerclient.ContainerStatPathOptions{Path: filePath})
 	require.NoError(t, err, "file %q should exist in image %q", filePath, image)
+}
+
+// ListFiles returns the absolute paths of all regular files under dir in the image, without starting
+// the container. Works for images with no shell or executables.
+func ListFiles(t *testing.T, image string, dir string) []string {
+	t.Helper()
+
+	dir = path.Clean(dir)
+	cli, id := createStopped(t, image)
+
+	res, err := cli.CopyFromContainer(t.Context(), id, dockerclient.CopyFromContainerOptions{SourcePath: dir})
+	require.NoError(t, err, "directory %q should exist in image %q", dir, image)
+	defer res.Content.Close()
+
+	var files []string
+	tr := tar.NewReader(res.Content)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		require.NoError(t, err)
+		if hdr.Typeflag == tar.TypeReg {
+			// tar entries are relative to the parent of dir, e.g. "postgresql/18/lib/vchord.so"
+			files = append(files, path.Join(path.Dir(dir), hdr.Name))
+		}
+	}
+	return files
 }
 
 // RequireCommandSucceeds tests that a command runs successfully in the container (exit code 0)
