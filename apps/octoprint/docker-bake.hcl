@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=pypi depName=OctoPrint
-  default = "1.11.8"
+  default = "2.0.0"
 }
 
 variable "SOURCE" {
