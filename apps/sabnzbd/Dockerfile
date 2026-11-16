@@ -12,8 +12,7 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true \
-    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.24/"
+    UV_SYSTEM_PYTHON=true
 
 ENV SABNZBD__ADDRESS="[::]" \
     SABNZBD__PORT="8080"

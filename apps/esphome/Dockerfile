@@ -14,8 +14,7 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true \
-    UV_EXTRA_INDEX_URL="https://wheels.home-assistant.io/musllinux/"
+    UV_SYSTEM_PYTHON=true
 
 ENV \
     HOME="/config" \
