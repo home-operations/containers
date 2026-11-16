@@ -2,7 +2,7 @@
 experimental = true
 
 [tools]
-gh = "2.103.3"
+gh = "2.104.0"
 "github:immanuwell/dockerfile-roast" = "1.7.0"
 go = "1.27.4"
 jq = "1.8.2"
