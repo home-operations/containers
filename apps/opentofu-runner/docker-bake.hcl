@@ -5,12 +5,12 @@ variable "APP" {
 }
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=opentofu/opentofu
-  default = "1.13.9"
+  // renovate: datasource=docker depName=ghcr.io/flux-iac/tf-runner
+  default = "v0.17.0"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/opentofu/opentofu"
+  default = "https://github.com/flux-iac/tofu-controller"
 }
 
 group "default" {

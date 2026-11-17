@@ -83,8 +83,8 @@
       ignoreTests: false,
     },
     {
-      description: ["Auto-merge tf-runner Updates"],
-      matchDepNames: ["ghcr.io/flux-iac/tf-runner"],
+      description: ["Auto-merge OpenTofu Updates"],
+      matchDepNames: ["opentofu/opentofu"],
       automerge: true,
       ignoreTests: false,
     },
