@@ -8,7 +8,7 @@ export OCL_ICD_VENDORS="${APP_DIR}/extra/etc/OpenCL/vendors"
 export PCI_IDS_PATH="${APP_DIR}/share/hwdata/pci.ids"
 export SSL_CERT_FILE="${APP_DIR}/etc/ssl/certs/ca-certificates.crt"
 if [ -d "/lib/x86_64-linux-gnu" ]; then
-    export LIBVA_DRIVERS_PATH="/usr/lib/x86_64-linux-gnu/dri:${APP_DIR}/extra/lib/dri"
+    export LIBVA_DRIVERS_PATH="/usr/lib/x86_64-linux-gnu/dri:${APP_DIR}/lib/dri"
 fi
 export HOME="/config"
 
