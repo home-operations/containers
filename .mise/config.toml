@@ -4,7 +4,7 @@ min_version = "2026.11.1"
 experimental = true
 
 [tools]
-gh = "2.104.0"
+gh = "2.105.0"
 "github:immanuwell/dockerfile-roast" = "1.7.0"
 go = "1.27.4"
 jq = "1.8.2"
