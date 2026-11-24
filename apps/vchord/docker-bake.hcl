@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=pgsty/vchord
-  default = "1.3.0"
+  default = "1.5.0"
 }
 
 variable "SOURCE" {
