@@ -4,7 +4,7 @@ ARG VERSION
 FROM docker.io/library/alpine:3.24 AS builder
 ARG TARGETARCH
 # renovate: datasource=github-releases depName=opentofu/opentofu
-ARG TOFU_VERSION=1.13.9
+ARG TOFU_VERSION=1.13.10
 RUN apk add --no-cache --upgrade curl \
     && curl -fsSL "https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_${TARGETARCH}.tar.gz" \
         | tar xzf - -C /tmp
