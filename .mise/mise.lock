@@ -219,24 +219,24 @@ url_api = "https://api.github.com/repos/mikefarah/yq/releases/assets/726219940"
 provenance = "cosign"
 
 [[tools.zizmor]]
-version = "1.32.0"
+version = "1.33.0"
 backend = "aqua:zizmorcore/zizmor"
-specifiers = ["1.32.0"]
+specifiers = ["1.33.0"]
 
 [tools.zizmor."platforms.linux-arm64"]
-checksum = "sha256:cb152b207f815116d7fa1c1ee4614f61578803351395052908095e79adfd9fd0"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.32.0/zizmor-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/703541931"
+checksum = "sha256:8a0577fc0da395febe1f37194280b6169818eb8f6924318d0e941de277dbe8f5"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.33.0/zizmor-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/779717761"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-x64"]
-checksum = "sha256:bb110cc765eca9cd7efb2e284a956be5974c60027b0970f16397d86208a9957b"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.32.0/zizmor-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/703541932"
+checksum = "sha256:d38ea7058985610f989e1798dba346962dbec479858d14306e1f2202116563ad"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.33.0/zizmor-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/779717757"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.macos-arm64"]
-checksum = "sha256:6efed18c4539a663fd3c851a2be9533fd8456c4e646d9416206da059154a0d3c"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.32.0/zizmor-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/703541933"
+checksum = "sha256:c04e784f78cc9c4d5fa751603e6abc1b32eae32233ca088688f40031fd31642b"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.33.0/zizmor-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/779717768"
 provenance = "github-attestations"
