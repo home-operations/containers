@@ -46,30 +46,30 @@ url = "https://github.com/immanuwell/dockerfile-roast/releases/download/1.7.0/dr
 url_api = "https://api.github.com/repos/immanuwell/dockerfile-roast/releases/assets/539932752"
 
 [[tools."github:oxc-project/oxc"]]
-version = "0.79.0"
+version = "0.80.0"
 backend = "github:oxc-project/oxc"
-specifiers = ["0.79.0"]
+specifiers = ["0.80.0"]
 
 [tools."github:oxc-project/oxc".options]
 matching_regex = "^oxfmt-"
 version_prefix = "oxfmt_v"
 
 [tools."github:oxc-project/oxc"."platforms.linux-arm64"]
-checksum = "sha256:2d550f171f2464df1fc7dd63154c6c77d795a9c6d54f99a3366cb45d2ff9e46d"
-url = "https://github.com/oxc-project/oxc/releases/download/oxfmt_v0.79.0/oxfmt-aarch64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/oxc-project/oxc/releases/assets/754764756"
+checksum = "sha256:5170d9c9072c1e2da6970524306aeccd107aa1d237f81cff5e2a6011844fb483"
+url = "https://github.com/oxc-project/oxc/releases/download/oxfmt_v0.80.0/oxfmt-aarch64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/oxc-project/oxc/releases/assets/783612277"
 provenance = "github-attestations"
 
 [tools."github:oxc-project/oxc"."platforms.linux-x64"]
-checksum = "sha256:458ba526dd692baad90c5cf164341257e339da2a6e0f585dea6eae6644df5608"
-url = "https://github.com/oxc-project/oxc/releases/download/oxfmt_v0.79.0/oxfmt-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/oxc-project/oxc/releases/assets/754764891"
+checksum = "sha256:e393d1d65cff7f051cc5eb21fca7e29691dd4e9fdbb9bde09f73cd50cd8ec22d"
+url = "https://github.com/oxc-project/oxc/releases/download/oxfmt_v0.80.0/oxfmt-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/oxc-project/oxc/releases/assets/783612416"
 provenance = "github-attestations"
 
 [tools."github:oxc-project/oxc"."platforms.macos-arm64"]
-checksum = "sha256:c75859a53ec3a57a78d3e9752d2e9604badfca97dda65366c310ed2f5bf28534"
-url = "https://github.com/oxc-project/oxc/releases/download/oxfmt_v0.79.0/oxfmt-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/oxc-project/oxc/releases/assets/754764750"
+checksum = "sha256:32a03838f50d2417b55eae71226c940da9d7964b77e49648a51957795527b479"
+url = "https://github.com/oxc-project/oxc/releases/download/oxfmt_v0.80.0/oxfmt-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/oxc-project/oxc/releases/assets/783612273"
 provenance = "github-attestations"
 
 [[tools.go]]
